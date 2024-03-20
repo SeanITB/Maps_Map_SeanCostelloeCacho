@@ -94,6 +94,7 @@ fun MyBottomSheet(navigationController: NavController, markerVM: MarkerViewModel
                     if (markerVM.proveThatMarkerIsCorrect()) {
                         markerVM.addMarkerToList(markerVM.newMarker)
                         markerVM.changeShowBottomSheet(false)
+                        markerVM.restartMarkerAtributes()
                     } else
                         Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
                             .show()
@@ -160,8 +161,19 @@ fun TypeOptions(markerVM: MarkerViewModel) {
                     .fillMaxWidth(0.6f)
             )
             DropdownMenu(
-                expanded = markerVM.expandedOptions,
-                onDismissRequest = { markerVM.changeExpandedOptions(false) },
+                expanded =
+                if(markerVM.actualScreen != "BottomSheet") {
+                    markerVM.expandedOptionsTopBar
+                } else {
+                    markerVM.expandedOptions
+                },
+                onDismissRequest = {
+                    if (markerVM.actualScreen != "BottomSheet") {
+                        markerVM.changeExpandedOptionsTopBar(true)
+                    } else {
+                        markerVM.changeExpandedOptions(true)
+                    }
+                },
                 modifier = Modifier.background(MaterialTheme.colorScheme.secondary)
             ) {
                 genders.forEach { gender ->
@@ -173,13 +185,17 @@ fun TypeOptions(markerVM: MarkerViewModel) {
                             )
                         },
                         onClick = {
-                            markerVM.changeExpandedOptions(false)
                             markerVM.changeTypeMarker(gender)
                             if (markerVM.actualScreen != "BottomSheet") {
                                 markerVM.changeIsFiltred(true)
                                 markerVM.createFilerList()
                                 if (markerVM.typeMarker.equals("All markers"))
                                     markerVM.changeIsFiltred(false)
+                                markerVM.changeExpandedOptionsTopBar(false)
+                            } else if (markerVM.actualScreen == "mapScreen") {
+                                markerVM.createFilerList()
+                            } else {
+                                markerVM.changeExpandedOptions(false)
                             }
                         }
                     )

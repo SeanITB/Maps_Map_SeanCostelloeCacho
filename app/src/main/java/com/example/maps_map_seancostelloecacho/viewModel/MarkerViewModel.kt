@@ -56,13 +56,13 @@ class MarkerViewModel: ViewModel() {
 
     var name by mutableStateOf("")
         private set
-    var typeMarker by mutableStateOf("")
+    var typeMarker by mutableStateOf("All markers")
         private set
 
     var expandedOptions by mutableStateOf(false)
         private set
 
-    var expandedOptionsTopBar by mutableStateOf(false) //toDo: canviando expanded options
+    var expandedOptionsTopBar by mutableStateOf(false)
         private set
 
     var description by mutableStateOf("")
@@ -138,11 +138,13 @@ class MarkerViewModel: ViewModel() {
         this.isFiltered = value
     }
     fun createFilerList() {
-        Log.i("type marker", typeMarker)
-        this.categoryMarkerList.value?.forEach {
-            if (it.name == this.typeMarker) {
-                Log.i("dentro en el type", typeMarker)
-                this._filterMarkerList.value = it.items
+        if (this.typeMarker == "All markers")
+            this._filterMarkerList.value = this._markerList.value
+        else {
+            this.categoryMarkerList.value?.forEach {
+                if (it.name == this.typeMarker) {
+                    this._filterMarkerList.value = it.items
+                }
             }
         }
     }
@@ -160,7 +162,7 @@ class MarkerViewModel: ViewModel() {
     }
 
     fun changeExpandedOptionsTopBar(value: Boolean) {
-        this.expandedOptions = value
+        this.expandedOptionsTopBar = value
     }
 
     fun changeDescription(value: String) {
@@ -212,5 +214,12 @@ class MarkerViewModel: ViewModel() {
 
     fun changeShowBottomSheet(value : Boolean) {
         this.showBottomSheet = value
+    }
+
+    fun restartMarkerAtributes() {
+        this.name = ""
+        this.typeMarker = "All markers"
+        this.description = ""
+        this.photoList = mutableListOf()
     }
 }

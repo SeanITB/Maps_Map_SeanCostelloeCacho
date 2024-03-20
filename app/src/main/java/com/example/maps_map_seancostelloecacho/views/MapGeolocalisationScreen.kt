@@ -28,9 +28,9 @@ import com.example.maps_map_seancostelloecacho.navigation.Routes
 @Composable
 fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerViewModel) {
     val context = LocalContext.current
-    val isMapPermissionsGranted by markerVM.camaeraPermissionGranted.observeAsState(false)
-    val shouldShowPermissionMapRationale by markerVM.shouldShowCameraPermissionRationale.observeAsState(false)
-    val showMapPermissionDenied by markerVM.showCameraPermissionDenied.observeAsState(false)
+    val isMapPermissionsGranted by markerVM.mapPermissionGranted.observeAsState(false)
+    val shouldShowPermissionMapRationale by markerVM.shouldShowPermissionMapRationale.observeAsState(false)
+    val showMapPermissionDenied by markerVM.showMapPermissionDenied.observeAsState(false)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {isGranted ->

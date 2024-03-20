@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,6 +33,9 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @SuppressLint("MissingPermission")
 @Composable
 fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
+    markerVM.changeActualScreen("mapScreen")
+    val markerList by markerVM.filterMarkerList.observeAsState(emptyList())
+    markerVM.createFilerList()
     val context = LocalContext.current
     val fusedLocationProviderClient =
         remember {
@@ -47,7 +51,6 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
         rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(deviceLatLng, 18f)
         }
-
     val locationResult = fusedLocationProviderClient.getCurrentLocation(100, null)
     locationResult.addOnCompleteListener(context as MainActivity) { task ->
         if (task.isSuccessful) {
@@ -58,7 +61,6 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
             Log.e("ERROR", "Exception: %s", task.exception)
         }
     }
-    markerVM.changeActualScreen("mapScreen")
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -68,13 +70,13 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
             cameraPositionState = cameraPositionState,
             onMapClick = {},
             onMapLongClick = {
-                println("long click")
                 markerVM.changeLatitude(it.latitude)
                 markerVM.changeLongitude(it.longitude)
+                markerVM.changeTypeMarker("")
                 markerVM.changeShowBottomSheet(true) },
             properties = MapProperties(isMyLocationEnabled = true)
         ){
-            markerVM.markerList.value?.forEach { marker ->
+            markerList.forEach { marker ->
                 Marker(
                     state = MarkerState(position = LatLng(marker.location.latitude, marker.location.longitude)),
                     title = marker.name,
