@@ -1,0 +1,25 @@
+package com.example.maps_map_seancostelloecacho.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+val Purple80 = Color(0xFFD0BCFF)
+val PurpleGrey80 = Color(0xFFCCC2DC)
+val Pink80 = Color(0xFFEFB8C8)
+
+val Purple40 = Color(0xFF6650a4)
+val PurpleGrey40 = Color(0xFF625b71)
+val Pink40 = Color(0xFF7D5260)
+
+val dark = Color(0xFF000000)
+val light = Color(0xFFFFFFFF)
+val gray = Color(0xFFB8B8B8)
+
+// Colors foscos
+val darkSecundariColor = Color(0xFFA05162)
+val darkWrongAswer = Color(0xFF910432)
+val darkCorrectAswer = Color(0xFF6033FF)
+
+// Colors clars
+val lightSecundariColor = Color(0xFF018786)
+val lightWrongAswer = Color(0xFFFFC107)
+val lightCorrectAswer = Color(0xFF4CAF50)
