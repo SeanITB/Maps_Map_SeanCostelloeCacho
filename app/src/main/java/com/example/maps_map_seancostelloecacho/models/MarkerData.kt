@@ -6,6 +6,6 @@ data class MarkerData(
     val name: String,
     val tipe: String,
     val description: String,
-    val imatges: MutableList<Bitmap>,
+    val photos: MutableList<Bitmap>,
     val location: Location
 )

@@ -83,6 +83,8 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-firestore-ktx:24.10.3")
+    implementation("com.google.firebase:firebase-analytics") // Anastasiia
 
 
     // TODO: Add the dependencies for Firebase products you want to use

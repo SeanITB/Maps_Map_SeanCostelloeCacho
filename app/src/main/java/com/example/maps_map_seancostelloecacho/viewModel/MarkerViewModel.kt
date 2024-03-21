@@ -7,13 +7,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.maps_map_seancostelloecacho.firebase.Repository
 import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.QuerySnapshot
+import java.util.EventListener
+import java.util.Objects
 import java.util.SortedMap
 
 class MarkerViewModel: ViewModel() {
 
+    // firabase values
+    val repository = Repository()
+
+    val NAME_KEY = "name"
+    val TYPE_KEY = "type"
+    val DESCRIPTION_KEY = "description"
+    val PHOTOS_KEY = "photos"
+    val LATITUDE_KEY = "latitude"
+    val LONGITUDE_KEY = "longitude"
+    val dataToSave = HashMap<String, Any>()
+
+
+
+    // app values
     private val _camaeraPermissionGranted = MutableLiveData(false)
     val camaeraPermissionGranted = _camaeraPermissionGranted
 
@@ -50,12 +70,12 @@ class MarkerViewModel: ViewModel() {
     var categoryMap: SortedMap<String, MutableList<MarkerData>>? by mutableStateOf( sortedMapOf())
         private set
 
-
     var newMarker by mutableStateOf(MarkerData("", "", "", mutableListOf(), Location(0.0, 0.0)))
         private set
 
     var name by mutableStateOf("")
         private set
+
     var typeMarker by mutableStateOf("All markers")
         private set
 
@@ -80,8 +100,38 @@ class MarkerViewModel: ViewModel() {
     var showBottomSheet by mutableStateOf(false)
         private set
 
+    // Firebase Methods
 
-    // Methods
+    //toDo: no funciona
+    /*
+    fun getMarker() {
+        repository.getMarkers().addSnapshotListener(object: EventListener<QuerySnapshot> {
+            override fun onEvent(value: QuerySnapshot?, error: FirebaseFirestoreException?) {
+                if (error != null) {
+                    Log.e("Firestore error", error.message.toString())
+                    return
+                }
+                val tempList = mutableListOf<MarkerData>()
+                for(dc: DocumentChange in value?.documentChanges!!){
+                    if(dc.type == DocumentChange.Type.ADDED){
+                        val newUser = dc.document.toObject(MarkerData::class.java)
+                        tempList.add(newUser)
+                    }
+                }
+                _markerList.value = tempList
+            }
+        })
+    }
+
+     */
+
+    fun addMarker() {
+        repository.addMarkerYT(dataToSave)
+    }
+
+
+
+    // App Methods
     fun setCamaeraPermissionGranted(granted: Boolean) {
         this._camaeraPermissionGranted.value = granted
     }
@@ -149,14 +199,6 @@ class MarkerViewModel: ViewModel() {
         }
     }
 
-    fun changeNameMarker(value : String) {
-        this.name = value
-    }
-
-    fun changeTypeMarker(value : String) {
-        this.typeMarker = value
-    }
-
     fun changeExpandedOptions(value: Boolean) {
         this.expandedOptions = value
     }
@@ -165,27 +207,34 @@ class MarkerViewModel: ViewModel() {
         this.expandedOptionsTopBar = value
     }
 
+    fun changeNameMarker(value : String) {
+        this.name = value
+        dataToSave.put(NAME_KEY, this.name)
+    }
+
+    fun changeTypeMarker(value : String) {
+        this.typeMarker = value
+        dataToSave.put(TYPE_KEY, this.typeMarker)
+    }
+
     fun changeDescription(value: String) {
         this.description = value
+        dataToSave.put(DESCRIPTION_KEY, this.description)
     }
 
-    /* toDO: passar drawabel to bitmap
-    fun startRowOfImages() {
-        val context = LocalContext.current
-        val bitmap = getBitymapFromImage()
-    }
-
-     */
     fun addPhoto(value: Bitmap) {
         this.photoList.add(value)
+        dataToSave.put(PHOTOS_KEY, this.photoList)
     }
 
     fun changeLatitude(value: Double) {
         this.latitude = value
+        dataToSave.put(LATITUDE_KEY, this.latitude)
     }
 
     fun changeLongitude(value: Double) {
         this.longitude = value
+        dataToSave.put(LONGITUDE_KEY, this.longitude)
     }
 
     fun addNewMarker() { //toDo: rebisar la photo por defectop q muestra
@@ -201,6 +250,7 @@ class MarkerViewModel: ViewModel() {
         )
         println("new marker: " + newMarker)
     }
+
 
     fun proveThatMarkerIsCorrect(): Boolean {
         var isCorrect = false

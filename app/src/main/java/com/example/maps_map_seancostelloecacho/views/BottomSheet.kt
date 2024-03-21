@@ -95,6 +95,7 @@ fun MyBottomSheet(navigationController: NavController, markerVM: MarkerViewModel
                         markerVM.addMarkerToList(markerVM.newMarker)
                         markerVM.changeShowBottomSheet(false)
                         markerVM.restartMarkerAtributes()
+                        markerVM.addMarker()
                     } else
                         Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
                             .show()

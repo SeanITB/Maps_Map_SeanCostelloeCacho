@@ -40,7 +40,7 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
                 markerVM.setShouldShowMapPermissionRationale(
                     shouldShowRequestPermissionRationale(
                         context as Activity,
-                        Manifest.permission.CAMERA
+                        Manifest.permission.ACCESS_FINE_LOCATION
                     )
                 )
                 if (!shouldShowPermissionMapRationale) {
@@ -51,7 +51,7 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
         }
     )
     if (!isMapPermissionsGranted) {
-        launcher.launch(Manifest.permission.CAMERA)
+        launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     } else {
         navController.navigate(Routes.MapScreen.route)
     }
