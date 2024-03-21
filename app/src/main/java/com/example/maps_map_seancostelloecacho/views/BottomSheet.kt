@@ -129,77 +129,70 @@ fun TypeOptions(markerVM: MarkerViewModel) {
                 "Restaurant"
             )
         }
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-        //.fillMaxWidth(0.2f)
+    Box(
+        //modifier = Modifier.fillMaxWidth(0.35f)
     ) {
-        Spacer(modifier = Modifier.padding(16.dp))
-        Box(
-            //modifier = Modifier.fillMaxWidth(0.35f)
-        ) {
-            OutlinedTextField(
-                value = markerVM.typeMarker,
-                onValueChange = { markerVM.changeTypeMarker(it) },
-                label = { Text(text = "Marker Type", color = MaterialTheme.colorScheme.primary) },
-                enabled = false,
-                readOnly = true,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-                    focusedLabelColor = MaterialTheme.colorScheme.primary,
-                    cursorColor = MaterialTheme.colorScheme.primary
-                ),
-                modifier = Modifier
-                    .clickable {
-                        if (markerVM.actualScreen != "BottomSheet") {
-                            markerVM.changeExpandedOptionsTopBar(true)
-                        } else {
-                            markerVM.changeExpandedOptions(true)
-                        }
-                    }
-                    .fillMaxWidth(0.6f)
-            )
-            DropdownMenu(
-                expanded =
-                if(markerVM.actualScreen != "BottomSheet") {
-                    markerVM.expandedOptionsTopBar
-                } else {
-                    markerVM.expandedOptions
-                },
-                onDismissRequest = {
-                    if (markerVM.actualScreen != "BottomSheet") {
+        OutlinedTextField(
+            value = markerVM.typeMarker,
+            onValueChange = { markerVM.changeTypeMarker(it) },
+            label = { Text(text = "Marker Type", color = MaterialTheme.colorScheme.primary) },
+            enabled = false,
+            readOnly = true,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary
+            ),
+            modifier = Modifier
+                .clickable {
+                    if (markerVM.actualScreen != "BottomSheet") { //toDo: para quando habrel el bottom sheet no sea habra el top bar, pero no funciona
                         markerVM.changeExpandedOptionsTopBar(true)
                     } else {
                         markerVM.changeExpandedOptions(true)
                     }
-                },
-                modifier = Modifier.background(MaterialTheme.colorScheme.secondary)
-            ) {
-                genders.forEach { gender ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = gender,
-                                color = MaterialTheme.colorScheme.background
-                            )
-                        },
-                        onClick = {
-                            markerVM.changeTypeMarker(gender)
-                            if (markerVM.actualScreen != "BottomSheet") {
-                                markerVM.changeIsFiltred(true)
-                                markerVM.createFilerList()
-                                if (markerVM.typeMarker.equals("All markers"))
-                                    markerVM.changeIsFiltred(false)
-                                markerVM.changeExpandedOptionsTopBar(false)
-                            } else if (markerVM.actualScreen == "mapScreen") {
-                                markerVM.createFilerList()
-                            } else {
-                                markerVM.changeExpandedOptions(false)
-                            }
-                        }
-                    )
                 }
+                .fillMaxWidth(0.6f)
+        )
+        DropdownMenu(
+            expanded =
+            if (markerVM.actualScreen != "BottomSheet") {
+                markerVM.expandedOptionsTopBar
+            } else {
+                markerVM.expandedOptions
+            },
+            onDismissRequest = {
+                if (markerVM.actualScreen != "BottomSheet") {
+                    markerVM.changeExpandedOptionsTopBar(true)
+                } else {
+                    markerVM.changeExpandedOptions(true)
+                }
+            },
+            modifier = Modifier.background(MaterialTheme.colorScheme.secondary)
+        ) {
+            genders.forEach { gender ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = gender,
+                            color = MaterialTheme.colorScheme.background
+                        )
+                    },
+                    onClick = {
+                        markerVM.changeTypeMarker(gender)
+                        if (markerVM.actualScreen != "BottomSheet") {
+                            markerVM.changeIsFiltred(true)
+                            markerVM.createFilerList()
+                            if (markerVM.typeMarker.equals("All markers"))
+                                markerVM.changeIsFiltred(false)
+                            markerVM.changeExpandedOptionsTopBar(false)
+                        } else if (markerVM.actualScreen == "mapScreen") {
+                            markerVM.createFilerList()
+                        } else {
+                            markerVM.changeExpandedOptions(false)
+                        }
+                    }
+                )
             }
         }
     }
