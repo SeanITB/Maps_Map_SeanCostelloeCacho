@@ -11,9 +11,6 @@ import com.example.maps_map_seancostelloecacho.firebase.Repository
 import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.QuerySnapshot
 import java.util.EventListener
 import java.util.Objects
 import java.util.SortedMap
@@ -128,6 +125,27 @@ class MarkerViewModel: ViewModel() {
     fun addMarker() {
         repository.addMarkerYT(dataToSave)
     }
+
+    /*
+    fun onStart() {
+        repository.onStart()
+    }
+
+     */
+
+    /* // toDo: fata devolver
+    fun getMarkers(): MarkerData {
+        val makerHasMap = repository.getMarkers()
+
+        return MarkerData(
+           "",
+            "",
+            "",
+
+        )
+    }
+
+     */
 
 
 
