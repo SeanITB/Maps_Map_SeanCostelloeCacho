@@ -92,7 +92,6 @@ fun MyBottomSheet(navigationController: NavController, markerVM: MarkerViewModel
                 onClick = {
                     markerVM.addMarker()
                     if (markerVM.proveThatMarkerIsCorrect()) {
-                        markerVM.addMarkerToList(markerVM.actualMarker.value!!)
                         markerVM.changeShowBottomSheet(false)
                         markerVM.restartMarkerAtributes()
                         markerVM.addMarker()

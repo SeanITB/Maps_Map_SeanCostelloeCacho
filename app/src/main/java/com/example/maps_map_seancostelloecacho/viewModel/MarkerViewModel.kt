@@ -53,7 +53,7 @@ class MarkerViewModel : ViewModel() {
     var isFiltered by mutableStateOf(false)
         private set
 
-    private val _markerList = MutableLiveData<MutableList<MarkerData>>(mutableListOf())
+    private val _markerList = MutableLiveData(emptyList<MarkerData>())
     val markerList = _markerList
 
     private var _categoryMarkrList = MutableLiveData<List<Category>>(mutableListOf())
@@ -158,10 +158,14 @@ class MarkerViewModel : ViewModel() {
                 if (dc.type == DocumentChange.Type.ADDED) {
                     val newMarker = dc.document.toObject(MarkerData::class.java)
                     newMarker.id = dc.document.id
+                    newMarker.location.latitude = dc.document.get(LATITUDE_KEY).toString().toDouble()
+                    newMarker.location.longitude = dc.document.get(LONGITUDE_KEY).toString().toDouble()
+                    println("id new marker: " +newMarker.id)
                     tempList.add(newMarker)
                 }
             }
             _markerList.value = tempList
+
         }
     }
 
@@ -256,11 +260,7 @@ class MarkerViewModel : ViewModel() {
         this.actualScreen = value
     }
 
-    fun addMarkerToList(marker: MarkerData) {
-        this._markerList.value!!.add(marker)
-        addMarkerToMap(marker)
-        sortMarkerList()
-    }
+
 
     private fun addMarkerToMap(marker: MarkerData) {
         if (this.categoryMap!!.contains(marker.type))
@@ -285,9 +285,9 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun createFilerList() {
-        if (this.typeMarker.value == "All markers")
+        if (this.typeMarker.value == "All markers") {
             this._filterMarkerList.value = this._markerList.value
-        else {
+        } else {
             this.categoryMarkerList.value?.forEach {
                 if (it.name == this.typeMarker.value) {
                     this._filterMarkerList.value = it.items
