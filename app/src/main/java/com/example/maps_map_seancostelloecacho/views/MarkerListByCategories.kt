@@ -39,7 +39,7 @@ fun MarkerFilterListScreen(markerVM: MarkerViewModel) {
     if (filterMarkerList.isNotEmpty()) {
         LazyColumn() {
             stickyHeader {
-                CategoryHeader(text = markerVM.typeMarker)
+                CategoryHeader(text = markerVM.typeMarker.value!!)
             }
             items(filterMarkerList) { element ->
                 categoryItem(text = element.name)

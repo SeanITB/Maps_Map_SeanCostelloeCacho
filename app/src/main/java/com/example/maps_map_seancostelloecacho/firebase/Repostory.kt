@@ -1,23 +1,14 @@
 package com.example.maps_map_seancostelloecacho.firebase
 
-import android.graphics.Bitmap
-import android.util.Log
 import com.example.maps_map_seancostelloecacho.models.MarkerData
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
-import org.checkerframework.checker.nullness.qual.NonNull
 
 class Repository {
     private val database = FirebaseFirestore.getInstance()
 
-    val TAG = "Marker"
+    val MARKERS = "markers"
     val NAME_KEY = "name"
     val TYPE_KEY = "type"
     val DESCRIPTION_KEY = "description"
@@ -26,19 +17,45 @@ class Repository {
     val LONGITUDE_KEY = "longitude"
 
     fun addMarker(marker: MarkerData){
-        database.collection("markers")
+        database.collection(MARKERS)
             .add(
                 hashMapOf(
-                    "mame" to marker.name,
-                    "type" to marker.tipe,
-                    "description" to marker.description,
-                    "photos" to marker.photos,
-                    "location" to marker.location
+                    NAME_KEY to marker.name,
+                    TYPE_KEY to marker.type,
+                    DESCRIPTION_KEY to marker.description,
+                    //PHOTOS_KEY to marker.photos,
+                    LATITUDE_KEY to marker.location.latitude,
+                    LONGITUDE_KEY to marker.location.longitude
                 )
             )
     }
 
+    fun editMarker(editMarker: MarkerData) {
+        database.collection(MARKERS).document(editMarker.id!!).set(
+            hashMapOf(
+                NAME_KEY to editMarker.name,
+                TYPE_KEY to editMarker.type,
+                DESCRIPTION_KEY to editMarker.description,
+                //PHOTOS_KEY to editMarker.photos,
+                LATITUDE_KEY to editMarker.location.latitude,
+                LONGITUDE_KEY to editMarker.location.longitude
+            )
+        )
+    }
 
+    fun deleteMarker(markerId: String) {
+        database.collection(MARKERS).document(markerId).delete()
+    }
+
+    fun getMarkers(): CollectionReference {
+        return database.collection(MARKERS)
+    }
+
+    fun getMarker(markerId: String): DocumentReference {
+        return database.collection(MARKERS).document(markerId)
+    }
+
+    /*
     fun addMarkerYT(dataToSave: HashMap<String, Any>){
         println("add marker to firebase")
         database.document("markers/markers").set(dataToSave).addOnCompleteListener( OnCompleteListener() {
@@ -53,6 +70,8 @@ class Repository {
             }
 
         })
+
+     */
 
         /*
         database.document("markers/markers").set(dataToSave).addOnSuccessListener { OnSuccessListener<Void>() {
@@ -69,14 +88,12 @@ class Repository {
 
 
          */
-    }
 
 
 
 
-    fun getMarkers(): CollectionReference {
-        return database.collection("markers")
-    }
+
+
 
 
     /* //toDo: el get del tutorial no funciona

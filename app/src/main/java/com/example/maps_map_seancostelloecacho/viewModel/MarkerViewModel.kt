@@ -11,11 +11,10 @@ import com.example.maps_map_seancostelloecacho.firebase.Repository
 import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
-import java.util.EventListener
-import java.util.Objects
+import com.google.firebase.firestore.DocumentChange
 import java.util.SortedMap
 
-class MarkerViewModel: ViewModel() {
+class MarkerViewModel : ViewModel() {
 
     // firabase values
     val repository = Repository()
@@ -27,7 +26,6 @@ class MarkerViewModel: ViewModel() {
     val LATITUDE_KEY = "latitude"
     val LONGITUDE_KEY = "longitude"
     val dataToSave = HashMap<String, Any>()
-
 
 
     // app values
@@ -64,22 +62,41 @@ class MarkerViewModel: ViewModel() {
     private val _filterMarkerList = MutableLiveData<List<MarkerData>>(listOf())
     val filterMarkerList = _filterMarkerList
 
-    var categoryMap: SortedMap<String, MutableList<MarkerData>>? by mutableStateOf( sortedMapOf())
+    var categoryMap: SortedMap<String, MutableList<MarkerData>>? by mutableStateOf(sortedMapOf())
         private set
 
-    var newMarker by mutableStateOf(MarkerData("", "", "", mutableListOf(), Location(0.0, 0.0)))
+    private val _actualMarker = MutableLiveData<MarkerData>(MarkerData("", "", "", "", mutableListOf(), Location(0.0, 0.0)))
+    val actualMarker = _actualMarker
+
+    private val _idMarker = MutableLiveData<String>("")
+    val idMarker = _idMarker
+
+    private val _nameMarker = MutableLiveData<String>("")
+    val nameMarker = _nameMarker
+
+    private val _typeMarker = MutableLiveData<String>("")
+    val typeMarker = _typeMarker
+
+    private val _descriptionMarker = MutableLiveData<String>("")
+    val descriptionMarker = _descriptionMarker
+
+    private val _photosMarker = MutableLiveData<MutableList<Bitmap>>(mutableListOf())
+    val photosMarker = _photosMarker
+
+    private val _latitudeMarker = MutableLiveData<Double>(0.0)
+    val latitudeMarker = _latitudeMarker
+
+    private val _longitudeMarker = MutableLiveData<Double>(0.0)
+    val longitudeMarker = _longitudeMarker
+
+    /*
+    var newMarker by mutableStateOf(MarkerData("", "", "", "", mutableListOf(), Location(0.0, 0.0)))
         private set
 
     var name by mutableStateOf("")
         private set
 
     var typeMarker by mutableStateOf("All markers")
-        private set
-
-    var expandedOptions by mutableStateOf(false)
-        private set
-
-    var expandedOptionsTopBar by mutableStateOf(false)
         private set
 
     var description by mutableStateOf("")
@@ -94,37 +111,99 @@ class MarkerViewModel: ViewModel() {
     var longitude by mutableStateOf(0.0)
         private set
 
+     */
+    var expandedOptions by mutableStateOf(false)
+        private set
+
+    var expandedOptionsTopBar by mutableStateOf(false)
+        private set
     var showBottomSheet by mutableStateOf(false)
         private set
 
     // Firebase Methods
 
-    //toDo: no funciona
-    /*
-    fun getMarker() {
-        repository.getMarkers().addSnapshotListener(object: EventListener<QuerySnapshot> {
-            override fun onEvent(value: QuerySnapshot?, error: FirebaseFirestoreException?) {
-                if (error != null) {
-                    Log.e("Firestore error", error.message.toString())
-                    return
-                }
-                val tempList = mutableListOf<MarkerData>()
-                for(dc: DocumentChange in value?.documentChanges!!){
-                    if(dc.type == DocumentChange.Type.ADDED){
-                        val newUser = dc.document.toObject(MarkerData::class.java)
-                        tempList.add(newUser)
-                    }
-                }
-                _markerList.value = tempList
-            }
-        })
+    fun addMarker() {
+        instanceActualMarker()
+        repository.addMarker(this.actualMarker.value!!)
     }
+
+    fun instanceActualMarker() {
+        this.actualMarker.value = MarkerData(
+            id = this.idMarker.value,
+            name = this.nameMarker.value!!,
+            type = this.typeMarker.value!!,
+            description = if (this.descriptionMarker.value.equals("")) "There isn't any description." else this.descriptionMarker.value!!,
+            photos = if (this.photosMarker.value!!.isEmpty()) mutableListOf(
+                Bitmap.createBitmap(
+                    25,
+                    25,
+                    Bitmap.Config.ARGB_8888
+                )
+            ) else this.photosMarker.value!!,
+            location = Location(
+                this.latitudeMarker.value!!,
+                this.longitudeMarker.value!!
+            )
+        )
+    }
+
+    fun getMarkers() {
+        repository.getMarkers().addSnapshotListener { value, error ->
+            if (error != null) {
+                Log.e("Firestore error!", error.message.toString())
+                return@addSnapshotListener
+            }
+            val tempList = mutableListOf<MarkerData>()
+            for (dc: DocumentChange in value?.documentChanges!!) {
+                if (dc.type == DocumentChange.Type.ADDED) {
+                    val newMarker = dc.document.toObject(MarkerData::class.java)
+                    newMarker.id = dc.document.id
+                    tempList.add(newMarker)
+                }
+            }
+            _markerList.value = tempList
+        }
+    }
+
+    fun getMarker(markerId: String) {
+        repository.getMarker(markerId).addSnapshotListener { value, error ->
+            if (error != null) {
+                Log.w("Markers", "Listen failed!", error)
+                return@addSnapshotListener
+            }
+            if (value != null && value.exists()) {
+                val marker = value.toObject(MarkerData::class.java)
+                if (marker != null) {
+                    marker.id = markerId
+                }
+                _nameMarker.value = _actualMarker.value!!.name
+                _idMarker.value = _actualMarker.value!!.id
+                _actualMarker.value = marker
+                _typeMarker.value = _actualMarker.value!!.type
+                _descriptionMarker.value = _actualMarker.value!!.description
+                //_photoList.valut = _actualMarker.value!!.photos
+                _latitudeMarker.value = _actualMarker.value!!.location.latitude
+                _longitudeMarker.value = _actualMarker.value!!.location.longitude
+            } else {
+                Log.d("Markers", "Current data; null")
+            }
+        }
+    }
+
+    /*
+        fun addMarker() {
+            repository.addMarkerYT(dataToSave)
+        }
 
      */
 
-    fun addMarker() {
-        repository.addMarkerYT(dataToSave)
+    /*
+    fun getMarker() {
+        val info = repository.getMarkers().document("markers")
+        changeNameMarker(info.)
     }
+
+     */
 
     /*
     fun onStart() {
@@ -146,7 +225,6 @@ class MarkerViewModel: ViewModel() {
     }
 
      */
-
 
 
     // App Methods
@@ -185,11 +263,11 @@ class MarkerViewModel: ViewModel() {
     }
 
     private fun addMarkerToMap(marker: MarkerData) {
-        if (this.categoryMap!!.contains(marker.tipe))
-            this.categoryMap!![marker.tipe]!!.add(marker)
+        if (this.categoryMap!!.contains(marker.type))
+            this.categoryMap!![marker.type]!!.add(marker)
         else {
-            this.categoryMap!![marker.tipe] = mutableListOf()
-            this.categoryMap!![marker.tipe]!!.add(marker)
+            this.categoryMap!![marker.type] = mutableListOf()
+            this.categoryMap!![marker.type]!!.add(marker)
         }
     }
 
@@ -205,12 +283,13 @@ class MarkerViewModel: ViewModel() {
     fun changeIsFiltred(value: Boolean) {
         this.isFiltered = value
     }
+
     fun createFilerList() {
-        if (this.typeMarker == "All markers")
+        if (this.typeMarker.value == "All markers")
             this._filterMarkerList.value = this._markerList.value
         else {
             this.categoryMarkerList.value?.forEach {
-                if (it.name == this.typeMarker) {
+                if (it.name == this.typeMarker.value) {
                     this._filterMarkerList.value = it.items
                 }
             }
@@ -225,69 +304,78 @@ class MarkerViewModel: ViewModel() {
         this.expandedOptionsTopBar = value
     }
 
-    fun changeNameMarker(value : String) {
-        this.name = value
-        dataToSave.put(NAME_KEY, this.name)
+    fun changeNameMarker(value: String) {
+        this.nameMarker.value = value
+        //dataToSave.put(NAME_KEY, this.nameMarker)
     }
 
-    fun changeTypeMarker(value : String) {
-        this.typeMarker = value
-        dataToSave.put(TYPE_KEY, this.typeMarker)
+    fun changeTypeMarker(value: String) {
+        this.typeMarker.value = value
+        //dataToSave.put(TYPE_KEY, this.typeMarker)
     }
 
     fun changeDescription(value: String) {
-        this.description = value
-        dataToSave.put(DESCRIPTION_KEY, this.description)
+        this.descriptionMarker.value = value
+        //dataToSave.put(DESCRIPTION_KEY, this.description)
     }
 
     fun addPhoto(value: Bitmap) {
-        this.photoList.add(value)
-        dataToSave.put(PHOTOS_KEY, this.photoList)
+        this.photosMarker.value!!.add(value)
+        //dataToSave.put(PHOTOS_KEY, this.photoList)
     }
 
     fun changeLatitude(value: Double) {
-        this.latitude = value
-        dataToSave.put(LATITUDE_KEY, this.latitude)
+        this.latitudeMarker.value = value
+        //dataToSave.put(LATITUDE_KEY, this.latitude)
     }
 
     fun changeLongitude(value: Double) {
-        this.longitude = value
-        dataToSave.put(LONGITUDE_KEY, this.longitude)
+        this.longitudeMarker.value = value
+        //dataToSave.put(LONGITUDE_KEY, this.longitude)
     }
 
+    /*
     fun addNewMarker() { //toDo: rebisar la photo por defectop q muestra
-        this.newMarker = MarkerData(
-            this.name,
-            this.typeMarker,
-            if (this.description.equals("")) "There isn't any description." else this.description,
-            if (this.photoList.isEmpty()) mutableListOf(Bitmap.createBitmap(25, 25, Bitmap.Config.ARGB_8888)) else this.photoList,
-            Location(
-                this.latitude,
-                this.longitude
+        this.actualMarker.value = MarkerData(
+            id = this.idMarker.value,
+            name = this.nameMarker.value,
+            type = this.typeMarker.value,
+            description = if (this.descriptionMarker.value.equals("")) "There isn't any description." else this.descriptionMarker.value,
+            photos = if (this.photosMarker.value!!.isEmpty()) mutableListOf(
+                Bitmap.createBitmap(
+                    25,
+                    25,
+                    Bitmap.Config.ARGB_8888
+                )
+            ) else this.photosMarker.value,
+            location = Location(
+                this.latitudeMarker.value!!,
+                this.longitudeMarker.value!!
             )
         )
-        println("new marker: " + newMarker)
     }
+
+     */
 
 
     fun proveThatMarkerIsCorrect(): Boolean {
         var isCorrect = false
         if (
-            this.name != "" &&
-            this.typeMarker != ""
+            this.nameMarker.value != "" &&
+            this.typeMarker.value != ""
         )
             isCorrect = true
         return isCorrect
     }
 
-    fun changeShowBottomSheet(value : Boolean) {
+    fun changeShowBottomSheet(value: Boolean) {
         this.showBottomSheet = value
     }
 
     fun restartMarkerAtributes() {
-        this.name = ""
-        this.typeMarker = "All markers"
-        this.description = ""
-        this.photoList = mutableListOf()
+        this.nameMarker.value = ""
+        this.typeMarker.value = "All markers"
+        this.descriptionMarker.value = ""
+        this.photosMarker.value = mutableListOf()
     }
 }

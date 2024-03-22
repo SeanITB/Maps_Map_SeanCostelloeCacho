@@ -63,7 +63,7 @@ fun MyBottomSheet(navigationController: NavController, markerVM: MarkerViewModel
                 //horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 TextField(
-                    value = markerVM.name,
+                    value = markerVM.nameMarker.value!!,
                     onValueChange = { markerVM.changeNameMarker(it) },
                     placeholder = { Text(text = "Name") },
                     modifier = Modifier.fillMaxWidth(0.5f)
@@ -72,7 +72,7 @@ fun MyBottomSheet(navigationController: NavController, markerVM: MarkerViewModel
             }
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             TextField(
-                value = markerVM.description,
+                value = markerVM.descriptionMarker.value!!,
                 onValueChange = { markerVM.changeDescription(it) },
                 placeholder = { Text(text = "Description (optional)") },
                 modifier = Modifier.fillMaxWidth(0.9f)
@@ -90,9 +90,9 @@ fun MyBottomSheet(navigationController: NavController, markerVM: MarkerViewModel
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             Button(
                 onClick = {
-                    markerVM.addNewMarker()
+                    markerVM.addMarker()
                     if (markerVM.proveThatMarkerIsCorrect()) {
-                        markerVM.addMarkerToList(markerVM.newMarker)
+                        markerVM.addMarkerToList(markerVM.actualMarker.value!!)
                         markerVM.changeShowBottomSheet(false)
                         markerVM.restartMarkerAtributes()
                         markerVM.addMarker()
@@ -134,7 +134,7 @@ fun TypeOptions(markerVM: MarkerViewModel) {
         //modifier = Modifier.fillMaxWidth(0.35f)
     ) {
         OutlinedTextField(
-            value = markerVM.typeMarker,
+            value = markerVM.typeMarker.value!!,
             onValueChange = { markerVM.changeTypeMarker(it) },
             label = { Text(text = "Marker Type", color = MaterialTheme.colorScheme.primary) },
             enabled = false,
@@ -205,8 +205,8 @@ fun RowOfImages(markerVM: MarkerViewModel) {
         modifier = Modifier.fillMaxWidth(0.9f),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (markerVM.photoList.isNotEmpty()) {
-            items(markerVM.photoList) { photo ->
+        if (markerVM.photosMarker.value!!.isNotEmpty()) {
+            items(markerVM.photosMarker.value!!) { photo ->
                 photoItem(photo)
             }
         } else {
