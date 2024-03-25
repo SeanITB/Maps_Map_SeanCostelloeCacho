@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,11 +33,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.R
 import com.example.maps_map_seancostelloecacho.navigation.Routes
+import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 
@@ -206,18 +212,18 @@ fun RowOfImages(markerVM: MarkerViewModel) {
     ) {
         if (markerVM.photosMarker.value!!.isNotEmpty()) {
             items(markerVM.photosMarker.value!!) { photo ->
-                photoItem(photo)
+                PhotoItem(photo)
             }
         } else {
             items(3) {
-                photoDefultItem()
+                PhotoDefultItem(R.drawable.ic_launcher_foreground)
             }
         }
     }
 }
 
 @Composable
-fun photoItem(photo: Bitmap) {
+fun PhotoItem(photo: Bitmap) {
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(8.dp),
@@ -231,7 +237,8 @@ fun photoItem(photo: Bitmap) {
 
 
 @Composable
-fun photoDefultItem() {
+fun PhotoDefultItem(photo: Int) {
+    //LocalInspectionMode.current // bolean q compruba q estes en preview
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(8.dp),
@@ -240,8 +247,38 @@ fun photoDefultItem() {
             .fillMaxHeight(0.25f)
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
+            imageVector = ImageVector.vectorResource(id = photo),
             contentDescription = "Defult images for marker"
         )
+    }
+}
+
+
+/* // todo: no me funciona el preview
+@PreviewParameter
+@Composable
+fun BottomSheetScreenPreview(markerVM: MarkerViewModel, navigationController: NavController){
+
+    Maps_Map_SeanCostelloeCachoTheme {
+        MyBottomSheet(navigationController, markerVM)
+    }
+}
+
+ */
+
+class BottomSheetParameterProviader: PreviewParameterProvider<Int> {
+    override val values: Sequence<Int>
+        get() = sequenceOf(R.drawable.ic_launcher_foreground, R.drawable.ic_launcher_background)
+}
+
+@Preview
+@PreviewScreenSizes
+@PreviewLightDark
+@Composable
+private fun BottomSheetPreview(
+    @PreviewParameter(BottomSheetParameterProviader::class) photo: Int
+) {
+    Maps_Map_SeanCostelloeCachoTheme {
+        PhotoDefultItem(photo = photo)
     }
 }

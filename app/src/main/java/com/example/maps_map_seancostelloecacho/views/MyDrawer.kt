@@ -55,7 +55,6 @@ fun MyDrawer(markerVM: MarkerViewModel, TIME: Int) {
                     Text(text = "Drawer title")
                 }
                 Divider()
-                //toDo: drawer items
                 NavigationDrawerItem(
                     label = { Text(text = "Map") },
                     selected = false,
