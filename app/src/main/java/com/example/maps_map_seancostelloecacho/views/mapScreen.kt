@@ -31,6 +31,7 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
     markerVM.changeActualScreen("mapScreen")
     //val markerList by markerVM.filterMarkerList.observeAsState(emptyList())
     val markerList2 by markerVM.markerList.observeAsState(emptyList())
+    val showBottomSheet by markerVM.showBottomSheet.observeAsState(false)
     markerVM.getMarkers()
     //markerVM.createFilerList()
     Log.i("TAMAÑO", "VIEW " + markerList2.size)
@@ -86,8 +87,8 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
             }
 
         }
-        if (markerVM.showBottomSheet)
-            MyBottomSheet(navigationController = navigationController, markerVM = markerVM)
+        if (showBottomSheet)
+            MyBottomSheetScreen(navigationController = navigationController, markerVM = markerVM)
     }
 }
 

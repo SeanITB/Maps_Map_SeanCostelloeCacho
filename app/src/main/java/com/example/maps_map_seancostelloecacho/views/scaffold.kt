@@ -15,6 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -47,6 +49,10 @@ fun MyScaffold(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBarList(state: DrawerState, markerVM: MarkerViewModel) {
+    val actualScreen by markerVM.actualScreen.observeAsState("")
+    val typeMarker by markerVM.typeMarker.observeAsState("")
+    val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
+    val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
     val scope = rememberCoroutineScope()
     TopAppBar(
         title = { Text(text = "My SuperApp")},
@@ -64,7 +70,16 @@ fun MyTopAppBarList(state: DrawerState, markerVM: MarkerViewModel) {
             }
         },
         actions = {
-            TypeOptions(markerVM = markerVM)
+            TypeMarkerContent(
+                actualScreen = actualScreen,
+                typeMarker = typeMarker,
+                onTypeMarkerChange = {markerVM.changeTypeMarker(it)},
+                expandedTopBar = expandedTopBar,
+                onExpandedTopBarChange = {markerVM.changeExpandedTopBar(it)},
+                expandedBottomSheet = expandedBottomSheet,
+                onExpandedBottomSheetChange = {markerVM.changeExpandedBottomSheet(it)},
+                whenMarkerTypedChanged = {markerVM.whenMarkerTypedChanged(it)}
+            )
         }
     )
 }

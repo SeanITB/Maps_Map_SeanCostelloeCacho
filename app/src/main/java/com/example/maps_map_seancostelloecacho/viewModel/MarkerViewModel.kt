@@ -1,7 +1,9 @@
 package com.example.maps_map_seancostelloecacho.viewModel
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,17 +17,19 @@ import com.google.firebase.firestore.DocumentChange
 import java.util.SortedMap
 
 class MarkerViewModel : ViewModel() {
-
     // firabase values
     val repository = Repository()
 
+    // FIREBASE CONSTANTS
     val NAME_KEY = "name"
     val TYPE_KEY = "type"
     val DESCRIPTION_KEY = "description"
     val PHOTOS_KEY = "photos"
     val LATITUDE_KEY = "latitude"
     val LONGITUDE_KEY = "longitude"
-    val dataToSave = HashMap<String, Any>()
+
+    // APP CONSTANTS
+    val MAP_SCREEN_KEY = "mapScreen"
 
 
     // app values
@@ -47,8 +51,8 @@ class MarkerViewModel : ViewModel() {
     private val _showMapPermissionDenied = MutableLiveData(false)
     val showMapPermissionDenied = _showMapPermissionDenied
 
-    var actualScreen by mutableStateOf("mapScreen")
-        private set
+    private val _actualScreen = MutableLiveData(MAP_SCREEN_KEY)
+    val actualScreen = _actualScreen
 
     var isFiltered by mutableStateOf(false)
         private set
@@ -89,39 +93,16 @@ class MarkerViewModel : ViewModel() {
     private val _longitudeMarker = MutableLiveData<Double>(0.0)
     val longitudeMarker = _longitudeMarker
 
-    /*
-    var newMarker by mutableStateOf(MarkerData("", "", "", "", mutableListOf(), Location(0.0, 0.0)))
-        private set
+    private var _expandedBottomSheet = MutableLiveData<Boolean>(false)
+    val expandedBottomSheet = _expandedBottomSheet
 
-    var name by mutableStateOf("")
-        private set
+    private var _expandedTopBar = MutableLiveData<Boolean>(false)
+    val expandedTopBar = _expandedTopBar
 
-    var typeMarker by mutableStateOf("All markers")
-        private set
-
-    var description by mutableStateOf("")
-        private set
-
-    var photoList by mutableStateOf(mutableListOf<Bitmap>())
-        private set
-
-    var latitude by mutableStateOf(0.0)
-        private set
-
-    var longitude by mutableStateOf(0.0)
-        private set
-
-     */
-    var expandedOptions by mutableStateOf(false)
-        private set
-
-    var expandedOptionsTopBar by mutableStateOf(false)
-        private set
-    var showBottomSheet by mutableStateOf(false)
-        private set
+    private var _showBottomSheet = MutableLiveData<Boolean>(false)
+    val showBottomSheet = _showBottomSheet
 
     // Firebase Methods
-
     fun addMarker() {
         instanceActualMarker()
         repository.addMarker(this.actualMarker.value!!)
@@ -194,42 +175,6 @@ class MarkerViewModel : ViewModel() {
         }
     }
 
-    /*
-        fun addMarker() {
-            repository.addMarkerYT(dataToSave)
-        }
-
-     */
-
-    /*
-    fun getMarker() {
-        val info = repository.getMarkers().document("markers")
-        changeNameMarker(info.)
-    }
-
-     */
-
-    /*
-    fun onStart() {
-        repository.onStart()
-    }
-
-     */
-
-    /* // toDo: fata devolver
-    fun getMarkers(): MarkerData {
-        val makerHasMap = repository.getMarkers()
-
-        return MarkerData(
-           "",
-            "",
-            "",
-
-        )
-    }
-
-     */
-
 
     // App Methods
     fun setCamaeraPermissionGranted(granted: Boolean) {
@@ -257,7 +202,7 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun changeActualScreen(value: String) {
-        this.actualScreen = value
+        this.actualScreen.value = value
     }
 
 
@@ -296,12 +241,27 @@ class MarkerViewModel : ViewModel() {
         }
     }
 
-    fun changeExpandedOptions(value: Boolean) {
-        this.expandedOptions = value
+    fun whenMarkerTypedChanged(gender: String) {
+        this.changeTypeMarker(gender)
+        if (this.actualScreen.value != "BottomSheet") {
+            this.changeIsFiltred(true)
+            this.createFilerList()
+            if (this.typeMarker.equals("All markers"))
+                this.changeIsFiltred(false)
+            this.changeExpandedTopBar(false)
+        } else if (this.actualScreen.value == "mapScreen") {
+            this.createFilerList()
+        } else {
+            this.changeExpandedBottomSheet(false)
+        }
     }
 
-    fun changeExpandedOptionsTopBar(value: Boolean) {
-        this.expandedOptionsTopBar = value
+    fun changeExpandedBottomSheet(value: Boolean) {
+        this._expandedBottomSheet.value = value
+    }
+
+    fun changeExpandedTopBar(value: Boolean) {
+        this._expandedTopBar.value = value
     }
 
     fun changeNameMarker(value: String) {
@@ -369,7 +329,19 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun changeShowBottomSheet(value: Boolean) {
-        this.showBottomSheet = value
+        this.showBottomSheet.value = value
+    }
+
+    fun whenAddMarker(
+        context: Context
+    ) {
+        if (this.proveThatMarkerIsCorrect()) {
+            this.changeShowBottomSheet(false)
+            this.restartMarkerAtributes()
+            this.addMarker()
+        } else
+            Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
+                .show()
     }
 
     fun restartMarkerAtributes() {
@@ -378,4 +350,6 @@ class MarkerViewModel : ViewModel() {
         this.descriptionMarker.value = ""
         this.photosMarker.value = mutableListOf()
     }
+
+
 }
