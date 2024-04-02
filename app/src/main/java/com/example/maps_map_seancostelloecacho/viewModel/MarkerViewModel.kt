@@ -14,6 +14,7 @@ import com.example.maps_map_seancostelloecacho.firebase.Repository
 import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
+import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
@@ -39,6 +40,15 @@ class MarkerViewModel : ViewModel() {
 
 
     // app values
+    private val _navigationItemsItems = MutableLiveData(
+        mapOf<String, String>(
+            NavigationItems.CameraScreen.label to NavigationItems.CameraScreen.route,
+            NavigationItems.GalleryScreen.label to NavigationItems.GalleryScreen.route,
+            NavigationItems.MapScreen.label to NavigationItems.MapScreen.route
+        )
+    )
+    val navigationItems = _navigationItemsItems
+
     private val _camaeraPermissionGranted = MutableLiveData(false)
     val camaeraPermissionGranted = _camaeraPermissionGranted
 
@@ -352,7 +362,7 @@ class MarkerViewModel : ViewModel() {
             this.changeShowBottomSheet(false)
             this.restartMarkerAtributes()
             this.addMarker()
-            if (this.uri != null) this.uploadImage()
+            if (this.uri.value != null) this.uploadImage()
         } else
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
                 .show()

@@ -18,10 +18,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.maps_map_seancostelloecacho.navigation.Navigation
+import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
 
 
-// todo: setting expanding sizes in sub-composables
+// todo (done): setting expanding sizes in sub-composables
 @Composable
 fun NameMarkerContent(
     modifier: Modifier = Modifier,
@@ -140,18 +140,18 @@ fun DescriptionMarkerContent(
 }
 
 @Composable
-fun NavigateToPhotoContent(navController: NavController, navigationItems: List<Navigation>) {
+fun NavigateToPhotoContent(navController: NavController, navigationItems: Map<String, String>) {
     Row{
         Button(
             onClick = {
-                navController.navigate(navigationItems[0].route) // Camera screen
+                navController.navigate(navigationItems["cameraScreen"]!!) // Camera screen
             }
         ) {
             Text(text = "photo")
         }
         Button(
             onClick = {
-                navController.navigate(navigationItems[1].route) // Gallery Screen
+                navController.navigate(navigationItems["galleryScreen"]!!) // Gallery Screen
             }
         ) {
             Text(text = "galeria")

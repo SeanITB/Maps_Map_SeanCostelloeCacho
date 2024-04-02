@@ -30,7 +30,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.R
-import com.example.maps_map_seancostelloecacho.navigation.Navigation
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 
@@ -61,7 +60,7 @@ fun MyBottomSheetScreen(navigationController: NavController, markerVM: MarkerVie
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             RowOfImages(markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            NavigateToCameraScreen(navigationController)
+            NavigateToCameraScreen(navigationController = navigationController, markerVM = markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(markerVM = markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
@@ -118,11 +117,8 @@ private fun DescriptionMarkerScreen(markerVM: MarkerViewModel) {
 }
 
 @Composable
-private fun NavigateToCameraScreen(navigationController: NavController) {
-    val navigationItems = listOf(
-        Navigation.CameraScreen,
-        Navigation.GalleryScreen
-    )
+private fun NavigateToCameraScreen(navigationController: NavController, markerVM: MarkerViewModel) {
+    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     NavigateToPhotoContent(navigationController, navigationItems)
 }
 
