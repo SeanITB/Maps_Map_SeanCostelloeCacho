@@ -35,6 +35,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.R
+import com.example.maps_map_seancostelloecacho.navigation.Navigation
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
@@ -124,9 +125,8 @@ private fun DescriptionMarkerScreen(markerVM: MarkerViewModel) {
 
 @Composable
 private fun NavigateToCameraScreen(navigationController: NavController) {
-    //toDo: definir un navigation sin ir directamente
-    //val navigateToCameraScreen = navigationController.navigate(Routes.CameraScreen.route)
-    NavigateToTakePhotoContent(/*navigateToCameraScreen*/)
+    val navigateToCameraScreen = Navigation.CameraScreen
+    NavigateToTakePhotoContent(navigationController, navigateToCameraScreen)
 }
 
 

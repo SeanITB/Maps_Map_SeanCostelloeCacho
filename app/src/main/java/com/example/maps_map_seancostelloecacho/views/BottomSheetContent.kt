@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.R
+import com.example.maps_map_seancostelloecacho.navigation.Navigation
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
@@ -168,10 +169,10 @@ fun DescriptionMarkerContent(
 }
 
 @Composable
-fun NavigateToTakePhotoContent(/*navigateToCameraScreen: Unit*/) {
+fun NavigateToTakePhotoContent(navController: NavController, navigateToCameraScreen: Navigation.CameraScreen) {
     Button(
         onClick = {
-            //navigateToCameraScreen
+            navController.navigate(navigateToCameraScreen.route)
         }
     ) {
         Text(text = "photo")
