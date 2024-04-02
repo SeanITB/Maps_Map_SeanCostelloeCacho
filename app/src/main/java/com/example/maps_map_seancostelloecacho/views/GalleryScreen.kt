@@ -39,7 +39,7 @@ import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 
 @Composable
-fun GalleryScreen(navController: NavHostController, markerVM: MarkerViewModel) {
+fun GalleryScreen(markerVM: MarkerViewModel) {
     val context = LocalContext.current
     val img : Bitmap? = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()
     var bitmap by remember {
@@ -81,10 +81,13 @@ fun GalleryScreen(navController: NavHostController, markerVM: MarkerViewModel) {
         )
         Button(
             onClick = {
-                if (!galleryOpened) launchImage.launch("image/*")
+                if (!galleryOpened) {
+                    launchImage.launch("image/*")
+                    galleryOpened = true
+                } else markerVM.addPhoto(bitmap!!)
             }
         ) {
-            Text(text = "Open Gallery")
+            Text(text = if (!galleryOpened) "Open Gallery" else "add photo")
         }
     }
 }

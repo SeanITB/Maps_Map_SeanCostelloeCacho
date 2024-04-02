@@ -51,7 +51,7 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
         composable(Routes.MarkerListScreen.route,) { MarkerListScreen(markerVM) }
         composable(Routes.CameraScreen.route,) { CameraScreen(markerVM, navController) }
-        composable(Routes.GalleryScreen.route,) { GalleryScreen(navController, markerVM) }
+        composable(Routes.GalleryScreen.route,) { GalleryScreen(markerVM) }
         composable(Routes.TakePhotoScreen.route,) { TakePhotoScreen(markerVM) }
     }
 }
