@@ -2,6 +2,7 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,29 +58,34 @@ fun GalleryScreen(navController: NavHostController, markerVM: MarkerViewModel) {
                     ImageDecoder.decodeBitmap(it1)
                 }!!
             }
+            markerVM.changeUri(it)
         }
     )
+    var galleryOpened by remember {
+        mutableStateOf(false)
+    }
     Column (
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(
-            onClick = {
-                launchImage.launch("image/*")
-            }
-        ) {
-            Text(text = "Open Gallery")
-        }
         Image(
             bitmap = bitmap!!.asImageBitmap(),
             contentDescription = "Image from gallery",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.clip(CircleShape)
+            modifier = Modifier
+                .clip(CircleShape)
                 .size(250.dp)
                 .background(MaterialTheme.colorScheme.background)
-                .border(width = 1.dp, color = MaterialTheme.colorScheme.primary, )
+                .border(width = 1.dp, color = MaterialTheme.colorScheme.primary,)
         )
+        Button(
+            onClick = {
+                if (!galleryOpened) launchImage.launch("image/*")
+            }
+        ) {
+            Text(text = "Open Gallery")
+        }
     }
 }
 

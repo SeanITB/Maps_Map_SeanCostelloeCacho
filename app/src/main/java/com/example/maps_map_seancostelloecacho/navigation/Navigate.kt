@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import com.example.maps_map_seancostelloecacho.views.CameraScreen
+import com.example.maps_map_seancostelloecacho.views.GalleryScreen
 import com.example.maps_map_seancostelloecacho.views.LunchScreen
 import com.example.maps_map_seancostelloecacho.views.MapGeolocalisationScreen
 import com.example.maps_map_seancostelloecacho.views.MapScreen
@@ -50,6 +51,7 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
         composable(Routes.MarkerListScreen.route,) { MarkerListScreen(markerVM) }
         composable(Routes.CameraScreen.route,) { CameraScreen(markerVM, navController) }
+        composable(Routes.GalleryScreen.route,) { GalleryScreen(navController, markerVM) }
         composable(Routes.TakePhotoScreen.route,) { TakePhotoScreen(markerVM) }
     }
 }

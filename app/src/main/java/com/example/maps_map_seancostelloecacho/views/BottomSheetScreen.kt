@@ -2,9 +2,7 @@
 
 package com.example.maps_map_seancostelloecacho.views
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -16,13 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -36,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.R
 import com.example.maps_map_seancostelloecacho.navigation.Navigation
-import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 
@@ -125,8 +119,11 @@ private fun DescriptionMarkerScreen(markerVM: MarkerViewModel) {
 
 @Composable
 private fun NavigateToCameraScreen(navigationController: NavController) {
-    val navigateToCameraScreen = Navigation.CameraScreen
-    NavigateToTakePhotoContent(navigationController, navigateToCameraScreen)
+    val navigationItems = listOf(
+        Navigation.CameraScreen,
+        Navigation.GalleryScreen
+    )
+    NavigateToPhotoContent(navigationController, navigationItems)
 }
 
 

@@ -2,6 +2,7 @@ package com.example.maps_map_seancostelloecacho.viewModel
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
@@ -14,9 +15,14 @@ import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.storage.FirebaseStorage
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.SortedMap
 
 class MarkerViewModel : ViewModel() {
+
     // firabase values
     val repository = Repository()
 
@@ -101,6 +107,9 @@ class MarkerViewModel : ViewModel() {
 
     private var _showBottomSheet = MutableLiveData<Boolean>(false)
     val showBottomSheet = _showBottomSheet
+
+    private val _uri = MutableLiveData<Uri?>(null)
+    val uri = _uri
 
     // Firebase Methods
     fun addMarker() {
@@ -265,33 +274,37 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun changeNameMarker(value: String) {
-        this.nameMarker.value = value
+        this._nameMarker.value = value
         //dataToSave.put(NAME_KEY, this.nameMarker)
     }
 
     fun changeTypeMarker(value: String) {
-        this.typeMarker.value = value
+        this._typeMarker.value = value
         //dataToSave.put(TYPE_KEY, this.typeMarker)
     }
 
     fun changeDescription(value: String) {
-        this.descriptionMarker.value = value
+        this._descriptionMarker.value = value
         //dataToSave.put(DESCRIPTION_KEY, this.description)
     }
 
     fun addPhoto(value: Bitmap) {
-        this.photosMarker.value!!.add(value)
+        this._photosMarker.value!!.add(value)
         //dataToSave.put(PHOTOS_KEY, this.photoList)
     }
 
     fun changeLatitude(value: Double) {
-        this.latitudeMarker.value = value
+        this._latitudeMarker.value = value
         //dataToSave.put(LATITUDE_KEY, this.latitude)
     }
 
     fun changeLongitude(value: Double) {
-        this.longitudeMarker.value = value
+        this._longitudeMarker.value = value
         //dataToSave.put(LONGITUDE_KEY, this.longitude)
+    }
+
+    fun changeUri(value: Uri?) {
+        this._uri.value = value
     }
 
     /*
@@ -339,9 +352,28 @@ class MarkerViewModel : ViewModel() {
             this.changeShowBottomSheet(false)
             this.restartMarkerAtributes()
             this.addMarker()
+            if (this.uri != null) this.uploadImage()
         } else
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
                 .show()
+    }
+
+    fun uploadImage() {
+        val formatter = SimpleDateFormat("yyyy_MM_DD_HH_mm_ss", Locale.getDefault())
+        val now = Date()
+        val fileName = formatter.format(now)
+        val storage = FirebaseStorage.getInstance().getReference("images/$fileName")
+        storage.putFile(this.uri.value!!)
+            .addOnSuccessListener {
+                Log.i("IMAGE UPLOAD", "Image uploaded successfully!")
+                storage.downloadUrl.addOnCanceledListener {
+                    // toDo: do some amazing stuff
+                }
+            }
+            .addOnFailureListener {
+                Log.i("IMAGE UPLOAD", "Ups, image upload failed!")
+            }
+
     }
 
     fun restartMarkerAtributes() {
