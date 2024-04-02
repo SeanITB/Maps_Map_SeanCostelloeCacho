@@ -34,7 +34,8 @@ fun MarkerListScreen(markerVM: MarkerViewModel) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MarkerFilterListScreen(markerVM: MarkerViewModel) {
-    val filterMarkerList: List<MarkerData> by markerVM.filterMarkerList.observeAsState(emptyList<MarkerData>())
+    val filterMarkerList by markerVM.markerList.observeAsState(emptyList())
+    //val filterMarkerList: List<MarkerData> by markerVM.filterMarkerList.observeAsState(emptyList<MarkerData>())
     println("FilterMarkerList" + filterMarkerList.size)
     if (filterMarkerList.isNotEmpty()) {
         LazyColumn() {

@@ -29,12 +29,11 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
     markerVM.changeActualScreen("mapScreen")
-    //val markerList by markerVM.filterMarkerList.observeAsState(emptyList())
-    val markerList2 by markerVM.markerList.observeAsState(emptyList())
+    val markerList by markerVM.markerList.observeAsState(emptyList())
     val showBottomSheet by markerVM.showBottomSheet.observeAsState(false)
     markerVM.getMarkers()
     //markerVM.createFilerList()
-    Log.i("TAMAÑO", "VIEW " + markerList2.size)
+    Log.i("TAMAÑO", "VIEW " + markerList.size)
     val context = LocalContext.current
     val fusedLocationProviderClient =
         remember {
@@ -75,9 +74,9 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
                 markerVM.changeShowBottomSheet(true) },
             properties = MapProperties(isMyLocationEnabled = true)
         ){
-            if(markerList2.isNotEmpty()){
-                Log.i("CONTENIDO", "$markerList2")
-                markerList2.forEach { marker ->
+            if(markerList.isNotEmpty()){
+                Log.i("CONTENIDO", "$markerList")
+                markerList.forEach { marker ->
                     Marker(
                         state = MarkerState(position = LatLng(marker.location.latitude, marker.location.longitude)),
                         title = marker.name,
