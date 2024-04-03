@@ -98,6 +98,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     // FIREBASE STORAGE
     implementation ("com.google.firebase:firebase-storage-ktx")
+    // FIREBASE AUTHENTICATION
+    implementation ("com.firebaseui:firebase-ui-auth:7.2.0")
 
 
     testImplementation("junit:junit:4.13.2")

@@ -15,8 +15,8 @@ import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -25,7 +25,9 @@ import java.util.SortedMap
 class MarkerViewModel : ViewModel() {
 
     // firabase values
-    val repository = Repository()
+    private val repository = Repository()
+
+    private val auth = FirebaseAuth.getInstance()
 
     // FIREBASE CONSTANTS
     val NAME_KEY = "name"
