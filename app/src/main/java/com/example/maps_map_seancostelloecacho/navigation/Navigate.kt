@@ -18,12 +18,13 @@ import com.example.maps_map_seancostelloecacho.views.MapScreen
 import com.example.maps_map_seancostelloecacho.views.MarkerListByCategoriesScreen
 import com.example.maps_map_seancostelloecacho.views.MarkerListScreen
 import com.example.maps_map_seancostelloecacho.views.TakePhotoScreen
+import com.example.maps_map_seancostelloecacho.views.UserLoginContent
 
 @Composable
 fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel) {
     NavHost(
         navController = navController as NavHostController,
-        startDestination = Routes.MapScreen.route,
+        startDestination = Routes.LoginScreen.route,
         enterTransition = {
             fadeIn(animationSpec = tween(TIME)) + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left, tween(TIME)
@@ -46,7 +47,7 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
         }
     ) {
         composable(Routes.LunchScreen.route) { LunchScreen(navController) }
-        composable(Routes.LoginScreen.route,) { /*toDo*/}
+        composable(Routes.LoginScreen.route,) { UserLoginContent(markerVM) }
         composable(Routes.MapGeolocalisationScreen.route) { MapGeolocalisationScreen(navController, markerVM) }
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
         composable(Routes.MarkerListScreen.route,) { MarkerListScreen(markerVM) }

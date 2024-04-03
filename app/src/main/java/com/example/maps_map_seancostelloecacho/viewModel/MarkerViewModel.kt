@@ -224,7 +224,8 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun modifiyProcessing() {
-        this._isLoading.value = false
+        if (this.isLoading.value!!) this._isLoading.value = false
+        else this._isLoading.value = true
     }
 
     fun login(userName: String?, password: String?) {
@@ -443,6 +444,14 @@ class MarkerViewModel : ViewModel() {
         this.typeMarker.value = "All markers"
         this.descriptionMarker.value = ""
         this.photosMarker.value = mutableListOf()
+    }
+
+    fun chngeUserId(value: String) {
+        this._userId.value = value
+    }
+
+    fun changeLoggedUser(value: String) {
+        this._loggedUser.value = value
     }
 
 
