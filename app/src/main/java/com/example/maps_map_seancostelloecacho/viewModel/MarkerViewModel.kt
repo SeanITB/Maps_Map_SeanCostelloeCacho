@@ -17,6 +17,7 @@ import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -50,6 +51,18 @@ class MarkerViewModel : ViewModel() {
         )
     )
     val navigationItems = _navigationItemsItems
+
+    private val _goToNext = MutableLiveData<Boolean>(false)
+    val goToNext = _goToNext
+
+    private val _isLoading = MutableLiveData<Boolean>(true)
+    val isLoading = _isLoading
+
+    private val _userId = MutableLiveData<String>("")
+    val userId = _userId
+
+    private val _loggedUser = MutableLiveData<String>("")
+    val loggedUser = _loggedUser
 
     private val _camaeraPermissionGranted = MutableLiveData(false)
     val camaeraPermissionGranted = _camaeraPermissionGranted
@@ -194,6 +207,43 @@ class MarkerViewModel : ViewModel() {
                 Log.d("Markers", "Current data; null")
             }
         }
+    }
+
+    // Firebase Authentication
+    fun registrer(userName: String, password: String) {
+        auth.createUserWithEmailAndPassword(userName, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _goToNext.value = true
+                } else {
+                    _goToNext.value = false
+                    Log.d("ERROR", "Errir creating user: ${task.result}")
+                }
+                modifiyProcessing()
+            }
+    }
+
+    fun modifiyProcessing() {
+        this._isLoading.value = false
+    }
+
+    fun login(userName: String?, password: String?) {
+        auth.signInWithEmailAndPassword(userName!!, password!!)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _userId.value = task.result.user?.uid
+                    _loggedUser.value = task.result.user?.email?.split("@")?.get(0)
+                    _goToNext.value = true
+                } else {
+                    _goToNext.value = false
+                    Log.d("ERROR", "Error signing in: ${task.result}")
+                }
+                modifiyProcessing()
+            }
+    }
+
+    fun logout() {
+        auth.signOut()
     }
 
 
