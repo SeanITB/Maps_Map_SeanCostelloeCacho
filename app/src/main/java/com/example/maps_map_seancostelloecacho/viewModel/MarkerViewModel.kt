@@ -25,7 +25,7 @@ import java.util.SortedMap
 
 class MarkerViewModel : ViewModel() {
 
-    // firabase values
+    // firebase values
     private val repository = Repository()
 
     private val auth = FirebaseAuth.getInstance()
@@ -51,6 +51,12 @@ class MarkerViewModel : ViewModel() {
         )
     )
     val navigationItems = _navigationItemsItems
+
+    private val _userName = MutableLiveData<String>("")
+    val userName = _userName
+
+    private val _password = MutableLiveData<String>("")
+    val password = _password
 
     private val _goToNext = MutableLiveData<Boolean>(false)
     val goToNext = _goToNext
@@ -210,8 +216,8 @@ class MarkerViewModel : ViewModel() {
     }
 
     // Firebase Authentication
-    fun registrer(userName: String, password: String) {
-        auth.createUserWithEmailAndPassword(userName, password)
+    fun register() {
+        auth.createUserWithEmailAndPassword(this.userName.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     _goToNext.value = true
@@ -274,10 +280,16 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun changeActualScreen(value: String) {
-        this.actualScreen.value = value
+        this._actualScreen.value = value
     }
 
+    fun changeUserName(value: String) {
+        this._userName.value = value
+    }
 
+    fun changePassword(value: String) {
+        this._password.value = value
+    }
 
     private fun addMarkerToMap(marker: MarkerData) {
         if (this.categoryMap!!.contains(marker.type))

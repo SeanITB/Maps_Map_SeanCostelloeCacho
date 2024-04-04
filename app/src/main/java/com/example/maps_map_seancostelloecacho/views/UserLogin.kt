@@ -1,13 +1,20 @@
 package com.example.maps_map_seancostelloecacho.views
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,20 +24,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
-import com.google.android.gms.auth.api.identity.SignInPassword
 
 @Composable
-fun UserLoginContent(markerVM: MarkerViewModel) {
-    val userId by markerVM.userId.observeAsState("")
-    val loggedUser by markerVM.loggedUser.observeAsState("")
-    val isLoading by markerVM.isLoading.observeAsState(true)
-    var userName by rememberSaveable {
-        mutableStateOf("")
-    }
-    var password by rememberSaveable {
-        mutableStateOf("")
-    }
+fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
+    val userName by markerVM.userName.observeAsState("")
+    val password by markerVM.password.observeAsState("")
+    val goToNext by markerVM.goToNext.observeAsState(false)
+    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     var passwordCheck by rememberSaveable {
         mutableStateOf("")
     }
@@ -42,67 +48,108 @@ fun UserLoginContent(markerVM: MarkerViewModel) {
     }
     UserLoginView(
         modifier = Modifier.fillMaxSize(),
-        userId = userId,
-        onUserIdChange = {markerVM.chngeUserId(it)},
-        loggedUser = loggedUser,
-        onLoggedUserChange = {markerVM.changeLoggedUser(it)},
-        isLoading = isLoading,
-        onIsLoadingChange = {markerVM.modifiyProcessing()},
         userName = userName,
-        onUserNameChange = {userName = it},
+        onUserNameChange = { markerVM.changeUserName(it) },
         password = password,
-        onPasswordChange = {password = it},
+        onPasswordChange = { markerVM.changePassword(it) },
         passwordCheck = passwordCheck,
-        onPasswordCheckChange = {passwordCheck = it}
-        )
+        onPasswordCheckChange = { passwordCheck = it },
+        passwordVisibilty = passwordVisibilty,
+        onPasswordVisibilityChange = { passwordVisibilty = it },
+        passwordCheckVisibility = passwordCheckVisibilty,
+        onPasswordCheckVisibilityChange = { passwordCheckVisibilty = it },
+        register = { markerVM.register() },
+        goToNext = goToNext,
+        navController = navController,
+        navigationItems = navigationItems
+    )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserLoginView(
     modifier: Modifier = Modifier,
-    userId: String,
-    onUserIdChange: (String) -> Unit,
-    loggedUser: String,
-    onLoggedUserChange: (String) -> Unit,
-    isLoading: Boolean,
-    onIsLoadingChange: () -> Unit,
     userName: String,
     onUserNameChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
     passwordCheck: String,
     onPasswordCheckChange: (String) -> Unit,
-    passwordVisibilty: Boolean
+    passwordVisibilty: Boolean,
+    onPasswordVisibilityChange: (Boolean) -> Unit,
+    passwordCheckVisibility: Boolean,
+    onPasswordCheckVisibilityChange: (Boolean) -> Unit,
+    register: () -> Unit,
+    goToNext: Boolean,
+    navController: NavController,
+    navigationItems: Map<String, String>
 ) {
-    val arrValues = arrayOf(password, passwordCheck)
-    val arrFunctions = arrayOf(onPasswordChange, onPasswordCheckChange)
-    val arrLabel = arrayOf("Password", "Repeat password")
-    Column (
+    val context = LocalContext.current
+    val arrPasswords = arrayOf(password, passwordCheck)
+    val arrVisibilities = arrayOf(passwordVisibilty, passwordCheckVisibility)
+    val arrChangePasswordFunctions = arrayOf(onPasswordChange, onPasswordCheckChange)
+    val arrChangeVisibilityFunctions =
+        arrayOf(onPasswordVisibilityChange, onPasswordCheckVisibilityChange)
+    val arrPasswordLable = arrayOf("Password", "Repeat password")
+    val arrVisibilityLable = arrayOf("Password Visibility ", "Repeat Password Visibility")
+    Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
             value = userName,
-            onValueChange = {onUserNameChange(it)},
+            onValueChange = { onUserNameChange(it) },
             placeholder = { Text(text = "Name") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.background
             )
         )
-        for (index in arrValues.indices) {
+        for (index in arrPasswords.indices) {
             TextField(
-                value = arrValues[index],
-                onValueChange = {arrFunctions[index](it)},
-                placeholder = { Text(text = arrLabel[index]) },
+                value = arrPasswords[index],
+                onValueChange = { arrChangePasswordFunctions[index](it) },
+                placeholder = { Text(text = arrPasswordLable[index]) },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.background
-                )
+                ),
+                maxLines = 1,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    val image = if (passwordVisibilty) {
+                        Icons.Filled.VisibilityOff
+                    } else {
+                        Icons.Filled.Visibility
+                    }
+                    IconButton(onClick = { arrChangeVisibilityFunctions[index](!arrVisibilities[index]) }) { //toDo: chacer que solo se muestre uno quando canvias la visibilidad
+                        Icon(imageVector = image, contentDescription = arrVisibilityLable[index])
+                    }
+                },
+                visualTransformation = if (passwordVisibilty) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                }
             )
         }
-
+        Button(onClick = {
+            if (password.equals(passwordCheck)) { //toDo: quando doy al botton peta
+                register()
+                if (goToNext) {
+                    navController.navigate(navigationItems["mapScreen"]!!)
+                } else {
+                    Toast.makeText(context, "No funciona", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Toast.makeText(context, "The passwords are not the same.", Toast.LENGTH_LONG).show()
+            }
+        }
+        ) {
+            Text(text = "Registresr")
+        }
     }
 }

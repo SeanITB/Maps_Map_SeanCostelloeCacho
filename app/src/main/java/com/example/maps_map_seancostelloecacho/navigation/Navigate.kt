@@ -47,7 +47,7 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
         }
     ) {
         composable(Routes.LunchScreen.route) { LunchScreen(navController) }
-        composable(Routes.LoginScreen.route,) { UserLoginContent(markerVM) }
+        composable(Routes.LoginScreen.route,) { UserLoginContent(navController, markerVM) }
         composable(Routes.MapGeolocalisationScreen.route) { MapGeolocalisationScreen(navController, markerVM) }
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
         composable(Routes.MarkerListScreen.route,) { MarkerListScreen(markerVM) }
