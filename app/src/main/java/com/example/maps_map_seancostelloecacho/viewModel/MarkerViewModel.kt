@@ -217,7 +217,7 @@ class MarkerViewModel : ViewModel() {
 
     // Firebase Authentication
     fun register() {
-        auth.createUserWithEmailAndPassword("xxxxxxx@fd.com", "CosAco")
+        auth.createUserWithEmailAndPassword("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@fd.com", "CosAco")
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("ESTOYÑ", "REGISTER CORRECTO")
@@ -268,15 +268,15 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun setMapPermissionGranted(granted: Boolean) {
-        this._camaeraPermissionGranted.value = granted
+        this._mapPermissionGranted.value = granted
     }
 
     fun setShouldShowMapPermissionRationale(granted: Boolean) {
-        this._shouldShowCameraPermissionRationale.value = granted
+        this._shouldShowPermissionMapRationale.value = granted
     }
 
     fun setShowMapPermissionDenied(granted: Boolean) {
-        this._showCameraPermissionDenied.value = granted
+        this._showMapPermissionDenied.value = granted
     }
 
     fun changeActualScreen(value: String) {

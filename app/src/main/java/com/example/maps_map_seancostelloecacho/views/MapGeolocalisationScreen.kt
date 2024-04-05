@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,11 +30,13 @@ import com.example.maps_map_seancostelloecacho.navigation.Routes
 fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerViewModel) {
     val context = LocalContext.current
     val isMapPermissionsGranted by markerVM.mapPermissionGranted.observeAsState(false)
-    val shouldShowPermissionMapRationale by markerVM.shouldShowPermissionMapRationale.observeAsState(false)
+    val shouldShowPermissionMapRationale by markerVM.shouldShowPermissionMapRationale.observeAsState(
+        false
+    )
     val showMapPermissionDenied by markerVM.showMapPermissionDenied.observeAsState(false)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = {isGranted ->
+        onResult = { isGranted ->
             if (isGranted)
                 markerVM.setMapPermissionGranted(true)
             else {
@@ -50,17 +53,17 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
             }
         }
     )
-    Button(onClick = {
-        if (!isMapPermissionsGranted) {
+    Log.i("booleano", "estado boleano: $isMapPermissionsGranted")
+    if (!isMapPermissionsGranted) {
+        SideEffect {
             launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            Log.w("ERROR", "Ups, permissions no haceptados")
-        } else {
-            Log.d("ACEPTADO", "Aceptado")
-            navController.navigate(Routes.MapScreen.route)
         }
-    }){
-        Text(text = "Prueba")
+    } else {
+        Log.d("ACEPTADO", "Aceptado")
+        println("navegando a mapa")
+        navController.navigate(Routes.MapScreen.route)
     }
+
     if (showMapPermissionDenied)
         PermissionDeclinedMapGeolocalisationScreen()
 }
