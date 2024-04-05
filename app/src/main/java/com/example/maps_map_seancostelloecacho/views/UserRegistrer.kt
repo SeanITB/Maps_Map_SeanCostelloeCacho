@@ -65,7 +65,8 @@ fun UsernRegistrerContent(navController: NavController, markerVM: MarkerViewMode
         goToNext = goToNext,
         navController = navController,
         navigationItems = navigationItems,
-        isLoading = isLoading
+        isLoading = isLoading,
+        proveThatItsAEmail = {markerVM.proveThatIstAEmail(userName)}
     )
 }
 
@@ -88,7 +89,8 @@ fun UserRegistrerView(
     goToNext: Boolean,
     navController: NavController,
     navigationItems: Map<String, String>,
-    isLoading: Boolean
+    isLoading: Boolean,
+    proveThatItsAEmail: (String) -> Boolean
 ) {
     val context = LocalContext.current
     val arrPasswords = arrayOf(password, passwordCheck)
@@ -142,16 +144,21 @@ fun UserRegistrerView(
             )
         }
         Button(onClick = {
-            if (password.equals(passwordCheck)) { //toDo: quando doy al botton peta
+            Log.i("provar", "email correcto: ${proveThatItsAEmail(userName)}")
+            if (password.equals(passwordCheck) && proveThatItsAEmail(userName) ) {
                 register()
             } else {
-                Toast.makeText(context, "The passwords are not the same.", Toast.LENGTH_LONG).show()
+                if (!proveThatItsAEmail(userName)) {
+                    Toast.makeText(context, "Email incorrect.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
+                }
             }
         }
         ) {
             Text(text = "Registresr")
         }
-        if (isLoading == false) {
+        if (!isLoading) {
             Log.d("ESTOY", "booleano $goToNext")
             if (goToNext) {
                 navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)

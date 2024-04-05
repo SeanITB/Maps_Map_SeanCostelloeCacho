@@ -217,14 +217,13 @@ class MarkerViewModel : ViewModel() {
 
     // Firebase Authentication
     fun register() {
-        auth.createUserWithEmailAndPassword("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@fd.com", "CosAco")
+        auth.createUserWithEmailAndPassword(this.userName.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("ESTOYÑ", "REGISTER CORRECTO")
                     _goToNext.value = true
                 } else {
                     _goToNext.value = false
-                    Log.d("ERRORÑ", "Error creating user: ${task.result}")
+                    Log.d("ERROR", "Ups, error creating user: ${task.result}")
                 }
                 modifiyProcessing()
             }
@@ -464,6 +463,27 @@ class MarkerViewModel : ViewModel() {
 
     fun changeLoggedUser(value: String) {
         this._loggedUser.value = value
+    }
+
+    fun proveThatIstAEmail(userName: String): Boolean {
+        var isCorrect = false
+        val email = "@"
+        if (email in userName) {
+            val emailNameInput = userName.split("@").get(0)
+            val emailOrgagnitzationInput = userName.split("@").get(1)
+
+            val emailNameRegex = Regex("[a-zA-Z0-9._%+-]+")
+            val emailrgagnitzationRegex = Regex("[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+
+            if (
+                emailNameRegex.matches(emailNameInput) &&
+                emailrgagnitzationRegex.matches(emailOrgagnitzationInput)
+            ){
+                isCorrect = true
+            }
+        }
+
+        return isCorrect
     }
 
 
