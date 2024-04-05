@@ -1,5 +1,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,11 +33,13 @@ import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 @Composable
-fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
+fun UsernRegistrerContent(navController: NavController, markerVM: MarkerViewModel) {
     val userName by markerVM.userName.observeAsState("")
     val password by markerVM.password.observeAsState("")
     val goToNext by markerVM.goToNext.observeAsState(false)
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
+    val isLoading by markerVM.isLoading.observeAsState(true)
+
     var passwordCheck by rememberSaveable {
         mutableStateOf("")
     }
@@ -46,7 +49,7 @@ fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
     var passwordCheckVisibilty by rememberSaveable {
         mutableStateOf(false)
     }
-    UserLoginView(
+    UserRegistrerView(
         modifier = Modifier.fillMaxSize(),
         userName = userName,
         onUserNameChange = { markerVM.changeUserName(it) },
@@ -61,14 +64,15 @@ fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
         register = { markerVM.register() },
         goToNext = goToNext,
         navController = navController,
-        navigationItems = navigationItems
+        navigationItems = navigationItems,
+        isLoading = isLoading
     )
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserLoginView(
+fun UserRegistrerView(
     modifier: Modifier = Modifier,
     userName: String,
     onUserNameChange: (String) -> Unit,
@@ -83,7 +87,8 @@ fun UserLoginView(
     register: () -> Unit,
     goToNext: Boolean,
     navController: NavController,
-    navigationItems: Map<String, String>
+    navigationItems: Map<String, String>,
+    isLoading: Boolean
 ) {
     val context = LocalContext.current
     val arrPasswords = arrayOf(password, passwordCheck)
@@ -139,17 +144,20 @@ fun UserLoginView(
         Button(onClick = {
             if (password.equals(passwordCheck)) { //toDo: quando doy al botton peta
                 register()
-                if (goToNext) {
-                    navController.navigate(navigationItems["mapScreen"]!!)
-                } else {
-                    Toast.makeText(context, "No funciona", Toast.LENGTH_LONG).show()
-                }
             } else {
                 Toast.makeText(context, "The passwords are not the same.", Toast.LENGTH_LONG).show()
             }
         }
         ) {
             Text(text = "Registresr")
+        }
+        if (isLoading == false) {
+            Log.d("ESTOY", "booleano $goToNext")
+            if (goToNext) {
+                navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
+            } else {
+                Toast.makeText(context, "No funciona", Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

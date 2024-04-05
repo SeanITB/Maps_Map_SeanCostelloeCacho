@@ -50,10 +50,16 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
             }
         }
     )
-    if (!isMapPermissionsGranted) {
-        launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-    } else {
-        navController.navigate(Routes.MapScreen.route)
+    Button(onClick = {
+        if (!isMapPermissionsGranted) {
+            launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            Log.w("ERROR", "Ups, permissions no haceptados")
+        } else {
+            Log.d("ACEPTADO", "Aceptado")
+            navController.navigate(Routes.MapScreen.route)
+        }
+    }){
+        Text(text = "Prueba")
     }
     if (showMapPermissionDenied)
         PermissionDeclinedMapGeolocalisationScreen()

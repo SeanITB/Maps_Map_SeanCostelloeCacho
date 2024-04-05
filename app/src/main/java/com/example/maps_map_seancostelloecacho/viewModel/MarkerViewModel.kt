@@ -47,7 +47,7 @@ class MarkerViewModel : ViewModel() {
         mapOf<String, String>(
             NavigationItems.CameraScreen.label to NavigationItems.CameraScreen.route,
             NavigationItems.GalleryScreen.label to NavigationItems.GalleryScreen.route,
-            NavigationItems.MapScreen.label to NavigationItems.MapScreen.route
+            NavigationItems.MapGeolocalisationScreen.label to NavigationItems.MapGeolocalisationScreen.route
         )
     )
     val navigationItems = _navigationItemsItems
@@ -217,21 +217,21 @@ class MarkerViewModel : ViewModel() {
 
     // Firebase Authentication
     fun register() {
-        auth.createUserWithEmailAndPassword(this.userName.value!!, this.password.value!!)
+        auth.createUserWithEmailAndPassword("xxxxxxx@fd.com", "CosAco")
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    Log.d("ESTOYÑ", "REGISTER CORRECTO")
                     _goToNext.value = true
                 } else {
                     _goToNext.value = false
-                    Log.d("ERROR", "Errir creating user: ${task.result}")
+                    Log.d("ERRORÑ", "Error creating user: ${task.result}")
                 }
                 modifiyProcessing()
             }
     }
 
     fun modifiyProcessing() {
-        if (this.isLoading.value!!) this._isLoading.value = false
-        else this._isLoading.value = true
+        this._isLoading.value = false
     }
 
     fun login(userName: String?, password: String?) {
