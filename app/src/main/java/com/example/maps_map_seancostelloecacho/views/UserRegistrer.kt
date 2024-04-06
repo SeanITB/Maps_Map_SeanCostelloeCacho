@@ -66,7 +66,8 @@ fun UsernRegistrerContent(navController: NavController, markerVM: MarkerViewMode
         navController = navController,
         navigationItems = navigationItems,
         isLoading = isLoading,
-        proveThatItsAEmail = {markerVM.proveThatIstAEmail(userName)}
+        proveThatItsAEmail = {markerVM.proveThatIstAEmail(userName)},
+        passwordVerification = {markerVM.passwordVerification(password)}
     )
 }
 
@@ -90,7 +91,8 @@ fun UserRegistrerView(
     navController: NavController,
     navigationItems: Map<String, String>,
     isLoading: Boolean,
-    proveThatItsAEmail: (String) -> Boolean
+    proveThatItsAEmail: (String) -> Boolean,
+    passwordVerification: (String) -> Boolean
 ) {
     val context = LocalContext.current
     val arrPasswords = arrayOf(password, passwordCheck)
@@ -144,26 +146,24 @@ fun UserRegistrerView(
             )
         }
         Button(onClick = {
-            Log.i("provar", "email correcto: ${proveThatItsAEmail(userName)}")
-            if (password.equals(passwordCheck) && proveThatItsAEmail(userName) ) {
-                register()
+            if (!password.equals(passwordCheck)) {
+                Toast.makeText(context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
+            } else if (!passwordVerification(password)) {
+                Toast.makeText(context, "Incorrect password.", Toast.LENGTH_LONG).show()
+            } else if (!proveThatItsAEmail(userName)) {
+                Toast.makeText(context, "Incorrect email.", Toast.LENGTH_LONG).show()
             } else {
-                if (!proveThatItsAEmail(userName)) {
-                    Toast.makeText(context, "Email incorrect.", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
-                }
+                register()
             }
         }
         ) {
             Text(text = "Registresr")
         }
         if (!isLoading) {
-            Log.d("ESTOY", "booleano $goToNext")
             if (goToNext) {
                 navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
             } else {
-                Toast.makeText(context, "No funciona", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show()
             }
         }
     }

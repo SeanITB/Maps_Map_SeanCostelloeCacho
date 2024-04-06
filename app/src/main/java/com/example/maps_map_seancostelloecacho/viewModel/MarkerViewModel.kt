@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.SortedMap
+import java.util.regex.Pattern
 
 class MarkerViewModel : ViewModel() {
 
@@ -223,7 +224,7 @@ class MarkerViewModel : ViewModel() {
                     _goToNext.value = true
                 } else {
                     _goToNext.value = false
-                    Log.d("ERROR", "Ups, error creating user: ${task.result}")
+                    Log.d("ERROR", "Ups, user already exists.")
                 }
                 modifiyProcessing()
             }
@@ -484,6 +485,14 @@ class MarkerViewModel : ViewModel() {
         }
 
         return isCorrect
+    }
+
+    fun passwordVerification(password: String): Boolean {
+        // Regex expression that verify that the password, at less, has:
+        // 1 digit, 1 postmark expression, 1 capital letter and 6 characters.
+        val regualarExpresionPasword = "(?=.*[\\d])(?=.*[!@#\$%^&*()])(?=.*[A-Z]).{6,}"
+        val p: Pattern = Pattern.compile(regualarExpresionPasword)
+        return p.matcher(password).matches()
     }
 
 
