@@ -25,10 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 @Composable
@@ -64,7 +66,7 @@ fun UserRegistrerView(
     onPasswordChange: (String) -> Unit,
     register: () -> Unit,
     goToNext: Boolean,
-    navController: NavController,
+    navController: NavController?,
     navigationItems: Map<String, String>,
     isLoading: Boolean,
     proveThatItsAEmail: (String) -> Boolean,
@@ -112,44 +114,12 @@ fun UserRegistrerView(
             )
         } else {
             if (goToNext) {
-                navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
+                navController!!.navigate(navigationItems["mapGeolocalisationScreen"]!!)
             } else {//toDo: quando entra por aqui que se salga del dialog
                 Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show()
             }
         }
 
-    }
-}
-
-@Composable
-fun RegisterButton(
-    modifier: Modifier = Modifier,
-    userName: String,
-    password: String,
-    passwordCheck: String,
-    context: Context,
-    onShowChange: (Boolean) -> Unit,
-    passwordVerification: (String) -> Boolean,
-    proveThatItsAEmail: (String) -> Boolean,
-    register: () -> Unit
-    ) {
-    Button(
-        modifier = modifier,
-        onClick = {
-            onShowChange(true)
-            if (!password.equals(passwordCheck)) {
-                Toast.makeText(context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
-            } else if (!passwordVerification(password)) {
-                Toast.makeText(context, "Incorrect password.", Toast.LENGTH_LONG).show()
-            } else if (!proveThatItsAEmail(userName)) {
-                Toast.makeText(context, "Incorrect email.", Toast.LENGTH_LONG).show()
-            } else {
-                register()
-            }
-
-        }
-    ) {
-        Text(text = "Registresr")
     }
 }
 
@@ -200,6 +170,38 @@ fun NameAndPassword(
 }
 
 @Composable
+fun RegisterButton(
+    modifier: Modifier = Modifier,
+    userName: String,
+    password: String,
+    passwordCheck: String,
+    context: Context,
+    onShowChange: (Boolean) -> Unit,
+    passwordVerification: (String) -> Boolean,
+    proveThatItsAEmail: (String) -> Boolean,
+    register: () -> Unit
+) {
+    Button(
+        modifier = modifier,
+        onClick = {
+            onShowChange(true)
+            if (!password.equals(passwordCheck)) {
+                Toast.makeText(context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
+            } else if (!passwordVerification(password)) {
+                Toast.makeText(context, "Incorrect password.", Toast.LENGTH_LONG).show()
+            } else if (!proveThatItsAEmail(userName)) {
+                Toast.makeText(context, "Incorrect email.", Toast.LENGTH_LONG).show()
+            } else {
+                register()
+            }
+
+        }
+    ) {
+        Text(text = "Registresr")
+    }
+}
+
+@Composable
 fun WhileLoding(
     show: Boolean,
     onDismiss: () -> Unit,
@@ -223,5 +225,27 @@ fun WhileLoding(
                 }
             }
         }
+    }
+}
+
+
+
+@Preview
+@Composable
+fun UserRegisterPreview() {
+    Maps_Map_SeanCostelloeCachoTheme{
+        UserRegistrerView(
+            userName = "Jose Antonio",
+            onUserNameChange = {},
+            password = "",
+            onPasswordChange = {},
+            register = { /*TODO*/ },
+            goToNext = false,
+            navController =  null,
+            navigationItems = mapOf(),
+            isLoading = false,
+            proveThatItsAEmail = {false},
+            passwordVerification = {false}
+        )
     }
 }
