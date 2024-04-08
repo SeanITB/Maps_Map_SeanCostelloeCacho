@@ -107,7 +107,8 @@ class MarkerViewModel : ViewModel() {
     var categoryMap: SortedMap<String, MutableList<MarkerData>>? by mutableStateOf(sortedMapOf())
         private set
 
-    private val _actualMarker = MutableLiveData<MarkerData>(MarkerData("", "", "", "", mutableListOf(), Location(0.0, 0.0)))
+    private val _actualMarker =
+        MutableLiveData<MarkerData>(MarkerData("", "", "", "", mutableListOf(), Location(0.0, 0.0)))
     val actualMarker = _actualMarker
 
     private val _idMarker = MutableLiveData<String>("")
@@ -180,9 +181,11 @@ class MarkerViewModel : ViewModel() {
                 if (dc.type == DocumentChange.Type.ADDED) {
                     val newMarker = dc.document.toObject(MarkerData::class.java)
                     newMarker.id = dc.document.id
-                    newMarker.location.latitude = dc.document.get(LATITUDE_KEY).toString().toDouble()
-                    newMarker.location.longitude = dc.document.get(LONGITUDE_KEY).toString().toDouble()
-                    println("id new marker: " +newMarker.id)
+                    newMarker.location.latitude =
+                        dc.document.get(LATITUDE_KEY).toString().toDouble()
+                    newMarker.location.longitude =
+                        dc.document.get(LONGITUDE_KEY).toString().toDouble()
+                    println("id new marker: " + newMarker.id)
                     tempList.add(newMarker)
                 }
             }
@@ -466,7 +469,7 @@ class MarkerViewModel : ViewModel() {
         this._loggedUser.value = value
     }
 
-    fun proveThatIstAEmail(userName: String): Boolean {
+    fun proveThatItsAEmail(userName: String): Boolean {
         var isCorrect = false
         val email = "@"
         if (email in userName) {
@@ -479,7 +482,7 @@ class MarkerViewModel : ViewModel() {
             if (
                 emailNameRegex.matches(emailNameInput) &&
                 emailrgagnitzationRegex.matches(emailOrgagnitzationInput)
-            ){
+            ) {
                 isCorrect = true
             }
         }
@@ -494,6 +497,5 @@ class MarkerViewModel : ViewModel() {
         val p: Pattern = Pattern.compile(regualarExpresionPasword)
         return p.matcher(password).matches()
     }
-
 
 }
