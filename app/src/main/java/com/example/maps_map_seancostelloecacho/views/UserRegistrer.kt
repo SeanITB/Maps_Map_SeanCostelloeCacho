@@ -22,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -55,7 +56,6 @@ fun UsernRegistrerContent(navController: NavController, markerVM: MarkerViewMode
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserRegistrerView(
     userName: String,
@@ -73,54 +73,41 @@ fun UserRegistrerView(
     var passwordCheck by rememberSaveable {
         mutableStateOf("")
     }
-
     var show by rememberSaveable {
         mutableStateOf(false)
     }
     val context = LocalContext.current
-    val arrItems = arrayOf(userName, password, passwordCheck)
-    val arrChangeItems = arrayOf(onUserNameChange, onPasswordChange, { passwordCheck = it })
-    val arrPasswordLable = arrayOf("Name", "Password", "Repeat password")
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ShowPaswordInstructions(modifier = Modifier.fillMaxWidth(0.6F))
-        NameAndPassword(modifier = Modifier.weight(1F))
-        for (index in arrItems.indices) {
-            TextField(
-                value = arrItems[index],
-                onValueChange = { arrChangeItems[index](it) },
-                placeholder = { Text(text = arrPasswordLable[index]) },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.background
-                ),
-                singleLine = true,
-            )
-        }
-        Button(onClick = {
-            show = true
+        NameAndPassword(
+            modifier = Modifier.fillMaxWidth(0.6F),
+            userName = userName,
+            password = password,
+            passwordCheck = passwordCheck,
+            onUserNameChange = { onUserNameChange(it) },
+            onPasswordChange = { onPasswordChange(it) },
+            onPasswordChaeckChange = { passwordCheck = it }
+        )
+        RegisterButton(
+            modifier = Modifier.fillMaxWidth(0.6F),
+            userName = userName,
+            password = password,
+            passwordCheck = passwordCheck,
+            context = context,
+            onShowChange = {show = it},
+            passwordVerification = { passwordVerification(password) },
+            proveThatItsAEmail = { proveThatItsAEmail(userName) },
+            register = register
 
-            if (!password.equals(passwordCheck)) {
-                Toast.makeText(context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
-            } else if (!passwordVerification(password)) {
-                Toast.makeText(context, "Incorrect password.", Toast.LENGTH_LONG).show()
-            } else if (!proveThatItsAEmail(userName)) {
-                Toast.makeText(context, "Incorrect email.", Toast.LENGTH_LONG).show()
-            } else {
-                register()
-            }
-
-        }
-        ) {
-            Text(text = "Registresr")
-        }
+        )
         if (isLoading) {
             WhileLoding(
                 show = show,
-                onDismiss = {show = false},
+                onDismiss = { show = false },
                 isLoading = isLoading
             )
         } else {
@@ -135,29 +122,81 @@ fun UserRegistrerView(
 }
 
 @Composable
+fun RegisterButton(
+    modifier: Modifier = Modifier,
+    userName: String,
+    password: String,
+    passwordCheck: String,
+    context: Context,
+    onShowChange: (Boolean) -> Unit,
+    passwordVerification: (String) -> Boolean,
+    proveThatItsAEmail: (String) -> Boolean,
+    register: () -> Unit
+    ) {
+    Button(
+        modifier = modifier,
+        onClick = {
+            onShowChange(true)
+            if (!password.equals(passwordCheck)) {
+                Toast.makeText(context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
+            } else if (!passwordVerification(password)) {
+                Toast.makeText(context, "Incorrect password.", Toast.LENGTH_LONG).show()
+            } else if (!proveThatItsAEmail(userName)) {
+                Toast.makeText(context, "Incorrect email.", Toast.LENGTH_LONG).show()
+            } else {
+                register()
+            }
+
+        }
+    ) {
+        Text(text = "Registresr")
+    }
+}
+
+@Composable
 fun ShowPaswordInstructions(modifier: Modifier = Modifier) {
-        Text(text = "Password characteristics: ", modifier = modifier, fontWeight = FontWeight.Bold)
-        Text(
-            text = """
+    Text(text = "Password characteristics: ", modifier = modifier, fontWeight = FontWeight.Bold)
+    Text(
+        text = """
             - 1 digit
             - 1 postmark expression
             - 1 capital letter
             - 6 characters
         """.trimIndent(),
-            modifier = modifier
-        )
+        modifier = modifier
+    )
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NameAndPassword(modifier: Modifier) {
-    Column (
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
+fun NameAndPassword(
+    modifier: Modifier,
+    userName: String,
+    password: String,
+    passwordCheck: String,
+    onUserNameChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onPasswordChaeckChange: (String) -> Unit
+) {
+    val arrItems = arrayOf(userName, password, passwordCheck)
+    val arrChangeItems = arrayOf(onUserNameChange, onPasswordChange, onPasswordChaeckChange)
+    val arrPasswordLable = arrayOf("Name", "Password", "Repeat password")
 
+    for (index in arrItems.indices) {
+        TextField(
+            value = arrItems[index],
+            onValueChange = { arrChangeItems[index](it) },
+            placeholder = { Text(text = arrPasswordLable[index]) },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.background
+            ),
+            singleLine = true,
+            modifier = modifier
+        )
     }
+
 }
 
 @Composable
@@ -166,7 +205,6 @@ fun WhileLoding(
     onDismiss: () -> Unit,
     isLoading: Boolean
 ) {
-    val context = LocalContext.current
     if (show) {
         Dialog(
             onDismissRequest = { onDismiss() },
