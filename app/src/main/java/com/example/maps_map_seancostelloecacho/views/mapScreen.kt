@@ -32,7 +32,6 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
     val markerList by markerVM.markerList.observeAsState(emptyList())
     val showBottomSheet by markerVM.showBottomSheet.observeAsState(false)
     markerVM.getMarkers()
-    //markerVM.createFilerList()
     Log.i("TAMAÑO", "VIEW " + markerList.size)
     val context = LocalContext.current
     val fusedLocationProviderClient =
@@ -75,7 +74,6 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
             properties = MapProperties(isMyLocationEnabled = true)
         ){
             if(markerList.isNotEmpty()){
-                Log.i("CONTENIDO", "$markerList")
                 markerList.forEach { marker ->
                     Marker(
                         state = MarkerState(position = LatLng(marker.location.latitude, marker.location.longitude)),

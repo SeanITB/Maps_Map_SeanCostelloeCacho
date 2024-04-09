@@ -31,12 +31,13 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
     val context = LocalContext.current
     val isMapPermissionsGranted by markerVM.mapPermissionGranted.observeAsState(false)
     val shouldShowPermissionMapRationale by markerVM.shouldShowPermissionMapRationale.observeAsState(
-        false
+        true
     )
     val showMapPermissionDenied by markerVM.showMapPermissionDenied.observeAsState(false)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
+            Log.i("booleano", "isGranded: $isGranted") //toDo: siempre me sale false
             if (isGranted)
                 markerVM.setMapPermissionGranted(true)
             else {
@@ -54,7 +55,7 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
         }
     )
     Log.i("booleano", "estado boleano: $isMapPermissionsGranted")
-    if (!isMapPermissionsGranted) {
+    if (!isMapPermissionsGranted) { //toDO: por eso no navega
         SideEffect {
             launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
@@ -64,13 +65,12 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
         markerVM.setShowMapPermissionDenied(false)
         navController.navigate(Routes.MapScreen.route)
     }
-    /*
-    SideEffect {
-        if (showMapPermissionDenied)
-            //PermissionDeclinedMapGeolocalisationScreen() //toDo: navegar a la permission screen
-    }
 
-     */
+    
+    if (showMapPermissionDenied)
+        PermissionDeclinedMapGeolocalisationScreen()
+
+
 
 }
 

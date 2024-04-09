@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import com.example.maps_map_seancostelloecacho.firebase.Repository
 import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
@@ -33,15 +34,14 @@ class MarkerViewModel : ViewModel() {
 
     // FIREBASE CONSTANTS
     val NAME_KEY = "name"
+
     val TYPE_KEY = "type"
     val DESCRIPTION_KEY = "description"
     val PHOTOS_KEY = "photos"
     val LATITUDE_KEY = "latitude"
     val LONGITUDE_KEY = "longitude"
-
     // APP CONSTANTS
     val MAP_SCREEN_KEY = "mapScreen"
-
 
     // app values
     private val _navigationItemsItems = MutableLiveData(
@@ -92,8 +92,11 @@ class MarkerViewModel : ViewModel() {
     private val _actualScreen = MutableLiveData(MAP_SCREEN_KEY)
     val actualScreen = _actualScreen
 
-    var isFiltered by mutableStateOf(false)
-        private set
+    private val _isFilitered = MutableLiveData(false)
+    val isFiltered = _isFilitered
+
+    private val _getMarkersComplet = MutableLiveData(false)
+    val getMarkersComplet = _getMarkersComplet
 
     private val _markerList = MutableLiveData(emptyList<MarkerData>())
     val markerList = _markerList
@@ -107,8 +110,7 @@ class MarkerViewModel : ViewModel() {
     var categoryMap: SortedMap<String, MutableList<MarkerData>>? by mutableStateOf(sortedMapOf())
         private set
 
-    private val _actualMarker =
-        MutableLiveData<MarkerData>(MarkerData("", "", "", "", mutableListOf(), Location(0.0, 0.0)))
+    private val _actualMarker = MutableLiveData<MarkerData>(MarkerData("", "", "", "", mutableListOf(), Location(0.0, 0.0)))
     val actualMarker = _actualMarker
 
     private val _idMarker = MutableLiveData<String>("")
@@ -185,12 +187,12 @@ class MarkerViewModel : ViewModel() {
                         dc.document.get(LATITUDE_KEY).toString().toDouble()
                     newMarker.location.longitude =
                         dc.document.get(LONGITUDE_KEY).toString().toDouble()
-                    println("id new marker: " + newMarker.id)
                     tempList.add(newMarker)
                 }
             }
             _markerList.value = tempList
-
+            _getMarkersComplet.value = true
+            Log.i("makerList", "markerList befor: ${_markerList.value!!.size}")
         }
     }
 
@@ -304,7 +306,7 @@ class MarkerViewModel : ViewModel() {
         }
     }
 
-    private fun sortMarkerList() {
+    fun sortMarkerList() {
         this._categoryMarkrList.value = this.categoryMap?.map {
             Category(
                 name = it.key,
@@ -313,8 +315,15 @@ class MarkerViewModel : ViewModel() {
         }
     }
 
+    fun createMapOfMarkers() {
+        Log.i("makerList", "sdf ${_markerList.value!!.size}")
+        for (m in markerList.value!!){
+            addMarkerToMap(m)
+        }
+    }
+
     fun changeIsFiltred(value: Boolean) {
-        this.isFiltered = value
+        this.isFiltered.value = value
     }
 
     fun createFilerList() {
