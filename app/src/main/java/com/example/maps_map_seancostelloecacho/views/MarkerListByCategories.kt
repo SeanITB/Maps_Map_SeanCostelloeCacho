@@ -47,7 +47,7 @@ fun MarkerFilterListScreen(markerVM: MarkerViewModel) {
                     text = markerVM.typeMarker.value!!,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(MaterialTheme.colorScheme.primary)
                         .padding(16.dp)
                 )
             }
