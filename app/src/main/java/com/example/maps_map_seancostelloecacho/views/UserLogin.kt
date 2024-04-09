@@ -50,16 +50,16 @@ fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
     val context = LocalContext.current
     val userPrefs = UserPrefs(context)
     val storedUserData = userPrefs.getUserData.collectAsState(initial = emptyList())
-    var thereIsData by rememberSaveable {
+    var firstTime by rememberSaveable {
         mutableStateOf(false)
     }
 
     //only enters the first time
-    if (!thereIsData && storedUserData.value.isNotEmpty() && storedUserData.value.get(0) != "" && storedUserData.value.get(1) != "") {
+    if (!firstTime && storedUserData.value.isNotEmpty() && storedUserData.value.get(0) != "" && storedUserData.value.get(1) != "") {
         Log.i("USERÑ", "Que esta passando")
         markerVM.changeUserName(storedUserData.value.get(0))
         markerVM.changePassword(storedUserData.value.get(1))
-        thereIsData = true
+        firstTime = true
     }
 
     UserLoginView(
@@ -147,16 +147,17 @@ fun UserLoginView(
                 PasswordVisualTransformation()
             }
         )
-        //Log.i("USER", storeUserData.value.get(1))
         Button(
             onClick = {
                 if (storedUserData.value.isEmpty() || storedUserData.value.get(0) == "" && storedUserData.value.get(1) == "") {
                     CoroutineScope(Dispatchers.IO).launch {
                         userPrefs.saveUserData(userName, password)
                     }
+                } else {
+                    onUserNameChange(storedUserData.value.get(0))
+                    onPasswordChange(storedUserData.value.get(1))
                 }
-                onUserNameChange(storedUserData.value.get(0))
-                onPasswordChange(storedUserData.value.get(1))
+                Log.i("USERÑ", "username: $userName password: $password")
                 login()
             }
         ) {
