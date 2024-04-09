@@ -100,6 +100,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage-ktx")
     // FIREBASE AUTHENTICATION
     implementation ("com.firebaseui:firebase-ui-auth:7.2.0")
+    // DATA STORE
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
 
     testImplementation("junit:junit:4.13.2")

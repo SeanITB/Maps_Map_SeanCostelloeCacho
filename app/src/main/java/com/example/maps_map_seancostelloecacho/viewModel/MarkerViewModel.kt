@@ -250,6 +250,7 @@ class MarkerViewModel : ViewModel() {
                 }
                 modifiyProcessing()
             }
+            .addOnFailureListener{} // toDo: si contra no esta bien
     }
 
     fun logout() {
