@@ -17,6 +17,7 @@ import com.example.maps_map_seancostelloecacho.views.MapGeolocalisationScreen
 import com.example.maps_map_seancostelloecacho.views.MapScreen
 import com.example.maps_map_seancostelloecacho.views.MarkerListScreen
 import com.example.maps_map_seancostelloecacho.views.TakePhotoScreen
+import com.example.maps_map_seancostelloecacho.views.UserLoginContent
 import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
@@ -46,7 +47,8 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
         }
     ) {
         composable(Routes.LunchScreen.route) { LunchScreen(navController) }
-        composable(Routes.LoginScreen.route,) { UsernRegistrerContent(navController, markerVM) }
+        composable(Routes.RegisterScreen.route,) { UsernRegistrerContent(navController, markerVM) }
+        composable(Routes.LoginScreen.route,) { UserLoginContent(navController, markerVM) }
         composable(Routes.MapGeolocalisationScreen.route) { MapGeolocalisationScreen(navController, markerVM) }
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
         composable(Routes.MarkerListScreen.route,) { MarkerListScreen(markerVM) }

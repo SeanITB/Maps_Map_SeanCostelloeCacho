@@ -1,5 +1,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import javax.annotation.Untainted
@@ -35,13 +38,23 @@ import javax.annotation.Untainted
 
 @Composable
 fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
+    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val userName by markerVM.userName.observeAsState("")
     val password by markerVM.password.observeAsState("")
     val goToNext by markerVM.goToNext.observeAsState(false)
-    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val isLoading by markerVM.isLoading.observeAsState(true)
 
-    UserLoginView(userName = userName, password = , onUserNameChange = )
+    UserLoginView(
+        navController = navController,
+        navigationItems = navigationItems,
+        userName = userName,
+        password = password,
+        goToNext = goToNext,
+        isLoading = isLoading,
+        onUserNameChange = {markerVM.changeUserName(it)},
+        onPasswordChange = {markerVM.changePassword(it)},
+        login = {markerVM.login()}
+    )
 
 
 }
@@ -49,15 +62,24 @@ fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserLoginView(
+    navController: NavController?,
+    navigationItems: Map<String, String>,
     userName: String,
     password: String,
+    goToNext: Boolean,
+    isLoading: Boolean,
     onUserNameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    login: () -> Unit
 ) {
     var visability by rememberSaveable {
         mutableStateOf(false)
     }
-    Column (
+    var show by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -65,7 +87,7 @@ fun UserLoginView(
         TextField(
             value = userName,
             onValueChange = { onUserNameChange(it) },
-            placeholder = { Text(text = "email") },
+            placeholder = { Text(text = "Email") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.background
@@ -75,7 +97,7 @@ fun UserLoginView(
         TextField(
             value = password,
             onValueChange = { onPasswordChange(it) },
-            placeholder = { Text(text = "Password" )},
+            placeholder = { Text(text = "Password") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.background
@@ -89,7 +111,7 @@ fun UserLoginView(
                 } else {
                     Icons.Filled.Visibility
                 }
-                IconButton(onClick = { visability = !visability }) { //toDo: chacer que solo se muestre uno quando canvias la visibilidad
+                IconButton(onClick = { visability = !visability }) {
                     Icon(imageVector = image, contentDescription = "Visibility password")
                 }
             },
@@ -99,6 +121,24 @@ fun UserLoginView(
                 PasswordVisualTransformation()
             }
         )
+        Button(
+            onClick = { login() }
+        ) {
+            Text(text = "Login")
+        }
+        if (isLoading) {
+            WhileLoding(
+                show = show,
+                onDismiss = { show = false },
+                isLoading = isLoading
+            )
+        } else {
+            if (goToNext) {
+                navController!!.navigate(navigationItems["mapGeolocalisationScreen"]!!)
+            } else {//toDo: quando entra por aqui que se salga del dialog
+                Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
 

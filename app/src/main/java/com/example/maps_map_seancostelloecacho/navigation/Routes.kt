@@ -2,6 +2,7 @@ package com.example.maps_map_seancostelloecacho.navigation
 
 sealed class Routes (val route: String) {
     object LunchScreen: Routes("lunchScreen")
+    object RegisterScreen: Routes("registerScreen")
     object LoginScreen: Routes("loginScreen")
     object MapGeolocalisationScreen: Routes("mapGeolocalisationScreen")
     object MapScreen: Routes("mapScreen")

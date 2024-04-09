@@ -237,8 +237,8 @@ class MarkerViewModel : ViewModel() {
         this._isLoading.value = false
     }
 
-    fun login(userName: String?, password: String?) {
-        auth.signInWithEmailAndPassword(userName!!, password!!)
+    fun login() {
+        auth.signInWithEmailAndPassword(this.userName.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     _userId.value = task.result.user?.uid
