@@ -61,11 +61,17 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
     } else {
         Log.d("ACEPTADO", "Aceptado")
         println("navegando a mapa")
+        markerVM.setShowMapPermissionDenied(false)
         navController.navigate(Routes.MapScreen.route)
     }
+    /*
+    SideEffect {
+        if (showMapPermissionDenied)
+            //PermissionDeclinedMapGeolocalisationScreen() //toDo: navegar a la permission screen
+    }
 
-    if (showMapPermissionDenied)
-        PermissionDeclinedMapGeolocalisationScreen()
+     */
+
 }
 
 @Composable
