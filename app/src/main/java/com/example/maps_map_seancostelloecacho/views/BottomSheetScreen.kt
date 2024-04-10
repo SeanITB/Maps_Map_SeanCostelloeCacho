@@ -36,7 +36,6 @@ import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyBottomSheetScreen(navigationController: NavController, markerVM: MarkerViewModel) {
-    //val spaceBetween = 50
     markerVM.changeActualScreen("BottomSheet")
     ModalBottomSheet(
         onDismissRequest = {
@@ -63,7 +62,7 @@ fun MyBottomSheetScreen(navigationController: NavController, markerVM: MarkerVie
             NavigateToCameraScreen(navigationController = navigationController, markerVM = markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(markerVM = markerVM)
-            Spacer(modifier = Modifier.fillMaxHeight(0.05f))
+            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         }
     }
 }

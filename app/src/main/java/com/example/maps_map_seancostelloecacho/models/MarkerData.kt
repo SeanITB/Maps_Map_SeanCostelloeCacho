@@ -7,8 +7,8 @@ data class MarkerData(
     val name: String,
     val type: String,
     val description: String,
-    val photos: MutableList<Bitmap>,
+    val photo: String,
     val location: Location
 ) {
-    constructor() : this(null, "", "", "", mutableListOf(), Location(0.0, 0.0))
+    constructor() : this(null, "", "", "", "", Location(0.0, 0.0))
 }

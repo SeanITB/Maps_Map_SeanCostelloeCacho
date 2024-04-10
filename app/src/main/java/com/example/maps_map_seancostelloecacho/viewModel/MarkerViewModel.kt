@@ -110,7 +110,7 @@ class MarkerViewModel : ViewModel() {
     var categoryMap: SortedMap<String, MutableList<MarkerData>>? by mutableStateOf(sortedMapOf())
         private set
 
-    private val _actualMarker = MutableLiveData<MarkerData>(MarkerData("", "", "", "", mutableListOf(), Location(0.0, 0.0)))
+    private val _actualMarker = MutableLiveData<MarkerData>(MarkerData("", "", "", "", "", Location(0.0, 0.0)))
     val actualMarker = _actualMarker
 
     private val _idMarker = MutableLiveData<String>("")
@@ -149,22 +149,18 @@ class MarkerViewModel : ViewModel() {
     // Firebase Methods
     fun addMarker() {
         instanceActualMarker()
+        Log.i("makerList", "marker contetnt befor firestore: ${actualMarker.value}")
         repository.addMarker(this.actualMarker.value!!)
     }
 
     fun instanceActualMarker() {
+        Log.i("makerList", "name markerrr: ${_nameMarker.value}")
         this.actualMarker.value = MarkerData(
             id = this.idMarker.value,
             name = this.nameMarker.value!!,
             type = this.typeMarker.value!!,
             description = if (this.descriptionMarker.value.equals("")) "There isn't any description." else this.descriptionMarker.value!!,
-            photos = if (this.photosMarker.value!!.isEmpty()) mutableListOf(
-                Bitmap.createBitmap(
-                    25,
-                    25,
-                    Bitmap.Config.ARGB_8888
-                )
-            ) else this.photosMarker.value!!,
+            photo = "ToDo photo",
             location = Location(
                 this.latitudeMarker.value!!,
                 this.longitudeMarker.value!!
@@ -181,18 +177,24 @@ class MarkerViewModel : ViewModel() {
             val tempList = mutableListOf<MarkerData>()
             for (dc: DocumentChange in value?.documentChanges!!) {
                 if (dc.type == DocumentChange.Type.ADDED) {
-                    val newMarker = dc.document.toObject(MarkerData::class.java)
-                    newMarker.id = dc.document.id
-                    newMarker.location.latitude =
-                        dc.document.get(LATITUDE_KEY).toString().toDouble()
-                    newMarker.location.longitude =
-                        dc.document.get(LONGITUDE_KEY).toString().toDouble()
+                    val newMarker = MarkerData(
+                        id = dc.document.id,
+                        name = dc.document.get(NAME_KEY).toString(),
+                        type = dc.document.get(TYPE_KEY).toString(),
+                        description = dc.document.get(DESCRIPTION_KEY).toString(),
+                        photo = dc.document.get(PHOTOS_KEY).toString(),
+                        location = Location(
+                            latitude =  dc.document.get(LATITUDE_KEY).toString().toDouble(),
+                            longitude = dc.document.get(LONGITUDE_KEY).toString().toDouble()
+                        )
+                    )
                     tempList.add(newMarker)
                 }
             }
             _markerList.value = tempList
             _getMarkersComplet.value = true
-            Log.i("makerList", "markerList befor: ${_markerList.value!!.size}")
+            //Log.i("makerList", "markerList befor: ${_markerList.value!!.size}")
+            Log.i("makerList", "markerList content: ${_markerList.value!!}")
         }
     }
 
@@ -316,7 +318,6 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun createMapOfMarkers() {
-        Log.i("makerList", "sdf ${_markerList.value!!.size}")
         for (m in markerList.value!!){
             addMarkerToMap(m)
         }
@@ -363,6 +364,7 @@ class MarkerViewModel : ViewModel() {
 
     fun changeNameMarker(value: String) {
         this._nameMarker.value = value
+        Log.i("makerList", "change name marker: ${_nameMarker.value}")
         //dataToSave.put(NAME_KEY, this.nameMarker)
     }
 
@@ -438,8 +440,8 @@ class MarkerViewModel : ViewModel() {
     ) {
         if (this.proveThatMarkerIsCorrect()) {
             this.changeShowBottomSheet(false)
-            this.restartMarkerAtributes()
             this.addMarker()
+            this.restartMarkerAtributes()
             if (this.uri.value != null) this.uploadImage()
         } else
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)

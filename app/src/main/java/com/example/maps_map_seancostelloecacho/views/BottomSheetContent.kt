@@ -30,7 +30,7 @@ fun NameMarkerContent(
     ) {
     TextField(
         value = name,
-        onValueChange =  {onNameChange(it)} ,
+        onValueChange =  { onNameChange(it) } ,
         placeholder = { Text(text = "Name") },
         modifier = modifier
     )
