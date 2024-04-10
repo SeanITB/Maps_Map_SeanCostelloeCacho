@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import com.example.maps_map_seancostelloecacho.firebase.Repository
 import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
@@ -18,6 +17,8 @@ import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -170,32 +171,46 @@ class MarkerViewModel : ViewModel() {
 
     fun getMarkers() {
         repository.getMarkers().addSnapshotListener { value, error ->
-            if (error != null) {
-                Log.e("Firestore error!", error.message.toString())
-                return@addSnapshotListener
-            }
-            val tempList = mutableListOf<MarkerData>()
-            for (dc: DocumentChange in value?.documentChanges!!) {
-                if (dc.type == DocumentChange.Type.ADDED) {
-                    val newMarker = MarkerData(
-                        id = dc.document.id,
-                        name = dc.document.get(NAME_KEY).toString(),
-                        type = dc.document.get(TYPE_KEY).toString(),
-                        description = dc.document.get(DESCRIPTION_KEY).toString(),
-                        photo = dc.document.get(PHOTOS_KEY).toString(),
-                        location = Location(
-                            latitude =  dc.document.get(LATITUDE_KEY).toString().toDouble(),
-                            longitude = dc.document.get(LONGITUDE_KEY).toString().toDouble()
-                        )
-                    )
-                    tempList.add(newMarker)
-                }
-            }
-            _markerList.value = tempList
-            _getMarkersComplet.value = true
-            //Log.i("makerList", "markerList befor: ${_markerList.value!!.size}")
-            Log.i("makerList", "markerList content: ${_markerList.value!!}")
+            processOfGettingMarkerFormDataStore(error, value)
         }
+    }
+
+    fun getFilterMarkers() {
+        repository.getMarkers().whereEqualTo(TYPE_KEY, this.typeMarker.value!!).addSnapshotListener { value, error ->
+            processOfGettingMarkerFormDataStore(error, value)
+        }
+    }
+
+    private fun processOfGettingMarkerFormDataStore(
+        error: FirebaseFirestoreException?,
+        value: QuerySnapshot?
+    ) {
+        if (error != null) {
+            Log.e("Firestore error!", error.message.toString())
+            return
+        }
+        val tempList = mutableListOf<MarkerData>()
+        for (dc: DocumentChange in value?.documentChanges!!) {
+            Log.i("markrType", "filter by from data store: " + dc.document.get(TYPE_KEY).toString())
+
+            if (dc.type == DocumentChange.Type.ADDED) {
+                val newMarker = MarkerData(
+                    id = dc.document.id,
+                    name = dc.document.get(NAME_KEY).toString(),
+                    type = dc.document.get(TYPE_KEY).toString(),
+                    description = dc.document.get(DESCRIPTION_KEY).toString(),
+                    photo = dc.document.get(PHOTOS_KEY).toString(),
+                    location = Location(
+                        latitude = dc.document.get(LATITUDE_KEY).toString().toDouble(),
+                        longitude = dc.document.get(LONGITUDE_KEY).toString().toDouble()
+                    )
+                )
+                tempList.add(newMarker)
+            }
+        }
+        _markerList.value = tempList
+        Log.i("MARKERS", "${_markerList.value!!.size}")
+        _getMarkersComplet.value = true
     }
 
     fun getMarker(markerId: String) {
@@ -318,6 +333,9 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun createMapOfMarkers() {
+        if (this.categoryMap!!.isNotEmpty()) {
+            this.categoryMap!!.clear()
+        }
         for (m in markerList.value!!){
             addMarkerToMap(m)
         }
@@ -339,16 +357,15 @@ class MarkerViewModel : ViewModel() {
         }
     }
 
-    fun whenMarkerTypedChanged(gender: String) {
-        this.changeTypeMarker(gender)
-        if (this.actualScreen.value != "BottomSheet") {
+    fun whenMarkerTypedChanged() {
+        if (this.actualScreen.value != "BottomSheet" && this.typeMarker.value != "All markers") {
             this.changeIsFiltred(true)
-            this.createFilerList()
-            if (this.typeMarker.equals("All markers"))
-                this.changeIsFiltred(false)
+            //this.createFilerList()
+            //this.getFilterMarkers()
             this.changeExpandedTopBar(false)
-        } else if (this.actualScreen.value == "mapScreen") {
-            this.createFilerList()
+        } else if (this.typeMarker.value == "All markers"){
+            this.changeIsFiltred(false)
+            //this.getMarkers()
         } else {
             this.changeExpandedBottomSheet(false)
         }

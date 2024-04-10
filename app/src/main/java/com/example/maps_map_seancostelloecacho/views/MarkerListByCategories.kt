@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,12 +14,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,29 +29,49 @@ fun MarkerListScreen(markerVM: MarkerViewModel) {
 
     val isFiltered by markerVM.isFiltered.observeAsState(false)
 
+    Log.i("filtrar: ", "$isFiltered")
+
+
     if (isFiltered) {
-        MarkerFilterListScreen(markerVM)
+        MarkerFilterCategoriesListScreen(markerVM)
     } else {
-        MarkerListByCategoriesScreen(markerVM)
+        MarkerCategoriesListScreen(markerVM)
     }
+
+
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MarkerFilterListScreen(markerVM: MarkerViewModel) {
-    val filterMarkerList by markerVM.markerList.observeAsState(emptyList())
-    if (filterMarkerList.isNotEmpty()) {
+fun MarkerFilterCategoriesListScreen(markerVM: MarkerViewModel) {
+    val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
+    val getMarkersComplet by markerVM.getMarkersComplet.observeAsState(false)
+    val typeMarker by markerVM.typeMarker.observeAsState("")
+
+    /*
+    LaunchedEffect(key1 = typeMarker) {
+        markerVM.getFilterMarkers()
+    }
+
+     */
+
+    LaunchedEffect(key1 = getMarkersComplet) {
+        markerVM.createMapOfMarkers()
+        markerVM.sortMarkerList()
+    }
+
+    if (categoryMarkerList.isNotEmpty()) {
         LazyColumn() {
             stickyHeader {
                 CategoryHeader(
-                    text = markerVM.typeMarker.value!!,
+                    text = categoryMarkerList.get(0).name,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.primary)
                         .padding(16.dp)
                 )
             }
-            items(filterMarkerList) { element ->
+            items(categoryMarkerList.get(0).items) { element ->
                 CategoryItem(
                     text = element.name,
                     modifier = Modifier
@@ -63,15 +82,19 @@ fun MarkerFilterListScreen(markerVM: MarkerViewModel) {
             }
         }
     } else {
-        ErrorMsg(msg = "For the moment, for the type ${markerVM.typeMarker} there isn't any marker.", modifier = Modifier.fillMaxSize())
+        ErrorMsg(
+            msg = "For the moment, for the type ${markerVM.typeMarker} there isn't any marker.",
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MarkerListByCategoriesScreen(markerViewModel: MarkerViewModel) {
+fun MarkerCategoriesListScreen(markerViewModel: MarkerViewModel) {
     val categoryMarkerList by markerViewModel.categoryMarkerList.observeAsState(emptyList())
     val getMarkersComplet by markerViewModel.getMarkersComplet.observeAsState(false)
+
 
     markerViewModel.getMarkers()
     LaunchedEffect(getMarkersComplet) {
@@ -83,24 +106,32 @@ fun MarkerListByCategoriesScreen(markerViewModel: MarkerViewModel) {
         Log.i("makerList", "markers size: ${categoryMarkerList[0].items.size}")
         LazyColumn() {
             categoryMarkerList.forEach { category ->
-                Log.i("makerList", "markers sizeee: ${category.items.size}")
-                Log.i("makerList", "markers name: ${category.name}")
                 stickyHeader {
                     CategoryHeader(
                         text = category.name,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(MaterialTheme.colorScheme.primary)
                     )
                 }
                 items(category.items) { marker ->
+
                     CategoryItem(
                         text = marker.name,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.secondary)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(MaterialTheme.colorScheme.secondary)
                     )
                 }
             }
         }
     } else {
-        ErrorMsg(msg = "For the moment, you don't have any marker.", modifier = Modifier.fillMaxSize())
+        ErrorMsg(
+            msg = "For the moment, you don't have any marker.",
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
@@ -123,7 +154,7 @@ fun CategoryItem(
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = text+ " hola",
+        text = text,
         modifier = modifier,
         fontSize = 14.sp,
         color = MaterialTheme.colorScheme.primary
@@ -131,8 +162,8 @@ fun CategoryItem(
 }
 
 @Composable
-fun ErrorMsg (msg: String, modifier: Modifier = Modifier) {
-    Column (
+fun ErrorMsg(msg: String, modifier: Modifier = Modifier) {
+    Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

@@ -33,7 +33,7 @@ fun MyScaffold(
 ) {
     Scaffold(
         topBar = {
-            MyTopAppBarList(state = state, markerVM = markerVM)
+            MyTopAppBar(state = state, markerVM = markerVM)
         }
     ) { paddingValues ->
         Box (
@@ -48,7 +48,7 @@ fun MyScaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBarList(state: DrawerState, markerVM: MarkerViewModel) {
+fun MyTopAppBar(state: DrawerState, markerVM: MarkerViewModel) {
     val actualScreen by markerVM.actualScreen.observeAsState("")
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
@@ -78,7 +78,7 @@ fun MyTopAppBarList(state: DrawerState, markerVM: MarkerViewModel) {
                 onExpandedTopBarChange = {markerVM.changeExpandedTopBar(it)},
                 expandedBottomSheet = expandedBottomSheet,
                 onExpandedBottomSheetChange = {markerVM.changeExpandedBottomSheet(it)},
-                whenMarkerTypedChanged = {markerVM.whenMarkerTypedChanged(it)}
+                whenMarkerTypedChanged = {markerVM.whenMarkerTypedChanged()}
             )
         }
     )

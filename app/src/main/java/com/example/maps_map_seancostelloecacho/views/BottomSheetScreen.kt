@@ -101,7 +101,7 @@ private fun TypeMarkerScreen(markerVM: MarkerViewModel) {
         onExpandedTopBarChange = {markerVM.changeExpandedTopBar(it)},
         expandedBottomSheet = expandedBottomSheet,
         onExpandedBottomSheetChange = {markerVM.changeExpandedBottomSheet(it)},
-        whenMarkerTypedChanged = {markerVM.whenMarkerTypedChanged(it) }
+        whenMarkerTypedChanged = {markerVM.whenMarkerTypedChanged() }
         )
 }
 

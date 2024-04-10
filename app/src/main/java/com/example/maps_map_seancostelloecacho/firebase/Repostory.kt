@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class Repository {
     private val database = FirebaseFirestore.getInstance()
 
-    val MARKERS = "markers"
+    val MARKERS_KEY = "markers"
     val NAME_KEY = "name"
     val TYPE_KEY = "type"
     val DESCRIPTION_KEY = "description"
@@ -17,7 +17,7 @@ class Repository {
     val LONGITUDE_KEY = "longitude"
 
     fun addMarker(marker: MarkerData){
-        database.collection(MARKERS)
+        database.collection(MARKERS_KEY)
             .add(
                 hashMapOf(
                     NAME_KEY to marker.name,
@@ -31,7 +31,7 @@ class Repository {
     }
 
     fun editMarker(editMarker: MarkerData) {
-        database.collection(MARKERS).document(editMarker.id!!).set(
+        database.collection(MARKERS_KEY).document(editMarker.id!!).set(
             hashMapOf(
                 NAME_KEY to editMarker.name,
                 TYPE_KEY to editMarker.type,
@@ -44,15 +44,15 @@ class Repository {
     }
 
     fun deleteMarker(markerId: String) {
-        database.collection(MARKERS).document(markerId).delete()
+        database.collection(MARKERS_KEY).document(markerId).delete()
     }
 
     fun getMarkers(): CollectionReference {
-        return database.collection(MARKERS)
+        return database.collection(MARKERS_KEY)
     }
 
     fun getMarker(markerId: String): DocumentReference {
-        return database.collection(MARKERS).document(markerId)
+        return database.collection(MARKERS_KEY).document(markerId)
     }
 
     /*

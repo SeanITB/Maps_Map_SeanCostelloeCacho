@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +29,9 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @SuppressLint("MissingPermission")
 @Composable
 fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
-    markerVM.changeActualScreen("mapScreen")
     val markerList by markerVM.markerList.observeAsState(emptyList())
     val showBottomSheet by markerVM.showBottomSheet.observeAsState(false)
-    markerVM.getMarkers()
-    Log.i("TAMAÑO", "VIEW " + markerList.size)
+    val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val fusedLocationProviderClient =
         remember {
@@ -56,6 +55,15 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
             cameraPositionState.position = CameraPosition.fromLatLngZoom(deviceLatLng, 18f)
         } else {
             Log.e("ERROR", "Exception: %s", task.exception)
+        }
+    }
+    markerVM.changeActualScreen("mapScreen")
+    Log.i("markerType", "marker type: $typeMarker")
+    SideEffect {
+        if (typeMarker.equals("All markers")) {
+            markerVM.getMarkers()
+        } else {
+            markerVM.getFilterMarkers()
         }
     }
     Column (

@@ -72,7 +72,7 @@ fun TypeMarkerContent(
     Box {
         OutlinedTextField(
             value = typeMarker,
-            onValueChange =  onTypeMarkerChange,
+            onValueChange =  { onTypeMarkerChange(it) },
             label = { Text(text = "Marker Type", color = MaterialTheme.colorScheme.primary) },
             enabled = false,
             readOnly = true,
@@ -117,6 +117,7 @@ fun TypeMarkerContent(
                         )
                     },
                     onClick = {
+                        onTypeMarkerChange(gender)
                         whenMarkerTypedChanged(gender)
                     }
                 )
