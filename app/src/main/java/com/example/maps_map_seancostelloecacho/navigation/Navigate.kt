@@ -1,5 +1,7 @@
 package com.example.maps_map_seancostelloecacho.navigation
 
+import MarkerListContent
+import MarkerListScreen
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -17,9 +19,6 @@ import com.example.maps_map_seancostelloecacho.views.GalleryScreen
 import com.example.maps_map_seancostelloecacho.views.LunchScreen
 import com.example.maps_map_seancostelloecacho.views.MapGeolocalisationScreen
 import com.example.maps_map_seancostelloecacho.views.MapScreen
-import com.example.maps_map_seancostelloecacho.views.MarkerCategoriesListScreen
-import com.example.maps_map_seancostelloecacho.views.MarkerFilterCategoriesListScreen
-import com.example.maps_map_seancostelloecacho.views.MarkerListScreen
 import com.example.maps_map_seancostelloecacho.views.TakePhotoScreen
 import com.example.maps_map_seancostelloecacho.views.UserLoginContent
 import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
@@ -56,9 +55,10 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
         composable(Routes.LoginScreen.route,) { UserLoginContent(navController, markerVM) }
         composable(Routes.MapGeolocalisationScreen.route) { MapGeolocalisationScreen(navController, markerVM) }
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
-        composable(Routes.MarkerListHomeScreen.route) { MarkerListScreen(navController, navigationItems, markerVM) }
-        composable(Routes.MarkerListHomeScreen.route) { MarkerCategoriesListScreen(markerVM) }
-        composable(Routes.MarkerListHomeScreen.route) { MarkerFilterCategoriesListScreen(markerVM) }
+        composable(Routes.MarkerListHomeScreen.route) { MarkerListContent(navController, markerVM) }
+        composable(Routes.MarkerListScreen.route) { MarkerListScreen(markerVM) }
+        //composable(Routes.MarkerListHomeScreen.route) { MarkerCategoriesListScreen(markerVM) }
+        //composable(Routes.MarkerListHomeScreen.route) { MarkerFilterCategoriesListScreen(markerVM) }
         composable(Routes.CameraScreen.route,) { CameraScreen(markerVM, navController) }
         composable(Routes.GalleryScreen.route,) { GalleryScreen(markerVM) }
         composable(Routes.TakePhotoScreen.route,) { TakePhotoScreen(markerVM, navController) }

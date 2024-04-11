@@ -68,6 +68,10 @@ class MarkerViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>(true)
     val isLoading = _isLoading
 
+    private val _finishSort = MutableLiveData(false)
+    val finishSort = _finishSort
+
+
     private val _userId = MutableLiveData<String>("")
     val userId = _userId
 
@@ -98,8 +102,8 @@ class MarkerViewModel : ViewModel() {
     private val _isFilitered = MutableLiveData(false)
     val isFiltered = _isFilitered
 
-    private val _getMarkersComplet = MutableLiveData(false)
-    val markersComplet = _getMarkersComplet
+    private val _markersComplet = MutableLiveData(false)
+    val markersComplet = _markersComplet
 
     private val _markerList = MutableLiveData(emptyList<MarkerData>())
     val markerList = _markerList
@@ -193,8 +197,6 @@ class MarkerViewModel : ViewModel() {
         }
         val tempList = mutableListOf<MarkerData>()
         for (dc: DocumentChange in value?.documentChanges!!) {
-            Log.i("markrType", "filter by from data store: " + dc.document.get(TYPE_KEY).toString())
-
             if (dc.type == DocumentChange.Type.ADDED) {
                 val newMarker = MarkerData(
                     id = dc.document.id,
@@ -211,8 +213,8 @@ class MarkerViewModel : ViewModel() {
             }
         }
         _markerList.value = tempList
-        Log.i("MARKERS", "${_markerList.value!!.size}")
-        _getMarkersComplet.value = true
+        Log.i("MARKERS", "size: ${_markerList.value!!.size} values: ${_markerList.value!!}")
+        _markersComplet.value = true
     }
 
     fun getMarker(markerId: String) {
@@ -281,8 +283,13 @@ class MarkerViewModel : ViewModel() {
 
     // App Methods
     fun setMarkerComplete(value: Boolean) {
-        this.markersComplet.value = value
+        this._markersComplet.value = value
     }
+
+    fun changeFinishSort(value: Boolean) {
+        this._finishSort.value = value
+    }
+
     fun setCamaeraPermissionGranted(granted: Boolean) {
         this._camaeraPermissionGranted.value = granted
     }
@@ -329,13 +336,16 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun sortMarkerList() {
-        _categoryMarkrList.value = emptyList()
-        this._categoryMarkrList.value = this.categoryMap?.map {
-            Category(
-                name = it.key,
-                items = it.value
-            )
+        this._categoryMarkrList.value = emptyList()
+        if (markerList.value!!.isNotEmpty()) {
+            this._categoryMarkrList.value = this.categoryMap?.map {
+                Category(
+                    name = it.key,
+                    items = it.value
+                )
+            }
         }
+        this._finishSort.value = true
     }
 
     fun createMapOfMarkers() {
@@ -343,8 +353,10 @@ class MarkerViewModel : ViewModel() {
             this.categoryMap!!.clear()
         }
         Log.i("MARKER", "markerLis values in VM: ${markerList.value}")
-        for (m in markerList.value!!){
-            addMarkerToMap(m)
+        if (markerList.value!!.isNotEmpty()) {
+            for (m in markerList.value!!) {
+                addMarkerToMap(m)
+            }
         }
     }
 
@@ -352,17 +364,6 @@ class MarkerViewModel : ViewModel() {
         this.isFiltered.value = value
     }
 
-    fun createFilerList() {
-        if (this.typeMarker.value == "All markers") {
-            this._filterMarkerList.value = this._markerList.value
-        } else {
-            this.categoryMarkerList.value?.forEach {
-                if (it.name == this.typeMarker.value) {
-                    this._filterMarkerList.value = it.items
-                }
-            }
-        }
-    }
 
     fun whenMarkerTypedChanged() {
         if (this.actualScreen.value != "BottomSheet" && this.typeMarker.value != "All markers") {
