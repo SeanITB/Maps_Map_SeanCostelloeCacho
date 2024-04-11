@@ -97,7 +97,7 @@ class MarkerViewModel : ViewModel() {
     val isFiltered = _isFilitered
 
     private val _getMarkersComplet = MutableLiveData(false)
-    val getMarkersComplet = _getMarkersComplet
+    val markersComplet = _getMarkersComplet
 
     private val _markerList = MutableLiveData(emptyList<MarkerData>())
     val markerList = _markerList
@@ -278,6 +278,9 @@ class MarkerViewModel : ViewModel() {
 
 
     // App Methods
+    fun setMarkerComplete(value: Boolean) {
+        this.markersComplet.value = value
+    }
     fun setCamaeraPermissionGranted(granted: Boolean) {
         this._camaeraPermissionGranted.value = granted
     }
@@ -324,6 +327,7 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun sortMarkerList() {
+        _categoryMarkrList.value = emptyList()
         this._categoryMarkrList.value = this.categoryMap?.map {
             Category(
                 name = it.key,
@@ -336,6 +340,7 @@ class MarkerViewModel : ViewModel() {
         if (this.categoryMap!!.isNotEmpty()) {
             this.categoryMap!!.clear()
         }
+        Log.i("MARKER", "markerLis values in VM: ${markerList.value}")
         for (m in markerList.value!!){
             addMarkerToMap(m)
         }

@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val markerVM by viewModels<MarkerViewModel>()
                     val TIME : Int = 1000
+                    markerVM.changeTypeMarker("All markers") // toDo: ns si es un poco guarro hacerlo aqui
                     MyDrawer(markerVM = markerVM, TIME = TIME)
                 }
             }

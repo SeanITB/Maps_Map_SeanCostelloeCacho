@@ -25,17 +25,15 @@ import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 @Composable
 fun MarkerListScreen(markerVM: MarkerViewModel) {
+    val typeMarker by markerVM.typeMarker.observeAsState("")
+
     markerVM.changeActualScreen("MarkerListByCategories")
 
-    val isFiltered by markerVM.isFiltered.observeAsState(false)
 
-    Log.i("filtrar: ", "$isFiltered")
-
-
-    if (isFiltered) {
-        MarkerFilterCategoriesListScreen(markerVM)
-    } else {
+    if (typeMarker.equals("All markers")) { // toDO: creo q se tiene q hacer un sideEfect i el contenido q sean navigations
         MarkerCategoriesListScreen(markerVM)
+    } else {
+        MarkerFilterCategoriesListScreen(markerVM)
     }
 
 
@@ -45,20 +43,18 @@ fun MarkerListScreen(markerVM: MarkerViewModel) {
 @Composable
 fun MarkerFilterCategoriesListScreen(markerVM: MarkerViewModel) {
     val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
-    val getMarkersComplet by markerVM.getMarkersComplet.observeAsState(false)
-    val typeMarker by markerVM.typeMarker.observeAsState("")
+    val getMarkersComplet by markerVM.markersComplet.observeAsState(false)
 
-    /*
-    LaunchedEffect(key1 = typeMarker) {
-        markerVM.getFilterMarkers()
-    }
-
-     */
-
+    markerVM.getFilterMarkers()
+    Log.i("MARKERS", "$getMarkersComplet")
     LaunchedEffect(key1 = getMarkersComplet) {
+        Log.i("MARKERS", "CONTENT in list: $categoryMarkerList")
+        markerVM.setMarkerComplete(false)
         markerVM.createMapOfMarkers()
         markerVM.sortMarkerList()
     }
+
+
 
     if (categoryMarkerList.isNotEmpty()) {
         LazyColumn() {
@@ -93,7 +89,7 @@ fun MarkerFilterCategoriesListScreen(markerVM: MarkerViewModel) {
 @Composable
 fun MarkerCategoriesListScreen(markerViewModel: MarkerViewModel) {
     val categoryMarkerList by markerViewModel.categoryMarkerList.observeAsState(emptyList())
-    val getMarkersComplet by markerViewModel.getMarkersComplet.observeAsState(false)
+    val getMarkersComplet by markerViewModel.markersComplet.observeAsState(false)
 
 
     markerViewModel.getMarkers()
@@ -103,7 +99,6 @@ fun MarkerCategoriesListScreen(markerViewModel: MarkerViewModel) {
     }
 
     if (categoryMarkerList.isNotEmpty()) {
-        Log.i("makerList", "markers size: ${categoryMarkerList[0].items.size}")
         LazyColumn() {
             categoryMarkerList.forEach { category ->
                 stickyHeader {

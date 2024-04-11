@@ -61,7 +61,6 @@ fun MyDrawer(markerVM: MarkerViewModel, TIME: Int) {
                     onClick = {
                         scope.launch {
                             state.close()
-                            markerVM.changeTypeMarker("All markers") //toDo: ns si es un poco guarro ponerlo aqui
                             navController.navigate(Routes.MapScreen.route)
                         }
                     }

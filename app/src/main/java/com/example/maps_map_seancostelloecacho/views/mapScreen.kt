@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,6 +32,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
     val markerList by markerVM.markerList.observeAsState(emptyList())
     val showBottomSheet by markerVM.showBottomSheet.observeAsState(false)
+    val getMarkersComlet by markerVM.markersComplet.observeAsState(false)
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val fusedLocationProviderClient =
@@ -59,13 +61,20 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
     }
     markerVM.changeActualScreen("mapScreen")
     Log.i("markerType", "marker type: $typeMarker")
-    SideEffect {
+    LaunchedEffect(key1 = typeMarker) {
         if (typeMarker.equals("All markers")) {
             markerVM.getMarkers()
         } else {
             markerVM.getFilterMarkers()
+
         }
     }
+    Log.i("MARKERS", "$getMarkersComlet")
+    LaunchedEffect(key1 = getMarkersComlet) {
+        Log.i("MARKERS", "Markers in map $markerList")
+        markerVM.setMarkerComplete(false)
+    }
+
     Column (
         modifier = Modifier
             .fillMaxSize()
