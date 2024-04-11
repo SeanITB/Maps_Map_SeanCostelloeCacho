@@ -71,7 +71,7 @@ fun MyDrawer(markerVM: MarkerViewModel, TIME: Int) {
                     onClick = {
                         scope.launch {
                             state.close()
-                            navController.navigate(Routes.MarkerListScreen.route)
+                            navController.navigate(Routes.MarkerListHomeScreen.route)
                         }
                     }
                 )

@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -21,22 +22,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 @Composable
-fun MarkerListScreen(markerVM: MarkerViewModel) {
+fun MarkerListScreen(navController: NavHostController, navigationItems:  Map<String, String>, markerVM: MarkerViewModel) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
 
     markerVM.changeActualScreen("MarkerListByCategories")
 
-
-    if (typeMarker.equals("All markers")) { // toDO: creo q se tiene q hacer un sideEfect i el contenido q sean navigations
-        MarkerCategoriesListScreen(markerVM)
-    } else {
-        MarkerFilterCategoriesListScreen(markerVM)
-    }
-
-
+    Log.i("TYPE_MARKER", "type marker: " + typeMarker)
+    //LaunchedEffect(key1 = typeMarker) {
+        if (typeMarker.equals("All markers")) { // toDO: creo q se tiene q hacer un sideEfect i el contenido q sean navigations
+            //navController.navigate(navigationItems["markerListScreen"]!!)
+            MarkerFilterCategoriesListScreen(markerVM)
+        } else {
+            //navController.navigate(navigationItems["markerFilterListScreen"]!!)
+            MarkerCategoriesListScreen(markerVM)
+        }
+    //}
 }
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -45,11 +45,13 @@ class MarkerViewModel : ViewModel() {
     val MAP_SCREEN_KEY = "mapScreen"
 
     // app values
-    private val _navigationItemsItems = MutableLiveData(
+    private val _navigationItemsItems = MutableLiveData( //toDo: no hacer asi, poner un bucle
         mapOf<String, String>(
             NavigationItems.CameraScreen.label to NavigationItems.CameraScreen.route,
             NavigationItems.GalleryScreen.label to NavigationItems.GalleryScreen.route,
-            NavigationItems.MapGeolocalisationScreen.label to NavigationItems.MapGeolocalisationScreen.route
+            NavigationItems.MapGeolocalisationScreen.label to NavigationItems.MapGeolocalisationScreen.route,
+            NavigationItems.MarkerCategoriesListScreen.label to NavigationItems.MarkerCategoriesListScreen.route,
+            NavigationItems.MarkerFilterCategoriesListScreen.label to NavigationItems.MarkerFilterCategoriesListScreen.route
         )
     )
     val navigationItems = _navigationItemsItems
