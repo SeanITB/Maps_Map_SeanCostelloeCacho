@@ -2,6 +2,7 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -76,7 +77,11 @@ fun TakePhotoScreen(markerVM: MarkerViewModel, navController: NavController) {
             IconButton(
                 onClick = {
                     takePhoto(context, controller) { photo ->
-                        markerVM.addPhoto(photo)
+                        //markerVM.addPhoto(photo)
+                        val uri = markerVM.bitmapToUri(context, photo)
+                        if (uri != null) {
+                            markerVM.changeUri(uri)
+                        }
                         navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
                     }
                 }
@@ -98,6 +103,19 @@ private fun takePhoto(
             override fun onCaptureSuccess(image: ImageProxy) {
                 super.onCaptureSuccess(image)
                 onPhotoTaken(image.toBitmap())
+                val matri = Matrix().apply {
+                    postRotate(image.imageInfo.rotationDegrees.toFloat())
+                }
+                val rotatedBitmap = Bitmap.createBitmap(
+                    image.toBitmap(),
+                    0,
+                    0,
+                    image.width,
+                    image.height,
+                    matri,
+                    true
+                )
+                onPhotoTaken(rotatedBitmap)
             }
 
             override fun onError(exception: ImageCaptureException) {

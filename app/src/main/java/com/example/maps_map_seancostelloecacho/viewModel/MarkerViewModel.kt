@@ -1,8 +1,10 @@
 package com.example.maps_map_seancostelloecacho.viewModel
 
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
@@ -20,6 +22,7 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -502,6 +505,26 @@ class MarkerViewModel : ViewModel() {
     }
 
      */
+    fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
+        val filename = "${System.currentTimeMillis()}.jpg"
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.TITLE, filename)
+            put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+            put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+        }
+
+        val uri: Uri? = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        uri?.let {
+            val outstream: OutputStream? = context.contentResolver.openOutputStream(it)
+            outstream?.let { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }
+            outstream?.close()
+        }
+
+        return uri
+    }
+
 
     fun restartMarkerAtributes() {
         this.nameMarker.value = ""
