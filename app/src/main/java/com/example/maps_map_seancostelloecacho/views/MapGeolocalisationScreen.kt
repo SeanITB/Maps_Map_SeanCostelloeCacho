@@ -54,14 +54,11 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
             }
         }
     )
-    Log.i("booleano", "estado boleano: $isMapPermissionsGranted")
     if (!isMapPermissionsGranted) { //toDO: por eso no navega
         SideEffect {
             launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     } else {
-        Log.d("ACEPTADO", "Aceptado")
-        println("navegando a mapa")
         markerVM.setShowMapPermissionDenied(false)
         navController.navigate(Routes.MapScreen.route)
     }

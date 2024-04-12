@@ -1,12 +1,17 @@
 package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,9 +21,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.example.maps_map_seancostelloecacho.R
+import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 
 // todo (done): setting expanding sizes in sub-composables
@@ -140,16 +153,38 @@ fun DescriptionMarkerContent(
     )
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun NavigateToPhotoContent(navController: NavController, navigationItems: Map<String, String>) {
-    Button(
-        onClick = {
-            navController.navigate(navigationItems["cameraScreen"]!!) // Camera screen
-        }
+fun ImageItem(navController: NavController, markerVM: MarkerViewModel) {
+    val uri by markerVM.uri.observeAsState("")
+    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
+    Card(
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth(0.25f)
+            .fillMaxHeight(0.25f)
     ) {
-        Text(text = "photo")
+        if (uri != null) {
+            GlideImage(
+                model = uri,
+                contentDescription = "Image from the new marker",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { navController.navigate(navigationItems["cameraScreen"]!!) }
+            )
+        } else {
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "Defult images for marker",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { navController.navigate(navigationItems["cameraScreen"]!!) }
+            )
+        }
     }
 }
+
 
 @Composable
 fun WhenAddMarkerContent(

@@ -3,7 +3,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -27,10 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 
@@ -58,9 +54,7 @@ fun MyBottomSheetScreen(navigationController: NavController, markerVM: MarkerVie
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             DescriptionMarkerScreen(markerVM = markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            Image(markerVM)
-            Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            NavigateToCameraScreen(navigationController = navigationController, markerVM = markerVM)
+            ImageItem(navigationController, markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(markerVM = markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
@@ -116,24 +110,9 @@ private fun DescriptionMarkerScreen(markerVM: MarkerViewModel) {
     )
 }
 
-@Composable
-private fun NavigateToCameraScreen(navigationController: NavController, markerVM: MarkerViewModel) {
-    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
-    NavigateToPhotoContent(navigationController, navigationItems)
-}
 
 
 
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun Image(markerVM: MarkerViewModel) {
-    val photoMarker by markerVM.photoMarker.observeAsState("")
-    Log.i("IMAGE", "image in add marker $photoMarker")
-    GlideImage(
-        model = photoMarker.toUri(),
-        contentDescription = "Image from the new marker",
-    )
-}
 
 @Composable
 fun PhotoItem(photo: Bitmap) {

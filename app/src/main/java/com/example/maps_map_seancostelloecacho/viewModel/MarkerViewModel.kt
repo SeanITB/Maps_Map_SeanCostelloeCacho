@@ -527,10 +527,11 @@ class MarkerViewModel : ViewModel() {
 
 
     fun restartMarkerAtributes() {
-        this.nameMarker.value = ""
-        this.typeMarker.value = "All markers"
-        this.descriptionMarker.value = ""
-        this.photoMarker.value = ""
+        this._nameMarker.value = ""
+        this._typeMarker.value = "All markers"
+        this._descriptionMarker.value = ""
+        this._photoMarker.value = ""
+        this._uri.value = null
     }
 
     fun chngeUserId(value: String) {

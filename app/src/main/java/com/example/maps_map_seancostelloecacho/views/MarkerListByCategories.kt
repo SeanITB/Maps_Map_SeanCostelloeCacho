@@ -29,10 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 @Composable
@@ -137,7 +135,6 @@ fun CategoryItem(
                     //toDo
                 }
         ) {
-            Log.i("photo", "potho: $photo")
             GlideImage(
                 model = photo.toUri(),
                 contentDescription = "$text image",
