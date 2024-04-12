@@ -2,7 +2,6 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -87,7 +86,7 @@ fun GalleryScreen(navController: NavHostController, markerVM: MarkerViewModel) {
                     launchImage.launch("image/*")
                     galleryOpened = true
                 } else {
-                    markerVM.addPhoto(bitmap!!)
+                    //markerVM.addPhoto(bitmap!!)
                     navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
                 }
             }

@@ -138,8 +138,8 @@ class MarkerViewModel : ViewModel() {
     private val _descriptionMarker = MutableLiveData<String>("")
     val descriptionMarker = _descriptionMarker
 
-    private val _photosMarker = MutableLiveData<MutableList<Bitmap>>(mutableListOf())
-    val photosMarker = _photosMarker
+    private val _photoMarker = MutableLiveData("")
+    val photoMarker = _photoMarker
 
     private val _latitudeMarker = MutableLiveData<Double>(0.0)
     val latitudeMarker = _latitudeMarker
@@ -410,8 +410,8 @@ class MarkerViewModel : ViewModel() {
         //dataToSave.put(DESCRIPTION_KEY, this.description)
     }
 
-    fun addPhoto(value: Bitmap) {
-        this._photosMarker.value!!.add(value)
+    fun addPhoto(value: String) {
+        this._photoMarker.value = value
         //dataToSave.put(PHOTOS_KEY, this.photoList)
     }
 
@@ -530,7 +530,7 @@ class MarkerViewModel : ViewModel() {
         this.nameMarker.value = ""
         this.typeMarker.value = "All markers"
         this.descriptionMarker.value = ""
-        this.photosMarker.value = mutableListOf()
+        this.photoMarker.value = ""
     }
 
     fun chngeUserId(value: String) {

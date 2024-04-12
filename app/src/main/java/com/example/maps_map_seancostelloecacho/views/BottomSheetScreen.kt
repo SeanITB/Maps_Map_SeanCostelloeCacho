@@ -3,6 +3,7 @@
 package com.example.maps_map_seancostelloecacho.views
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,8 +27,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
-import com.example.maps_map_seancostelloecacho.R
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 
@@ -57,7 +58,7 @@ fun MyBottomSheetScreen(navigationController: NavController, markerVM: MarkerVie
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             DescriptionMarkerScreen(markerVM = markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            RowOfImages(markerVM)
+            Image(markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             NavigateToCameraScreen(navigationController = navigationController, markerVM = markerVM)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
@@ -123,22 +124,15 @@ private fun NavigateToCameraScreen(navigationController: NavController, markerVM
 
 
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun RowOfImages(markerVM: MarkerViewModel) {
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(0.9f),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        if (markerVM.photosMarker.value!!.isNotEmpty()) {
-            items(markerVM.photosMarker.value!!) { photo ->
-                PhotoItem(photo)
-            }
-        } else {
-            items(3) {
-                PhotoDefultItem(R.drawable.ic_launcher_foreground)
-            }
-        }
-    }
+fun Image(markerVM: MarkerViewModel) {
+    val photoMarker by markerVM.photoMarker.observeAsState("")
+    Log.i("IMAGE", "image in add marker $photoMarker")
+    GlideImage(
+        model = photoMarker.toUri(),
+        contentDescription = "Image from the new marker",
+    )
 }
 
 @Composable
