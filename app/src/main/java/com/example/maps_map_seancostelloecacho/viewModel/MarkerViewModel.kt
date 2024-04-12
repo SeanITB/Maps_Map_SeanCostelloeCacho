@@ -346,6 +346,7 @@ class MarkerViewModel : ViewModel() {
             }
         }
         this._finishSort.value = true
+        Log.i("MARKER", "markers in category ${categoryMarkerList.value}")
     }
 
     fun createMapOfMarkers() {

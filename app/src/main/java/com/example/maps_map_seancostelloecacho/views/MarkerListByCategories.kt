@@ -1,4 +1,3 @@
-
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -25,17 +24,13 @@ import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 @Composable
 fun MarkerListContent(
-    navController: NavHostController,
     markerVM: MarkerViewModel
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
-    val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
     val getMarkersComplet by markerVM.markersComplet.observeAsState(false)
-    val finishSort by markerVM.finishSort.observeAsState(false)
 
     markerVM.changeActualScreen("MarkerListByCategories")
 
-    Log.i("MARKER", "actual type: $typeMarker")
     LaunchedEffect(key1 = typeMarker) {
         if (typeMarker.equals("All markers")) {
             markerVM.getMarkers()
@@ -44,19 +39,14 @@ fun MarkerListContent(
         }
     }
 
-
     LaunchedEffect(key1 = getMarkersComplet) {
-
         markerVM.createMapOfMarkers()
         markerVM.sortMarkerList()
         markerVM.setMarkerComplete(false)
     }
 
-    Log.i("MARKERS", "markers $categoryMarkerList")
-    LaunchedEffect(key1 = finishSort) {
-        navController.navigate(Routes.MarkerListScreen.route)
-        markerVM.changeFinishSort(false)
-    }
+    MarkerListScreen(markerVM = markerVM)
+
 }
 
 @Composable
@@ -66,30 +56,34 @@ fun MarkerListScreen(
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
-    if (categoryMarkerList.size > 0) {
+    if (categoryMarkerList.isNotEmpty()) {
         LazyColumn() {
-            stickyHeader {
-                CategoryHeader(
-                    text = categoryMarkerList[0].name,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.primary)
-                        .padding(16.dp)
-                )
-            }
-            items(categoryMarkerList[0].items) { element ->
-                CategoryItem(
-                    text = element.name,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.secondary)
-                        .padding(16.dp)
-                )
+            for (m in categoryMarkerList) {
+                stickyHeader {
+                    CategoryHeader(
+                        text = m.name,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(16.dp)
+                    )
+                }
+                items(m.items) { element ->
+                    CategoryItem(
+                        text = element.name,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.secondary)
+                            .padding(16.dp)
+                    )
+                }
             }
         }
     } else {
+        Log.i("MARKER", "actual type: $typeMarker")
+
         ErrorMsg(
-            msg = if (typeMarker.equals("All markers")) "For the moment, you don't have any marker." else "For the moment, for the type ${markerVM.typeMarker} there isn't any marker.",
+            msg = if (typeMarker.equals("All markers")) "For the moment, you don't have any marker." else "For the moment, for the type ${typeMarker} there isn't any marker.",
             modifier = Modifier.fillMaxSize()
         )
     }
