@@ -28,7 +28,7 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     NavHost(
         navController = navController as NavHostController,
-        startDestination = Routes.MarkerListHomeScreen.route,
+        startDestination = Routes.MapGeolocalisationScreen.route,
         enterTransition = {
             fadeIn(animationSpec = tween(TIME)) + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left, tween(TIME)
@@ -58,7 +58,7 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
         composable(Routes.MarkerListHomeScreen.route) { MarkerListContent(markerVM) }
         composable(Routes.MarkerListScreen.route) { MarkerListScreen(markerVM) }
         composable(Routes.CameraScreen.route,) { CameraScreen(markerVM, navController) }
-        composable(Routes.GalleryScreen.route,) { GalleryScreen(markerVM) }
+        composable(Routes.GalleryScreen.route,) { GalleryScreen(navController, markerVM) }
         composable(Routes.TakePhotoScreen.route,) { TakePhotoScreen(markerVM, navController) }
     }
 }

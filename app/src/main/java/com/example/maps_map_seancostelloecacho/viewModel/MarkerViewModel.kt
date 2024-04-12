@@ -56,6 +56,9 @@ class MarkerViewModel : ViewModel() {
     )
     val navigationItems = _navigationItemsItems
 
+    //private val _imageUrl = MutableLiveData<String>("")
+    //val imageUrl = _imageUrl
+
     private val _userName = MutableLiveData<String>("")
     val userName = _userName
 
@@ -161,13 +164,13 @@ class MarkerViewModel : ViewModel() {
     }
 
     fun instanceActualMarker() {
-        Log.i("makerList", "name markerrr: ${_nameMarker.value}")
+        Log.i("makerList", "uri: ${_nameMarker.value}")
         this.actualMarker.value = MarkerData(
             id = this.idMarker.value,
             name = this.nameMarker.value!!,
             type = this.typeMarker.value!!,
             description = if (this.descriptionMarker.value.equals("")) "There isn't any description." else this.descriptionMarker.value!!,
-            photo = "ToDo photo",
+            photo = this.uri.value.toString(),
             location = Location(
                 this.latitudeMarker.value!!,
                 this.longitudeMarker.value!!
@@ -198,6 +201,7 @@ class MarkerViewModel : ViewModel() {
         val tempList = mutableListOf<MarkerData>()
         for (dc: DocumentChange in value?.documentChanges!!) {
             if (dc.type == DocumentChange.Type.ADDED) {
+                Log.i("photo", "photo in VM ${dc.document.get(PHOTOS_KEY).toString()}")
                 val newMarker = MarkerData(
                     id = dc.document.id,
                     name = dc.document.get(NAME_KEY).toString(),
@@ -213,7 +217,6 @@ class MarkerViewModel : ViewModel() {
             }
         }
         _markerList.value = tempList
-        Log.i("MARKERS", "size: ${_markerList.value!!.size} values: ${_markerList.value!!}")
         _markersComplet.value = true
     }
 
@@ -483,7 +486,8 @@ class MarkerViewModel : ViewModel() {
             .addOnSuccessListener {
                 Log.i("IMAGE UPLOAD", "Image uploaded successfully!")
                 storage.downloadUrl.addOnCanceledListener {
-                    // toDo: do some amazing stuff
+                    Log.i("IMAGE", it.toString())
+                    //changeImageUrl(it.toString())
                 }
             }
             .addOnFailureListener {
@@ -491,6 +495,13 @@ class MarkerViewModel : ViewModel() {
             }
 
     }
+
+    /*
+    fun changeImageUrl(value: String) {
+        this._imageUrl.value = value
+    }
+
+     */
 
     fun restartMarkerAtributes() {
         this.nameMarker.value = ""

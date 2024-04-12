@@ -39,9 +39,10 @@ import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 
 @Composable
-fun GalleryScreen(markerVM: MarkerViewModel) {
+fun GalleryScreen(navController: NavHostController, markerVM: MarkerViewModel) {
     val context = LocalContext.current
-    val img : Bitmap? = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()
+    val img: Bitmap? =
+        ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()
     var bitmap by remember {
         mutableStateOf(img)
     }
@@ -64,7 +65,8 @@ fun GalleryScreen(markerVM: MarkerViewModel) {
     var galleryOpened by remember {
         mutableStateOf(false)
     }
-    Column (
+    val navigationItems by markerVM.navigationItems.observeAsState(emptyMap())
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -77,14 +79,17 @@ fun GalleryScreen(markerVM: MarkerViewModel) {
                 .clip(CircleShape)
                 .size(250.dp)
                 .background(MaterialTheme.colorScheme.background)
-                .border(width = 1.dp, color = MaterialTheme.colorScheme.primary,)
+                .border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
         )
         Button(
             onClick = {
                 if (!galleryOpened) {
                     launchImage.launch("image/*")
                     galleryOpened = true
-                } else markerVM.addPhoto(bitmap!!)
+                } else {
+                    markerVM.addPhoto(bitmap!!)
+                    navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
+                }
             }
         ) {
             Text(text = if (!galleryOpened) "Open Gallery" else "add photo")

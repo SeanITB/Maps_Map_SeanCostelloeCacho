@@ -27,10 +27,10 @@ fun NameMarkerContent(
     modifier: Modifier = Modifier,
     name: String,
     onNameChange: (String) -> Unit,
-    ) {
+) {
     TextField(
         value = name,
-        onValueChange =  { onNameChange(it) } ,
+        onValueChange = { onNameChange(it) },
         placeholder = { Text(text = "Name") },
         modifier = modifier
     )
@@ -49,7 +49,7 @@ fun TypeMarkerContent(
     expandedBottomSheet: Boolean,
     onExpandedBottomSheetChange: (Boolean) -> Unit,
     whenMarkerTypedChanged: (String) -> Unit
-    ) {
+) {
     val genders =
         if (actualScreen != "BottomSheet") {
             arrayOf(
@@ -72,7 +72,7 @@ fun TypeMarkerContent(
     Box {
         OutlinedTextField(
             value = typeMarker,
-            onValueChange =  { onTypeMarkerChange(it) },
+            onValueChange = { onTypeMarkerChange(it) },
             label = { Text(text = "Marker Type", color = MaterialTheme.colorScheme.primary) },
             enabled = false,
             readOnly = true,
@@ -142,23 +142,13 @@ fun DescriptionMarkerContent(
 
 @Composable
 fun NavigateToPhotoContent(navController: NavController, navigationItems: Map<String, String>) {
-    Row{
-        Button(
-            onClick = {
-                navController.navigate(navigationItems["cameraScreen"]!!) // Camera screen
-            }
-        ) {
-            Text(text = "photo")
+    Button(
+        onClick = {
+            navController.navigate(navigationItems["cameraScreen"]!!) // Camera screen
         }
-        Button(
-            onClick = {
-                navController.navigate(navigationItems["galleryScreen"]!!) // Gallery Screen
-            }
-        ) {
-            Text(text = "galeria")
-        }
+    ) {
+        Text(text = "photo")
     }
-
 }
 
 @Composable

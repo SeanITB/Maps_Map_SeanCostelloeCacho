@@ -22,11 +22,12 @@ import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 
 @Composable
-fun CameraScreen(markerVM: MarkerViewModel, navController: NavHostController) {
+fun CameraScreen(markerVM: MarkerViewModel, navController: NavController) {
     val context = LocalContext.current
     val isCameraPermissionsGranted by markerVM.camaeraPermissionGranted.observeAsState(false)
     val shouldShowPermissionRationale by markerVM.shouldShowCameraPermissionRationale.observeAsState(false)

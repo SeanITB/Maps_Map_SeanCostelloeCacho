@@ -19,6 +19,10 @@ import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.MainActivity
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED
+import com.google.android.gms.maps.model.BitmapDescriptorFactory.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -95,7 +99,8 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
                     Marker(
                         state = MarkerState(position = LatLng(marker.location.latitude, marker.location.longitude)),
                         title = marker.name,
-                        snippet = "Marker at ${markerVM.nameMarker.value}"
+                        snippet = "Marker at ${markerVM.nameMarker.value}",
+                        icon = BitmapDescriptorFactory.defaultMarker(HUE_VIOLET)
                     )
                 }
             }

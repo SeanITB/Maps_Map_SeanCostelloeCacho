@@ -23,7 +23,7 @@ class Repository {
                     NAME_KEY to marker.name,
                     TYPE_KEY to marker.type,
                     DESCRIPTION_KEY to marker.description,
-                    //PHOTOS_KEY to marker.photos,
+                    PHOTOS_KEY to marker.photo,
                     LATITUDE_KEY to marker.location.latitude,
                     LONGITUDE_KEY to marker.location.longitude
                 )

@@ -66,15 +66,18 @@ fun TakePhotoScreen(markerVM: MarkerViewModel, navController: NavController) {
                 .align(Alignment.BottomCenter)
         ) {
             IconButton(
-                onClick = { println("Open gallery") }
+                onClick = {
+                    navController.navigate(navigationItems["galleryScreen"]!!)
+                }
             ) {
                 Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
+
             }
             IconButton(
                 onClick = {
                     takePhoto(context, controller) { photo ->
                         markerVM.addPhoto(photo)
-                        navController.navigate(navigationItems["mapScreen"]!!)
+                        navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
                     }
                 }
             ) {
