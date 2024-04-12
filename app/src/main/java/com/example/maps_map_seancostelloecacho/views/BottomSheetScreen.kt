@@ -101,7 +101,7 @@ private fun TypeMarkerScreen(markerVM: MarkerViewModel) {
 }
 
 @Composable
-private fun DescriptionMarkerScreen(markerVM: MarkerViewModel) {
+fun DescriptionMarkerScreen(markerVM: MarkerViewModel) {
     val descriptionMarker by markerVM.descriptionMarker.observeAsState("")
     DescriptionMarkerContent(
         modifier = Modifier.fillMaxWidth(0.9f),
@@ -112,38 +112,6 @@ private fun DescriptionMarkerScreen(markerVM: MarkerViewModel) {
 
 
 
-
-
-@Composable
-fun PhotoItem(photo: Bitmap) {
-    Card(
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .fillMaxWidth(0.5f)
-            .fillMaxHeight(0.25f)
-    ) {
-        Image(bitmap = photo.asImageBitmap(), contentDescription = "Image from the new marker")
-    }
-}
-
-
-@Composable
-fun PhotoDefultItem(photo: Int) {
-    //LocalInspectionMode.current // bolean q compruba q estes en preview
-    Card(
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .fillMaxWidth(0.5f)
-            .fillMaxHeight(0.25f)
-    ) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = photo),
-            contentDescription = "Defult images for marker"
-        )
-    }
-}
 
 
 /* // todo: no me funciona el preview

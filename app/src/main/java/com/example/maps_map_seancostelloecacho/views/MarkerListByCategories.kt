@@ -1,3 +1,4 @@
+import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -15,8 +16,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Museum
+import androidx.compose.material.icons.filled.Park
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.SportsBasketball
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +42,7 @@ import androidx.core.net.toUri
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MarkerListContent(
@@ -86,7 +97,8 @@ fun MarkerListScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.secondary)
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        markerVM = markerVM
                     )
                 }
             }
@@ -120,8 +132,11 @@ fun CategoryHeader(
 fun CategoryItem(
     photo: String,
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    markerVM: MarkerViewModel
 ) {
+    val typeMarker by markerVM.typeMarker.observeAsState("")
+    val defultIcons = mapOf("Park" to Icons.Filled.Park, "Bookstore" to Icons.Filled.MenuBook, "Sports Center" to Icons.Filled.SportsBasketball, "Museum" to Icons.Filled.Museum, "Restaurant" to Icons.Filled.Restaurant)
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
         shape = RoundedCornerShape(8.dp),
@@ -135,12 +150,19 @@ fun CategoryItem(
                     //toDo
                 }
         ) {
-            GlideImage(
-                model = photo.toUri(),
-                contentDescription = "$text image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(200.dp)
-            )
+            if (photo != null) {
+                GlideImage(
+                    model = photo.toUri(),
+                    contentDescription = "$text image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(200.dp)
+                )
+            } else {
+                Icon(
+                    imageVector = defultIcons[typeMarker]!!,
+                    contentDescription = "Close menu",
+                )
+            }
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             Text(
                 text = text,
