@@ -64,10 +64,12 @@ fun MarkerListContent(
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val getMarkersComplet by markerVM.markersComplet.observeAsState(false)
+    val justDelete by markerVM.justDelete.observeAsState(false)
+
 
     markerVM.changeActualScreen("MarkerListByCategories")
 
-    LaunchedEffect(key1 = typeMarker) {
+    LaunchedEffect(key1 = typeMarker, key2 = justDelete) {
         if (typeMarker.equals("All markers")) {
             markerVM.getMarkers()
         } else {
@@ -81,7 +83,7 @@ fun MarkerListContent(
         markerVM.setMarkerComplete(false)
     }
 
-    MarkerListScreen(markerVM = markerVM, navController = navController)
+    MarkerListScreen(markerVM = markerVM, navController = navController, justDelete = justDelete)
 
 }
 
@@ -89,10 +91,12 @@ fun MarkerListContent(
 @OptIn(ExperimentalFoundationApi::class)
 fun MarkerListScreen(
     navController: NavController,
-    markerVM: MarkerViewModel
+    markerVM: MarkerViewModel,
+    justDelete: Boolean
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
+
     if (categoryMarkerList.isNotEmpty()) {
         LazyColumn() {
             for (m in categoryMarkerList) {
@@ -119,7 +123,8 @@ fun MarkerListScreen(
                                 markerVM.getMarker(element.id!!)
                                 navController.navigate(Routes.MapGeolocalisationScreen.route)
                             },
-                        markerVM = markerVM
+                        markerVM = markerVM,
+                        justDelete = justDelete
                     )
                 }
             }
@@ -149,23 +154,15 @@ fun CategoryHeader(
     )
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CategoryItem(
     id: String,
     photo: String,
     text: String,
+    justDelete: Boolean,
     modifier: Modifier = Modifier,
     markerVM: MarkerViewModel
 ) {
-    val typeMarker by markerVM.typeMarker.observeAsState("")
-    val defultIcons = mapOf(
-        "Park" to Icons.Filled.Park,
-        "Bookstore" to Icons.Filled.MenuBook,
-        "Sports Center" to Icons.Filled.SportsBasketball,
-        "Museum" to Icons.Filled.Museum,
-        "Restaurant" to Icons.Filled.Restaurant
-    )
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
         shape = RoundedCornerShape(8.dp),
@@ -175,21 +172,39 @@ fun CategoryItem(
             modifier = modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Log.i("image", "state of image: $photo")
+            ImageMarker(photo, text)
+            NameMarker(text)
+            EditButton(markerVM)
+            DeleteButtom(markerVM, justDelete, id)
+        }
+    }
+}
 
-            if (photo.equals(null)) {
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Defult images for marker",
-                    modifier = Modifier
-                        //.width(1000.dp)
-                        //.height(1000.dp)
-                        .fillMaxWidth()
-                        .fillMaxHeight()
+@Composable
+@OptIn(ExperimentalGlideComposeApi::class)
+private fun ImageMarker(photo: String, text: String) {
+    //val typeMarker by markerVM.typeMarker.observeAsState("")
+    val defultIcons = mapOf(
+        "Park" to Icons.Filled.Park,
+        "Bookstore" to Icons.Filled.MenuBook,
+        "Sports Center" to Icons.Filled.SportsBasketball,
+        "Museum" to Icons.Filled.Museum,
+        "Restaurant" to Icons.Filled.Restaurant
+    )
+    Log.i("image", "state of image: $photo")
+    if (photo.equals(null)) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
+            contentDescription = "Defult images for marker",
+            modifier = Modifier
+                //.width(1000.dp)
+                //.height(1000.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
 
-                )
-            } else {
-                /*
+        )
+    } else {
+        /*
                                 Icon(
                                     imageVector = defultIcons[typeMarker]!!,
                                     contentDescription = "Close menu",
@@ -197,59 +212,69 @@ fun CategoryItem(
 
                                  */
 
-                GlideImage(
-                    model = photo.toUri(),
-                    contentDescription = "$text image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth(0.2F)
-                        .fillMaxHeight()
-                )
+        GlideImage(
+            model = photo.toUri(),
+            contentDescription = "$text image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth(0.2F)
+                .fillMaxHeight()
+        )
 
 
-            }
-            Spacer(modifier = Modifier.fillMaxWidth(0.1f))
-            Text(
-                text = text,
-                //modifier = modifier,
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.background
-            )
+    }
+}
 
-            //val methodIcons = arrayOf(Icons.Filled.Edit, Icons.Filled.DeleteSweep)
-            //val arrMethods = arrayOf()
-            //for (icon in methodIcons) {
-            IconButton(
-                onClick = { markerVM.changeShowBottomSheet(true) },
-                colors = IconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    disabledContainerColor = MaterialTheme.colorScheme.secondary,
-                    disabledContentColor = MaterialTheme.colorScheme.errorContainer
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = "Edit Marker",
-                )
-            }
-            IconButton(
-                onClick = { markerVM.deleteMarker(id) },
-                colors = IconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    disabledContainerColor = MaterialTheme.colorScheme.secondary,
-                    disabledContentColor = MaterialTheme.colorScheme.errorContainer
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.DeleteSweep,
-                    contentDescription = "Edit Marker",
-                )
-            }
-            //}
+@Composable
+private fun NameMarker(text: String) {
+    Text(
+        text = text,
+        //modifier = modifier,
+        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.background
+    )
+}
 
-        }
+@Composable
+private fun EditButton(markerVM: MarkerViewModel) {
+    IconButton(
+        onClick = { markerVM.changeShowBottomSheet(true) },
+        colors = IconButtonColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.primary,
+            disabledContainerColor = MaterialTheme.colorScheme.secondary,
+            disabledContentColor = MaterialTheme.colorScheme.errorContainer
+        )
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Edit,
+            contentDescription = "Edit Marker",
+        )
+    }
+}
+
+@Composable
+private fun DeleteButtom(
+    markerVM: MarkerViewModel,
+    justDelete: Boolean,
+    id: String
+) {
+    IconButton(
+        onClick = {
+            markerVM.deleteMarker(id)
+            markerVM.changeJustDelete(!justDelete)
+                  },
+        colors = IconButtonColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.primary,
+            disabledContainerColor = MaterialTheme.colorScheme.secondary,
+            disabledContentColor = MaterialTheme.colorScheme.errorContainer
+        )
+    ) {
+        Icon(
+            imageVector = Icons.Filled.DeleteSweep,
+            contentDescription = "Edit Marker",
+        )
     }
 }
 

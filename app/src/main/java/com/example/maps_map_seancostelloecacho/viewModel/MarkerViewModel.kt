@@ -31,6 +31,8 @@ import java.util.regex.Pattern
 
 class MarkerViewModel : ViewModel() {
 
+
+
     // firebase values
     private val repository = Repository()
 
@@ -61,6 +63,8 @@ class MarkerViewModel : ViewModel() {
 
     //private val _imageUrl = MutableLiveData<String>("")
     //val imageUrl = _imageUrl
+    private val _justDelete = MutableLiveData(false)
+    val justDelete = _justDelete
 
     private val _userName = MutableLiveData<String>("")
     val userName = _userName
@@ -573,6 +577,10 @@ class MarkerViewModel : ViewModel() {
         val regualarExpresionPasword = "(?=.*[\\d])(?=.*[!@#\$%^&*()])(?=.*[A-Z]).{6,}"
         val p: Pattern = Pattern.compile(regualarExpresionPasword)
         return p.matcher(password).matches()
+    }
+
+    fun changeJustDelete(value: Boolean) {
+        this._justDelete.value = value
     }
 
 }
