@@ -31,8 +31,6 @@ import java.util.regex.Pattern
 
 class MarkerViewModel : ViewModel() {
 
-
-
     // firebase values
     private val repository = Repository()
 
@@ -51,7 +49,7 @@ class MarkerViewModel : ViewModel() {
 
     // app values
     private val _navigationItemsItems = MutableLiveData( //toDo: no hacer asi, poner un bucle
-        mapOf<String, String>(
+        mapOf(
             NavigationItems.CameraScreen.label to NavigationItems.CameraScreen.route,
             NavigationItems.GalleryScreen.label to NavigationItems.GalleryScreen.route,
             NavigationItems.MapGeolocalisationScreen.label to NavigationItems.MapGeolocalisationScreen.route,
@@ -61,8 +59,9 @@ class MarkerViewModel : ViewModel() {
     )
     val navigationItems = _navigationItemsItems
 
-    //private val _imageUrl = MutableLiveData<String>("")
-    //val imageUrl = _imageUrl
+    private val _listMarkerType = MutableLiveData(mutableListOf("All markers", "Park", "Bookstore", "Sports Center", "Museum", "Restaurant"))
+    val listMarkerType = _listMarkerType
+
     private val _justDelete = MutableLiveData(false)
     val justDelete = _justDelete
 
@@ -80,7 +79,6 @@ class MarkerViewModel : ViewModel() {
 
     private val _finishSort = MutableLiveData(false)
     val finishSort = _finishSort
-
 
     private val _userId = MutableLiveData<String>("")
     val userId = _userId
@@ -121,9 +119,6 @@ class MarkerViewModel : ViewModel() {
     private var _categoryMarkrList = MutableLiveData<List<Category>>(mutableListOf())
     val categoryMarkerList = _categoryMarkrList
 
-    private val _filterMarkerList = MutableLiveData<List<MarkerData>>(listOf())
-    val filterMarkerList = _filterMarkerList
-
     var categoryMap: SortedMap<String, MutableList<MarkerData>>? by mutableStateOf(sortedMapOf())
         private set
 
@@ -141,9 +136,6 @@ class MarkerViewModel : ViewModel() {
 
     private val _descriptionMarker = MutableLiveData<String>("")
     val descriptionMarker = _descriptionMarker
-
-    private val _photoMarker = MutableLiveData("")
-    val photoMarker = _photoMarker
 
     private val _latitudeMarker = MutableLiveData<Double>(0.0)
     val latitudeMarker = _latitudeMarker
@@ -380,7 +372,8 @@ class MarkerViewModel : ViewModel() {
     }
 
 
-    fun whenMarkerTypedChanged() {
+    /*
+    fun whenMarkerTypedChanged() { //toDO: rebisar si sobra
         if (this.actualScreen.value != "BottomSheet" && this.typeMarker.value != "All markers") {
             this.changeIsFiltred(true)
             //this.createFilerList()
@@ -393,6 +386,8 @@ class MarkerViewModel : ViewModel() {
             this.changeExpandedBottomSheet(false)
         }
     }
+
+     */
 
     fun changeExpandedBottomSheet(value: Boolean) {
         this._expandedBottomSheet.value = value
@@ -418,11 +413,6 @@ class MarkerViewModel : ViewModel() {
         //dataToSave.put(DESCRIPTION_KEY, this.description)
     }
 
-    fun addPhoto(value: String) {
-        this._photoMarker.value = value
-        //dataToSave.put(PHOTOS_KEY, this.photoList)
-    }
-
     fun changeLatitude(value: Double) {
         this._latitudeMarker.value = value
         //dataToSave.put(LATITUDE_KEY, this.latitude)
@@ -436,30 +426,6 @@ class MarkerViewModel : ViewModel() {
     fun changeUri(value: Uri?) {
         this._uri.value = value
     }
-
-    /*
-    fun addNewMarker() { //toDo: rebisar la photo por defectop q muestra
-        this.actualMarker.value = MarkerData(
-            id = this.idMarker.value,
-            name = this.nameMarker.value,
-            type = this.typeMarker.value,
-            description = if (this.descriptionMarker.value.equals("")) "There isn't any description." else this.descriptionMarker.value,
-            photos = if (this.photosMarker.value!!.isEmpty()) mutableListOf(
-                Bitmap.createBitmap(
-                    25,
-                    25,
-                    Bitmap.Config.ARGB_8888
-                )
-            ) else this.photosMarker.value,
-            location = Location(
-                this.latitudeMarker.value!!,
-                this.longitudeMarker.value!!
-            )
-        )
-    }
-
-     */
-
 
     fun proveThatMarkerIsCorrect(): Boolean {
         var isCorrect = false
@@ -480,9 +446,9 @@ class MarkerViewModel : ViewModel() {
     ) {
         if (this.proveThatMarkerIsCorrect()) {
             this.changeShowBottomSheet(false)
+            if (this.uri.value != null) this.uploadImage()
             this.addMarker()
             this.restartMarkerAtributes()
-            if (this.uri.value != null) this.uploadImage()
         } else
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
                 .show()
@@ -538,7 +504,6 @@ class MarkerViewModel : ViewModel() {
         this._nameMarker.value = ""
         this._typeMarker.value = "All markers"
         this._descriptionMarker.value = ""
-        this._photoMarker.value = ""
         this._uri.value = null
     }
 

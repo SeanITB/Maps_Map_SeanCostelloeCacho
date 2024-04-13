@@ -49,11 +49,11 @@ fun MyScaffold(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar(state: DrawerState, markerVM: MarkerViewModel) {
-    val actualScreen by markerVM.actualScreen.observeAsState("")
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
-    val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
+    val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val scope = rememberCoroutineScope()
+
     TopAppBar(
         title = { Text(text = "My SuperApp")},
         colors = TopAppBarDefaults.largeTopAppBarColors(
@@ -70,15 +70,12 @@ fun MyTopAppBar(state: DrawerState, markerVM: MarkerViewModel) {
             }
         },
         actions = {
-            TypeMarkerContent(
-                actualScreen = actualScreen,
+            TypeMarkerScreen(
+                arrTypeMarkers = listMarkerType,
                 typeMarker = typeMarker,
-                onTypeMarkerChange = {markerVM.changeTypeMarker(it)},
-                expandedTopBar = expandedTopBar,
-                onExpandedTopBarChange = {markerVM.changeExpandedTopBar(it)},
-                expandedBottomSheet = expandedBottomSheet,
-                onExpandedBottomSheetChange = {markerVM.changeExpandedBottomSheet(it)},
-                whenMarkerTypedChanged = {markerVM.whenMarkerTypedChanged()}
+                onTypeMarkerChange = { markerVM.changeTypeMarker(it) },
+                expanded = expandedTopBar,
+                onExpandedChange = { markerVM.changeExpandedTopBar(it) }
             )
         }
     )

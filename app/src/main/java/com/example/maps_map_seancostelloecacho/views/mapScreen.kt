@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -19,9 +18,7 @@ import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.MainActivity
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED
 import com.google.android.gms.maps.model.BitmapDescriptorFactory.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -107,7 +104,7 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
 
         }
         if (showBottomSheet)
-            MyBottomSheetScreen(navigationController = navigationController, markerVM = markerVM)
+            MyBottomSheetContent(navigationController = navigationController, markerVM = markerVM)
     }
 }
 
