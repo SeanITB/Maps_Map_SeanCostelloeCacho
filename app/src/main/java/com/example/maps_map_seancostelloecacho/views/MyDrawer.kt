@@ -21,14 +21,15 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun MyDrawer(markerVM: MarkerViewModel, TIME: Int) {
-    val navController = rememberNavController()
+fun MyDrawer(navController: NavController, markerVM: MarkerViewModel, TIME: Int) {
+
     val scope = rememberCoroutineScope()
     val state: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     ModalNavigationDrawer(

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import com.example.maps_map_seancostelloecacho.views.MyDrawer
@@ -24,8 +25,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val markerVM by viewModels<MarkerViewModel>()
                     val TIME : Int = 1000
+                    val navControllerLR = rememberNavController()
+                    val navController = rememberNavController()
+
                     markerVM.changeTypeMarker("All markers") // toDo: ns si es un poco guarro hacerlo aqui
-                    MyDrawer(markerVM = markerVM, TIME = TIME)
+                    MyDrawer(navController = navController, markerVM = markerVM, TIME = TIME)
                 }
             }
         }
