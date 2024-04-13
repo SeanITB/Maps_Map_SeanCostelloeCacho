@@ -61,19 +61,16 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
         }
     }
     markerVM.changeActualScreen("mapScreen")
-    Log.i("markerType", "marker type: $typeMarker")
     LaunchedEffect(key1 = typeMarker) {
         if (typeMarker.equals("All markers")) {
             markerVM.getMarkers()
         } else {
             markerVM.getFilterMarkers()
-
         }
+        markerVM.changeMarkerComplete(true)
     }
-    Log.i("MARKERS", "$getMarkersComlet")
     LaunchedEffect(key1 = getMarkersComlet) {
-        Log.i("MARKERS", "Markers in map $markerList")
-        markerVM.setMarkerComplete(false)
+        markerVM.changeMarkerComplete(false)
     }
 
     Column (

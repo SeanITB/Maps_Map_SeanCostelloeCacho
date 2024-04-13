@@ -65,6 +65,9 @@ class MarkerViewModel : ViewModel() {
     private val _justDelete = MutableLiveData(false)
     val justDelete = _justDelete
 
+    private val _turnOnSeconProcess = MutableLiveData(false)
+    val turnOnSeconProcess = _turnOnSeconProcess
+
     private val _userName = MutableLiveData<String>("")
     val userName = _userName
 
@@ -137,6 +140,9 @@ class MarkerViewModel : ViewModel() {
     private val _descriptionMarker = MutableLiveData<String>("")
     val descriptionMarker = _descriptionMarker
 
+    private val _photoUrl = MutableLiveData("")
+    val photoUrl = _photoUrl
+
     private val _latitudeMarker = MutableLiveData<Double>(0.0)
     val latitudeMarker = _latitudeMarker
 
@@ -185,12 +191,17 @@ class MarkerViewModel : ViewModel() {
         repository.getMarkers().addSnapshotListener { value, error ->
             processOfGettingMarkerFormDataStore(error, value)
         }
+        Log.i("markers", "values in all markers: ${categoryMarkerList.value}")
+
     }
 
     fun getFilterMarkers() {
+        Log.i("markers", "hola")
         repository.getMarkers().whereEqualTo(TYPE_KEY, this.typeMarker.value!!).addSnapshotListener { value, error ->
             processOfGettingMarkerFormDataStore(error, value)
         }
+        Log.i("markers", "values other markers: ${categoryMarkerList.value}")
+
     }
 
     private fun processOfGettingMarkerFormDataStore(
@@ -219,11 +230,13 @@ class MarkerViewModel : ViewModel() {
                 tempList.add(newMarker)
             }
         }
+        Log.i("markers", "temList: $tempList")
         _markerList.value = tempList
         _markersComplet.value = true
+        _turnOnSeconProcess.value = if (_turnOnSeconProcess.value!!) false else true
     }
 
-    fun getMarker(markerId: String) {
+    fun getMarker(markerId: String) { //toDo: transportarese a la posicion del marker
         repository.getMarker(markerId).addSnapshotListener { value, error ->
             if (error != null) {
                 Log.w("Markers", "Listen failed!", error)
@@ -239,9 +252,10 @@ class MarkerViewModel : ViewModel() {
                 _actualMarker.value = marker
                 _typeMarker.value = _actualMarker.value!!.type
                 _descriptionMarker.value = _actualMarker.value!!.description
-                //_photoList.valut = _actualMarker.value!!.photos
+                _photoUrl.value = _actualMarker.value!!.photo
                 _latitudeMarker.value = _actualMarker.value!!.location.latitude
                 _longitudeMarker.value = _actualMarker.value!!.location.longitude
+                _markerList.value = listOf(marker!!)
             } else {
                 Log.d("Markers", "Current data; null")
             }
@@ -287,8 +301,22 @@ class MarkerViewModel : ViewModel() {
     }
 
 
+
+
     // App Methods
-    fun setMarkerComplete(value: Boolean) {
+    fun initializeMarker(
+        name: String,
+        type: String,
+        description: String,
+        uriImage: Uri
+    ) {
+        this._nameMarker.value = name
+        this._typeMarker.value = type
+        this._descriptionMarker.value = description
+        this._uri.value = uriImage
+    }
+
+    fun changeMarkerComplete(value: Boolean) {
         this._markersComplet.value = value
     }
 
@@ -351,15 +379,13 @@ class MarkerViewModel : ViewModel() {
                 )
             }
         }
-        this._finishSort.value = true
-        Log.i("MARKER", "markers in category ${categoryMarkerList.value}")
     }
 
     fun createMapOfMarkers() {
         if (this.categoryMap!!.isNotEmpty()) {
             this.categoryMap!!.clear()
         }
-        Log.i("MARKER", "markerLis values in VM: ${markerList.value}")
+        Log.i("markers", "value of create map: ${markerList.value} ")
         if (markerList.value!!.isNotEmpty()) {
             for (m in markerList.value!!) {
                 addMarkerToMap(m)

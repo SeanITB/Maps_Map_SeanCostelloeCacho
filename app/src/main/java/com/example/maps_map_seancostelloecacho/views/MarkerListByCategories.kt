@@ -1,4 +1,5 @@
 import android.graphics.drawable.Icon
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -6,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +31,7 @@ import androidx.compose.material.icons.filled.Park
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.SportsBasketball
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -64,10 +67,9 @@ fun MarkerListContent(
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val getMarkersComplet by markerVM.markersComplet.observeAsState(false)
+    val turnOnSecondProcess by markerVM.turnOnSeconProcess.observeAsState(false)
+    val finishSort by markerVM.finishSort.observeAsState(false)
     val justDelete by markerVM.justDelete.observeAsState(false)
-
-
-    markerVM.changeActualScreen("MarkerListByCategories")
 
     LaunchedEffect(key1 = typeMarker, key2 = justDelete) {
         if (typeMarker.equals("All markers")) {
@@ -77,13 +79,37 @@ fun MarkerListContent(
         }
     }
 
-    LaunchedEffect(key1 = getMarkersComplet) {
+    LaunchedEffect(key1 = turnOnSecondProcess) {
         markerVM.createMapOfMarkers()
         markerVM.sortMarkerList()
-        markerVM.setMarkerComplete(false)
+        markerVM.changeFinishSort(true)
     }
 
-    MarkerListScreen(markerVM = markerVM, navController = navController, justDelete = justDelete)
+    if (getMarkersComplet && finishSort) {
+        MarkerListScreen(
+            markerVM = markerVM,
+            navController = navController,
+            justDelete = justDelete
+        )
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.width(64.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Text(
+                "Waiting for a response...",
+            )
+        }
+    }
 
 }
 
@@ -95,7 +121,9 @@ fun MarkerListScreen(
     justDelete: Boolean
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
+    val description by markerVM.descriptionMarker.observeAsState("")
     val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
+
 
     if (categoryMarkerList.isNotEmpty()) {
         LazyColumn() {
@@ -110,9 +138,11 @@ fun MarkerListScreen(
                     )
                 }
                 items(m.items) { element ->
+                    val actualUri = element.photo.toUri()
                     CategoryItem(
+                        navController = navController,
                         id = element.id!!,
-                        photo = element.photo,
+                        uri = actualUri,
                         text = element.name,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -124,7 +154,9 @@ fun MarkerListScreen(
                                 navController.navigate(Routes.MapGeolocalisationScreen.route)
                             },
                         markerVM = markerVM,
-                        justDelete = justDelete
+                        justDelete = justDelete,
+                        typeMarker = typeMarker,
+                        description = description
                     )
                 }
             }
@@ -156,13 +188,17 @@ fun CategoryHeader(
 
 @Composable
 fun CategoryItem(
+    navController: NavController,
     id: String,
-    photo: String,
+    uri: Uri,
     text: String,
+    typeMarker: String,
+    description: String,
     justDelete: Boolean,
     modifier: Modifier = Modifier,
     markerVM: MarkerViewModel
 ) {
+
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
         shape = RoundedCornerShape(8.dp),
@@ -172,9 +208,17 @@ fun CategoryItem(
             modifier = modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            ImageMarker(photo, text)
+            ImageMarker(uri, text)
             NameMarker(text)
-            EditButton(markerVM)
+            EditButton(
+                navController = navController,
+                markerVM = markerVM,
+                id = id,
+                name = text,
+                type = typeMarker,
+                description = description,
+                uri = uri
+            )
             DeleteButtom(markerVM, justDelete, id)
         }
     }
@@ -182,7 +226,7 @@ fun CategoryItem(
 
 @Composable
 @OptIn(ExperimentalGlideComposeApi::class)
-private fun ImageMarker(photo: String, text: String) {
+private fun ImageMarker(uri: Uri, text: String) {
     //val typeMarker by markerVM.typeMarker.observeAsState("")
     val defultIcons = mapOf(
         "Park" to Icons.Filled.Park,
@@ -191,8 +235,8 @@ private fun ImageMarker(photo: String, text: String) {
         "Museum" to Icons.Filled.Museum,
         "Restaurant" to Icons.Filled.Restaurant
     )
-    Log.i("image", "state of image: $photo")
-    if (photo.equals(null)) {
+    Log.i("image", "state of image: $uri")
+    if (uri.equals(null)) {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = "Defult images for marker",
@@ -213,7 +257,7 @@ private fun ImageMarker(photo: String, text: String) {
                                  */
 
         GlideImage(
-            model = photo.toUri(),
+            model = uri,
             contentDescription = "$text image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -236,9 +280,27 @@ private fun NameMarker(text: String) {
 }
 
 @Composable
-private fun EditButton(markerVM: MarkerViewModel) {
+private fun EditButton(
+    navController: NavController,
+    markerVM: MarkerViewModel,
+    id: String,
+    name: String,
+    type: String,
+    description: String,
+    uri: Uri
+) {
     IconButton(
-        onClick = { markerVM.changeShowBottomSheet(true) },
+        onClick = {
+            markerVM.getMarker(id)
+            markerVM.initializeMarker(
+                name = name,
+                type = type,
+                description = description,
+                uriImage = uri
+            )
+            markerVM.changeShowBottomSheet(true)
+            navController.navigate(Routes.MapGeolocalisationScreen.route)
+        },
         colors = IconButtonColors(
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.primary,
@@ -263,7 +325,7 @@ private fun DeleteButtom(
         onClick = {
             markerVM.deleteMarker(id)
             markerVM.changeJustDelete(!justDelete)
-                  },
+        },
         colors = IconButtonColors(
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.primary,
