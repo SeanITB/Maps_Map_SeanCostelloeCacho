@@ -2,6 +2,7 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -30,16 +32,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import com.example.maps_map_seancostelloecacho.models.UserPrefs
+import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 
 @Composable
 fun UsernRegistrerContent(navController: NavController, markerVM: MarkerViewModel) {
+    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val userName by markerVM.userName.observeAsState("")
     val password by markerVM.password.observeAsState("")
     val goToNext by markerVM.goToNext.observeAsState(false)
-    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val isLoading by markerVM.isLoading.observeAsState(true)
+    val context = LocalContext.current
+
 
     UserRegistrerView(
         userName = userName,
@@ -94,17 +100,22 @@ fun UserRegistrerView(
             onPasswordChange = { onPasswordChange(it) },
             onPasswordChaeckChange = { passwordCheck = it }
         )
+        Text(
+            text = "Do you have an account? Login!!",
+            modifier = Modifier.clickable {
+                navController?.navigate(Routes.LoginScreen.route)
+            }
+        )
         RegisterButton(
             modifier = Modifier.fillMaxWidth(0.6F),
             userName = userName,
             password = password,
             passwordCheck = passwordCheck,
             context = context,
-            onShowChange = {show = it},
+            onShowChange = { show = it },
             passwordVerification = { passwordVerification(password) },
             proveThatItsAEmail = { proveThatItsAEmail(userName) },
             register = register
-
         )
         if (isLoading) {
             WhileLoding(
@@ -229,11 +240,10 @@ fun WhileLoding(
 }
 
 
-
 @Preview
 @Composable
 fun UserRegisterPreview() {
-    Maps_Map_SeanCostelloeCachoTheme{
+    Maps_Map_SeanCostelloeCachoTheme {
         UserRegistrerView(
             userName = "Jose Antonio",
             onUserNameChange = {},
@@ -241,11 +251,11 @@ fun UserRegisterPreview() {
             onPasswordChange = {},
             register = { /*TODO*/ },
             goToNext = false,
-            navController =  null,
+            navController = null,
             navigationItems = mapOf(),
             isLoading = false,
-            proveThatItsAEmail = {false},
-            passwordVerification = {false}
+            proveThatItsAEmail = { false },
+            passwordVerification = { false }
         )
     }
 }

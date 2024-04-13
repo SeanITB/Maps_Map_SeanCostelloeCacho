@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -74,6 +75,17 @@ fun MyDrawer(markerVM: MarkerViewModel, TIME: Int) {
                             state.close()
                             markerVM.changeTypeMarker("All markers")
                             navController.navigate(Routes.MarkerListScreen.route)
+                        }
+                    }
+                )
+                NavigationDrawerItem(
+                    label = { Text(text = "Log aut") },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            state.close()
+                            markerVM.logout()
+                            navController.navigate(Routes.LoginScreen.route)
                         }
                     }
                 )

@@ -3,6 +3,7 @@ package com.example.maps_map_seancostelloecacho.views
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.models.UserPrefs
+import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +57,10 @@ fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
     }
 
     //only enters the first time
-    if (!firstTime && storedUserData.value.isNotEmpty() && storedUserData.value.get(0) != "" && storedUserData.value.get(1) != "") {
+    if (!firstTime && storedUserData.value.isNotEmpty() && storedUserData.value.get(0) != "" && storedUserData.value.get(
+            1
+        ) != ""
+    ) {
         Log.i("USERÑ", "Que esta passando")
         markerVM.changeUserName(storedUserData.value.get(0))
         markerVM.changePassword(storedUserData.value.get(1))
@@ -147,9 +152,20 @@ fun UserLoginView(
                 PasswordVisualTransformation()
             }
         )
+        Text(
+            text = "Don't have an account? Register!!",
+            modifier = Modifier.clickable {
+                onUserNameChange("")
+                onPasswordChange("")
+                navController?.navigate(Routes.RegisterScreen.route)
+            }
+        )
         Button(
             onClick = {
-                if (storedUserData.value.isEmpty() || storedUserData.value.get(0) == "" && storedUserData.value.get(1) == "") {
+                if (storedUserData.value.isEmpty() || storedUserData.value.get(0) == "" && storedUserData.value.get(
+                        1
+                    ) == ""
+                ) {
                     CoroutineScope(Dispatchers.IO).launch {
                         userPrefs.saveUserData(userName, password)
                     }
