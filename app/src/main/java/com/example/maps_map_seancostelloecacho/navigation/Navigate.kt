@@ -1,7 +1,6 @@
 package com.example.maps_map_seancostelloecacho.navigation
 
 import MarkerListContent
-import MarkerListScreen
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -25,10 +24,9 @@ import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
 fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel) {
-    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     NavHost(
         navController = navController as NavHostController,
-        startDestination = Routes.MapGeolocalisationScreen.route,
+        startDestination = Routes.MarkerListScreen.route,
         enterTransition = {
             fadeIn(animationSpec = tween(TIME)) + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left, tween(TIME)
@@ -55,8 +53,7 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
         composable(Routes.LoginScreen.route,) { UserLoginContent(navController, markerVM) }
         composable(Routes.MapGeolocalisationScreen.route) { MapGeolocalisationScreen(navController, markerVM) }
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
-        composable(Routes.MarkerListHomeScreen.route) { MarkerListContent(markerVM) }
-        composable(Routes.MarkerListScreen.route) { MarkerListScreen(markerVM) }
+        composable(Routes.MarkerListScreen.route) { MarkerListContent(navController, markerVM) }
         composable(Routes.CameraScreen.route,) { CameraScreen(markerVM, navController) }
         composable(Routes.GalleryScreen.route,) { GalleryScreen(navController, markerVM) }
         composable(Routes.TakePhotoScreen.route,) { TakePhotoScreen(markerVM, navController) }

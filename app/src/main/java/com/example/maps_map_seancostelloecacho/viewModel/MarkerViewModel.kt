@@ -181,6 +181,10 @@ class MarkerViewModel : ViewModel() {
         )
     }
 
+    fun deleteMarker(idMarker: String) {
+        repository.deleteMarker(idMarker)
+    }
+
     fun getMarkers() {
         repository.getMarkers().addSnapshotListener { value, error ->
             processOfGettingMarkerFormDataStore(error, value)
