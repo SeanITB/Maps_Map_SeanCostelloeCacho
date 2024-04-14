@@ -19,7 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -27,7 +27,7 @@ import androidx.navigation.NavHostController
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 
 @Composable
-fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerViewModel) {
+fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapViewModel) {
     val context = LocalContext.current
     val isMapPermissionsGranted by markerVM.mapPermissionGranted.observeAsState(false)
     val shouldShowPermissionMapRationale by markerVM.shouldShowPermissionMapRationale.observeAsState(

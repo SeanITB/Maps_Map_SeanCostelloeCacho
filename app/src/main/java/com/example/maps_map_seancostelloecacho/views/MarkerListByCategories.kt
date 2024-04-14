@@ -1,4 +1,3 @@
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -10,19 +9,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MenuBook
@@ -36,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,15 +50,13 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.R
-import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
 import com.example.maps_map_seancostelloecacho.navigation.Routes
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
-import kotlinx.coroutines.launch
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 @Composable
 fun MarkerListContent(
     navController: NavController,
-    markerVM: MarkerViewModel
+    markerVM: MapViewModel
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val getMarkersComplet by markerVM.markersComplet.observeAsState(false)
@@ -117,7 +110,7 @@ fun MarkerListContent(
 @OptIn(ExperimentalFoundationApi::class)
 fun MarkerListScreen(
     navController: NavController,
-    markerVM: MarkerViewModel,
+    markerVM: MapViewModel,
     justDelete: Boolean
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
@@ -200,7 +193,7 @@ fun CategoryItem(
     description: String,
     justDelete: Boolean,
     modifier: Modifier = Modifier,
-    markerVM: MarkerViewModel
+    markerVM: MapViewModel
 ) {
 
     Card(
@@ -288,7 +281,7 @@ private fun NameMarker(text: String) {
 @Composable
 private fun EditButton(
     navController: NavController,
-    markerVM: MarkerViewModel,
+    markerVM: MapViewModel,
     id: String,
     name: String,
     type: String,
@@ -327,7 +320,7 @@ private fun EditButton(
 
 @Composable
 private fun DeleteButtom(
-    markerVM: MarkerViewModel,
+    markerVM: MapViewModel,
     justDelete: Boolean,
     id: String
 ) {

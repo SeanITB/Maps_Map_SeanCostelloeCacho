@@ -36,14 +36,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.models.UserPrefs
 import com.example.maps_map_seancostelloecacho.navigation.Routes
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
+fun UserLoginContent(navController: NavController, markerVM: MapViewModel) {
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val userName by markerVM.userName.observeAsState("")
     val password by markerVM.password.observeAsState("")

@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ToggleOff
+import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,23 +23,38 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.maps_map_seancostelloecacho.models.MapEvent
 import com.example.maps_map_seancostelloecacho.navigation.Navigate
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun MyScaffold(
     navController: NavController,
     navControllerLR: NavController,
-    TIME : Int,
-    markerVM: MarkerViewModel, state: DrawerState
+    TIME: Int,
+    markerVM: MapViewModel, state: DrawerState
 ) {
     Scaffold(
         topBar = {
             MyTopAppBar(state = state, markerVM = markerVM)
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    markerVM.onEvent(MapEvent.ToggleFalloutMap)
+                }) {
+                Icon(
+                    imageVector = if (markerVM.state.isFollautMap) {
+                        Icons.Default.ToggleOff
+                    } else {
+                        Icons.Default.ToggleOn
+                    }, contentDescription = "Toggle Fallout map"
+                )
+            }
         }
     ) { paddingValues ->
-        Box (
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -48,14 +66,14 @@ fun MyScaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(state: DrawerState, markerVM: MarkerViewModel) {
+fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val scope = rememberCoroutineScope()
 
     TopAppBar(
-        title = { Text(text = "My SuperApp")},
+        title = { Text(text = "My SuperApp") },
         colors = TopAppBarDefaults.largeTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.background
@@ -66,7 +84,11 @@ fun MyTopAppBar(state: DrawerState, markerVM: MarkerViewModel) {
                     state.open()
                 }
             }) {
-                Icon( imageVector = Icons.Filled.Menu, tint = MaterialTheme.colorScheme.background, contentDescription = "Menu")
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    tint = MaterialTheme.colorScheme.background,
+                    contentDescription = "Menu"
+                )
             }
         },
         actions = {

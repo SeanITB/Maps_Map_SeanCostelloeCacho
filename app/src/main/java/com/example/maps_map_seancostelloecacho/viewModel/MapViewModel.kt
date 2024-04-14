@@ -15,8 +15,12 @@ import androidx.lifecycle.ViewModel
 import com.example.maps_map_seancostelloecacho.firebase.Repository
 import com.example.maps_map_seancostelloecacho.models.Category
 import com.example.maps_map_seancostelloecacho.models.Location
+import com.example.maps_map_seancostelloecacho.models.MapEvent
+import com.example.maps_map_seancostelloecacho.models.MapState
+import com.example.maps_map_seancostelloecacho.models.MapStyle
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -29,7 +33,7 @@ import java.util.Locale
 import java.util.SortedMap
 import java.util.regex.Pattern
 
-class MarkerViewModel : ViewModel() {
+class MapViewModel : ViewModel() {
 
     // firebase values
     private val repository = Repository()
@@ -48,6 +52,8 @@ class MarkerViewModel : ViewModel() {
     val MAP_SCREEN_KEY = "mapScreen"
 
     // app values
+    var state by mutableStateOf(MapState())
+
     private val _navigationItemsItems = MutableLiveData( //toDo: no hacer asi, poner un bucle
         mapOf(
             NavigationItems.CameraScreen.label to NavigationItems.CameraScreen.route,
@@ -307,6 +313,21 @@ class MarkerViewModel : ViewModel() {
 
 
     // App Methods
+    fun onEvent(event: MapEvent) {
+        when(event) {
+            is MapEvent.ToggleFalloutMap -> {
+                state = state.copy(
+                    properties = state.properties.copy(
+                        mapStyleOptions = if (state.isFollautMap) {
+                            null
+                        } else MapStyleOptions(MapStyle.json)
+                    ),
+                    isFollautMap = !state.isFollautMap
+                )
+            }
+        }
+    }
+
     fun changeGoToNext(value: Boolean) {
         this._goToNext.value = value
     }

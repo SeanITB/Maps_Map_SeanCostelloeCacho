@@ -41,11 +41,11 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.R
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 
 @Composable
-fun MyBottomSheetContent(navigationController: NavController, markerVM: MarkerViewModel) {
+fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewModel) {
     val context = LocalContext.current
     val name by markerVM.nameMarker.observeAsState("")
     val typeMarker by markerVM.typeMarker.observeAsState("")

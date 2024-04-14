@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,13 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
-import com.example.maps_map_seancostelloecacho.models.UserPrefs
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 @Composable
-fun UsernRegistrerContent(navController: NavController, markerVM: MarkerViewModel) {
+fun UsernRegistrerContent(navController: NavController, markerVM: MapViewModel) {
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val userName by markerVM.userName.observeAsState("")
     val password by markerVM.password.observeAsState("")

@@ -11,8 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.maps_map_seancostelloecacho.navigation.NavigateLoginAndRegister
 import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
-import com.example.maps_map_seancostelloecacho.views.MyDrawer
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val markerVM by viewModels<MarkerViewModel>()
+                    val markerVM by viewModels<MapViewModel>()
                     val TIME : Int = 1000
                     val navControllerLR = rememberNavController()
                     NavigateLoginAndRegister(navControllerLR = navControllerLR, TIME = TIME, markerVM = markerVM)

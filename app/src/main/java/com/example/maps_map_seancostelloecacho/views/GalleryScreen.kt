@@ -34,11 +34,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavHostController
 import com.example.maps_map_seancostelloecacho.R
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 
 @Composable
-fun GalleryScreen(navController: NavHostController, markerVM: MarkerViewModel) {
+fun GalleryScreen(navController: NavHostController, markerVM: MapViewModel) {
     val context = LocalContext.current
     val img: Bitmap? =
         ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()

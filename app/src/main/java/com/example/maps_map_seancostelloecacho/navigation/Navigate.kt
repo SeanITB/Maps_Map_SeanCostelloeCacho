@@ -6,24 +6,20 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.example.maps_map_seancostelloecacho.views.CameraScreen
 import com.example.maps_map_seancostelloecacho.views.GalleryScreen
-import com.example.maps_map_seancostelloecacho.views.LunchScreen
 import com.example.maps_map_seancostelloecacho.views.MapGeolocalisationScreen
 import com.example.maps_map_seancostelloecacho.views.MapScreen
 import com.example.maps_map_seancostelloecacho.views.TakePhotoScreen
 import com.example.maps_map_seancostelloecacho.views.UserLoginContent
-import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
-fun Navigate(navController: NavController, navControllerLR: NavController, TIME: Int, markerVM: MarkerViewModel) {
+fun Navigate(navController: NavController, navControllerLR: NavController, TIME: Int, markerVM: MapViewModel) {
     NavHost(
         navController = navController as NavHostController,
         startDestination = Routes.MarkerListScreen.route,

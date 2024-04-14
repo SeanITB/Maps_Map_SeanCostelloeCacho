@@ -10,14 +10,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.example.maps_map_seancostelloecacho.views.LunchScreen
 import com.example.maps_map_seancostelloecacho.views.MyDrawer
 import com.example.maps_map_seancostelloecacho.views.UserLoginContent
 import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
-fun NavigateLoginAndRegister(navControllerLR: NavController, TIME: Int, markerVM: MarkerViewModel) {
+fun NavigateLoginAndRegister(navControllerLR: NavController, TIME: Int, markerVM: MapViewModel) {
     NavHost(
         navController = navControllerLR as NavHostController,
         startDestination = Routes.LunchScreen.route,

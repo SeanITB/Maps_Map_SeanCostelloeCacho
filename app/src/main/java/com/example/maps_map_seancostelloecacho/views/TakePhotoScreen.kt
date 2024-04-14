@@ -34,10 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
+import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 @Composable
-fun TakePhotoScreen(markerVM: MarkerViewModel, navController: NavController) {
+fun TakePhotoScreen(markerVM: MapViewModel, navController: NavController) {
     val context = LocalContext.current
     val controller = remember {
         LifecycleCameraController(context).apply {

@@ -53,6 +53,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     // PREVIEW
     debugImplementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
     implementation(platform("androidx.compose:compose-bom:2024.03.00"))
