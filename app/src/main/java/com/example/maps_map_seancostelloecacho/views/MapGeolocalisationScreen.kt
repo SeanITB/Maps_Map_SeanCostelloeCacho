@@ -63,12 +63,8 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MarkerV
         navController.navigate(Routes.MapScreen.route)
     }
 
-    
     if (showMapPermissionDenied)
         PermissionDeclinedMapGeolocalisationScreen()
-
-
-
 }
 
 @Composable

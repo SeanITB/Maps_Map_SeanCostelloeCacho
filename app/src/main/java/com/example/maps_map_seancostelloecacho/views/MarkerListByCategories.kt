@@ -144,6 +144,8 @@ fun MarkerListScreen(
                         id = element.id!!,
                         uri = actualUri,
                         text = element.name,
+                        latitude = element.location.latitude,
+                        longitude = element.location.longitude,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -192,6 +194,8 @@ fun CategoryItem(
     id: String,
     uri: Uri,
     text: String,
+    latitude: Double,
+    longitude: Double,
     typeMarker: String,
     description: String,
     justDelete: Boolean,
@@ -217,6 +221,8 @@ fun CategoryItem(
                 name = text,
                 type = typeMarker,
                 description = description,
+                latitude = latitude,
+                longitude = longitude,
                 uri = uri
             )
             DeleteButtom(markerVM, justDelete, id)
@@ -287,6 +293,8 @@ private fun EditButton(
     name: String,
     type: String,
     description: String,
+    latitude: Double,
+    longitude: Double,
     uri: Uri
 ) {
     IconButton(
@@ -296,6 +304,8 @@ private fun EditButton(
                 name = name,
                 type = type,
                 description = description,
+                latitude = latitude,
+                longitude = longitude,
                 uriImage = uri
             )
             markerVM.changeShowBottomSheet(true)

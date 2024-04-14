@@ -36,6 +36,7 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
     val getMarkersComlet by markerVM.markersComplet.observeAsState(false)
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
+    val recentMarker by markerVM.recentMarker.observeAsState(null)
     val fusedLocationProviderClient =
         remember {
             LocationServices.getFusedLocationProviderClient(context)
@@ -80,12 +81,21 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            onMapClick = {},
+            onMapClick = {
+                markerVM.initializeRecentMarker(
+                    name = "New Marker",
+                    type = "Recent Marker",
+                    description = "Hello!!!",
+                    latitude = it.latitude,
+                    longitude = it.longitude,
+                )
+            },
             onMapLongClick = {
+                markerVM.restartMarkerAtributes()
                 markerVM.changeLatitude(it.latitude)
                 markerVM.changeLongitude(it.longitude)
-                markerVM.changeTypeMarker("")
-                markerVM.changeShowBottomSheet(true) },
+                markerVM.changeShowBottomSheet(true)
+                             },
             properties = MapProperties(isMyLocationEnabled = true)
         ){
             if(markerList.isNotEmpty()){
@@ -97,6 +107,15 @@ fun MapScreen(navigationController: NavController, markerVM: MarkerViewModel) {
                         icon = BitmapDescriptorFactory.defaultMarker(HUE_VIOLET)
                     )
                 }
+            }
+            Log.i("RECENT_MARKER", "Recent marker: $recentMarker")
+            if (recentMarker != null) {
+                Marker(
+                    state = MarkerState(position = LatLng(recentMarker!!.location.latitude, recentMarker!!.location.longitude)),
+                    title = recentMarker!!.name,
+                    snippet = recentMarker!!.description,
+                    icon = defaultMarker(HUE_RED)
+                )
             }
 
         }

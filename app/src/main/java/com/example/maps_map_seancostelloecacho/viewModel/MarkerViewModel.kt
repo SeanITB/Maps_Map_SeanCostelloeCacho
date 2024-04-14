@@ -58,6 +58,9 @@ class MarkerViewModel : ViewModel() {
         )
     )
     val navigationItems = _navigationItemsItems
+    
+    private val _recentMarker = MutableLiveData<MarkerData?>(null)
+    val recentMarker = _recentMarker
 
     private val _listMarkerType = MutableLiveData(mutableListOf("All markers", "Park", "Bookstore", "Sports Center", "Museum", "Restaurant"))
     val listMarkerType = _listMarkerType
@@ -312,11 +315,15 @@ class MarkerViewModel : ViewModel() {
         name: String,
         type: String,
         description: String,
-        uriImage: Uri
+        latitude: Double,
+        longitude: Double,
+        uriImage: Uri?
     ) {
         this._nameMarker.value = name
         this._typeMarker.value = type
         this._descriptionMarker.value = description
+        this._latitudeMarker.value = latitude
+        this._longitudeMarker.value = longitude
         this._uri.value = uriImage
     }
 
@@ -576,6 +583,17 @@ class MarkerViewModel : ViewModel() {
 
     fun changeJustDelete(value: Boolean) {
         this._justDelete.value = value
+    }
+
+    fun initializeRecentMarker(name: String, type: String, description: String, latitude: Double, longitude: Double) {
+        this._recentMarker.value = MarkerData(
+            id = null,
+            name = name,
+            type = type,
+            description = description,
+            photo = "",
+            location = Location(latitude = latitude, longitude = longitude)
+        )
     }
 
 }
