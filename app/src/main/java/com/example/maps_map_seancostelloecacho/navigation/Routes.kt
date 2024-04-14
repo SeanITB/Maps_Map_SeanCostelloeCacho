@@ -11,4 +11,5 @@ sealed class Routes (val route: String) {
     object CameraScreen: Routes("cameraScreen")
     object GalleryScreen: Routes("galleryScreen")
     object TakePhotoScreen: Routes("takePhotoScreen")
+    object MyDrawer: Routes("myDrawer")
 }

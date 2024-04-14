@@ -24,10 +24,10 @@ import com.example.maps_map_seancostelloecacho.navigation.Navigate
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import kotlinx.coroutines.launch
 
-//@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyScaffold(
     navController: NavController,
+    navControllerLR: NavController,
     TIME : Int,
     markerVM: MarkerViewModel, state: DrawerState
 ) {
@@ -41,7 +41,7 @@ fun MyScaffold(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Navigate(navController, TIME, markerVM)
+            Navigate(navController, navControllerLR, TIME, markerVM)
         }
     }
 }

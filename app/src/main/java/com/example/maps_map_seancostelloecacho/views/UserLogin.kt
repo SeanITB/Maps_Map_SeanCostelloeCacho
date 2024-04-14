@@ -73,6 +73,7 @@ fun UserLoginContent(navController: NavController, markerVM: MarkerViewModel) {
         userName = userName,
         password = password,
         goToNext = goToNext,
+        onGoToNextChange = { markerVM.changeGoToNext(it) },
         isLoading = isLoading,
         context = context,
         userPrefs = userPrefs,
@@ -92,6 +93,7 @@ fun UserLoginView(
     userName: String,
     password: String,
     goToNext: Boolean,
+    onGoToNextChange: (Boolean) -> Unit,
     isLoading: Boolean,
     context: Context,
     userPrefs: UserPrefs,
@@ -187,8 +189,10 @@ fun UserLoginView(
             isLoading = isLoading
         )
     } else {
+        Log.i("goToNext", "goToNext: $goToNext")
         if (goToNext) {
-            navController!!.navigate(navigationItems["mapGeolocalisationScreen"]!!)
+            onGoToNextChange(false)
+            navController!!.navigate(Routes.MyDrawer.route)
         } else {//toDo: quando entra por aqui que se salga del dialog
             Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show()
         }

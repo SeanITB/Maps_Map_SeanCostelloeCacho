@@ -1,32 +1,26 @@
 package com.example.maps_map_seancostelloecacho.navigation
 
-import MarkerListContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
-import com.example.maps_map_seancostelloecacho.views.CameraScreen
-import com.example.maps_map_seancostelloecacho.views.GalleryScreen
 import com.example.maps_map_seancostelloecacho.views.LunchScreen
-import com.example.maps_map_seancostelloecacho.views.MapGeolocalisationScreen
-import com.example.maps_map_seancostelloecacho.views.MapScreen
-import com.example.maps_map_seancostelloecacho.views.TakePhotoScreen
+import com.example.maps_map_seancostelloecacho.views.MyDrawer
 import com.example.maps_map_seancostelloecacho.views.UserLoginContent
 import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
-fun NavigateLoginAndRegister(navController: NavController, TIME: Int, markerVM: MarkerViewModel) {
+fun NavigateLoginAndRegister(navControllerLR: NavController, TIME: Int, markerVM: MarkerViewModel) {
     NavHost(
-        navController = navController as NavHostController,
-        startDestination = Routes.MarkerListScreen.route,
+        navController = navControllerLR as NavHostController,
+        startDestination = Routes.LunchScreen.route,
         enterTransition = {
             fadeIn(animationSpec = tween(TIME)) + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left, tween(TIME)
@@ -48,10 +42,14 @@ fun NavigateLoginAndRegister(navController: NavController, TIME: Int, markerVM: 
             )
         }
     ) {
-        composable(Routes.LunchScreen.route) { LunchScreen(navController) }
-        composable(Routes.RegisterScreen.route,) { UsernRegistrerContent(navController, markerVM) }
-        composable(Routes.LoginScreen.route,) { UserLoginContent(navController, markerVM) }
-        composable(Routes.MapGeolocalisationScreen.route) { MapGeolocalisationScreen(navController, markerVM) }
+        composable(Routes.LunchScreen.route) { LunchScreen(navControllerLR) }
+        composable(Routes.RegisterScreen.route,) { UsernRegistrerContent(navControllerLR, markerVM) }
+        composable(Routes.LoginScreen.route,) { UserLoginContent(navControllerLR, markerVM) }
+        composable(Routes.MyDrawer.route) {
+            val navController = rememberNavController()
+            markerVM.changeTypeMarker("All markers") // toDo: ns si es un poco guarro hacerlo aqui
+            MyDrawer(navController = navController, navControllerLR = navControllerLR, markerVM = markerVM, TIME = TIME)
+        }
 
     }
 }

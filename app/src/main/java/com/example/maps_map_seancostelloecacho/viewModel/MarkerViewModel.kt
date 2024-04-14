@@ -304,6 +304,10 @@ class MarkerViewModel : ViewModel() {
 
 
     // App Methods
+    fun changeGoToNext(value: Boolean) {
+        this._goToNext.value = value
+    }
+
     fun initializeMarker(
         name: String,
         type: String,

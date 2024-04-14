@@ -49,7 +49,7 @@ fun LunchScreen(navigationController: NavController) {
         startAnimation = true
         delay(4000)
         navigationController.popBackStack()
-        navigationController.navigate(Routes.MapScreen.route)
+        navigationController.navigate(Routes.RegisterScreen.route)
     }
     Splash(alphaAnim.value)
 }

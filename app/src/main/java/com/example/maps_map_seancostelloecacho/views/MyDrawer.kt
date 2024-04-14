@@ -28,7 +28,7 @@ import com.example.maps_map_seancostelloecacho.viewModel.MarkerViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun MyDrawer(navController: NavController, markerVM: MarkerViewModel, TIME: Int) {
+fun MyDrawer(navController: NavController, navControllerLR: NavController, markerVM: MarkerViewModel, TIME: Int) {
 
     val scope = rememberCoroutineScope()
     val state: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -93,7 +93,7 @@ fun MyDrawer(navController: NavController, markerVM: MarkerViewModel, TIME: Int)
             }
         }
     ) {
-        MyScaffold(navController, TIME, markerVM, state)
+        MyScaffold(navController, navControllerLR, TIME, markerVM, state)
     }
 }
 

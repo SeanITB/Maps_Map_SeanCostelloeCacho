@@ -23,7 +23,7 @@ import com.example.maps_map_seancostelloecacho.views.UserLoginContent
 import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
-fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel) {
+fun Navigate(navController: NavController, navControllerLR: NavController, TIME: Int, markerVM: MarkerViewModel) {
     NavHost(
         navController = navController as NavHostController,
         startDestination = Routes.MarkerListScreen.route,
@@ -48,9 +48,7 @@ fun Navigate(navController: NavController, TIME: Int, markerVM: MarkerViewModel)
             )
         }
     ) {
-        composable(Routes.LunchScreen.route) { LunchScreen(navController) }
-        composable(Routes.RegisterScreen.route,) { UsernRegistrerContent(navController, markerVM) }
-        composable(Routes.LoginScreen.route,) { UserLoginContent(navController, markerVM) }
+        composable(Routes.LoginScreen.route,) { UserLoginContent(navControllerLR, markerVM) }
         composable(Routes.MapGeolocalisationScreen.route) { MapGeolocalisationScreen(navController, markerVM) }
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
         composable(Routes.MarkerListScreen.route) { MarkerListContent(navController, markerVM) }

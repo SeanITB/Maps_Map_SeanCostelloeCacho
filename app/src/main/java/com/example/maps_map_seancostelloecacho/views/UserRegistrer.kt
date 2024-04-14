@@ -125,7 +125,7 @@ fun UserRegistrerView(
             )
         } else {
             if (goToNext) {
-                navController!!.navigate(navigationItems["mapGeolocalisationScreen"]!!)
+                navController!!.navigate(Routes.MyDrawer.route)
             } else {//toDo: quando entra por aqui que se salga del dialog
                 Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show()
             }
