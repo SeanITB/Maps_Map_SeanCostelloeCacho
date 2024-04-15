@@ -22,7 +22,7 @@ import com.example.maps_map_seancostelloecacho.views.UserLoginContent
 fun Navigate(navController: NavController, navControllerLR: NavController, TIME: Int, markerVM: MapViewModel) {
     NavHost(
         navController = navController as NavHostController,
-        startDestination = Routes.MarkerListScreen.route,
+        startDestination = Routes.MapGeolocalisationScreen.route,
         enterTransition = {
             fadeIn(animationSpec = tween(TIME)) + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left, tween(TIME)

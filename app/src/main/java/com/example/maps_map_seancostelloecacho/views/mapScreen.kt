@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.MainActivity
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
@@ -43,32 +42,16 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val recentMarker by markerVM.recentMarker.observeAsState(null)
-    val fusedLocationProviderClient =
-        remember {
-            LocationServices.getFusedLocationProviderClient(context)
-        }
-    var lastKnowLocation by remember {
-        mutableStateOf<Location?>(null)
-    }
-    var deviceLatLng by remember {
-        mutableStateOf(LatLng(0.0, 0.0))
-    }
+    val actualPosition by markerVM.actualPosition.observeAsState(LatLng(0.0, 0.0))
+
+
+
     val cameraPositionState =
         rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(deviceLatLng, 18f)
+            position = CameraPosition.fromLatLngZoom(actualPosition, 18f)
         }
-    val locationResult = fusedLocationProviderClient.getCurrentLocation(100, null)
     val uiSetings = remember {
         MapUiSettings(zoomControlsEnabled = false)
-    }
-    locationResult.addOnCompleteListener(context as MainActivity) { task ->
-        if (task.isSuccessful) {
-            lastKnowLocation = task.result
-            deviceLatLng = LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude)
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(deviceLatLng, 18f)
-        } else {
-            Log.e("ERROR", "Exception: %s", task.exception)
-        }
     }
     markerVM.changeActualScreen("mapScreen")
     LaunchedEffect(key1 = typeMarker) {
@@ -93,6 +76,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
             properties = markerVM.state.properties,
             uiSettings = uiSetings,
             onMapClick = {
+                markerVM.changeActualPosition(it)
                 markerVM.initializeRecentMarker(
                     name = "New Marker",
                     type = "Recent Marker",
@@ -102,6 +86,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                 )
             },
             onMapLongClick = {
+                markerVM.changeActualPosition(it)
                 markerVM.restartMarkerAtributes()
                 markerVM.changeLatitude(it.latitude)
                 markerVM.changeLongitude(it.longitude)
@@ -138,12 +123,13 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                 )
             }
         }
-        AddActualPositionMarkerContent(markerVM)
+        //AddActualPositionMarkerContent(markerVM)
         if (showBottomSheet)
             MyBottomSheetContent(navigationController = navigationController, markerVM = markerVM)
     }
 }
 
+/*
 @Composable
 fun AddActualPositionMarkerContent(markerVM: MapViewModel) {
     ConstraintLayout {
@@ -167,5 +153,7 @@ fun AddActualPositionMarkerContent(markerVM: MapViewModel) {
         }
     }
 }
+
+ */
 
 

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -60,6 +61,9 @@ fun MyScaffold(
                 .padding(paddingValues)
         ) {
             Navigate(navController, navControllerLR, TIME, markerVM)
+            Button(onClick = { /*TODO*/ }) {
+
+            }
         }
     }
 }

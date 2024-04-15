@@ -20,6 +20,7 @@ import com.example.maps_map_seancostelloecacho.models.MapState
 import com.example.maps_map_seancostelloecacho.models.MapStyle
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
@@ -34,6 +35,8 @@ import java.util.SortedMap
 import java.util.regex.Pattern
 
 class MapViewModel : ViewModel() {
+
+
 
     // firebase values
     private val repository = Repository()
@@ -64,7 +67,10 @@ class MapViewModel : ViewModel() {
         )
     )
     val navigationItems = _navigationItemsItems
-    
+
+    private val _actualPosition = MutableLiveData(LatLng(0.0, 0.0))
+    val actualPosition = _actualPosition
+
     private val _recentMarker = MutableLiveData<MarkerData?>(null)
     val recentMarker = _recentMarker
 
@@ -326,6 +332,10 @@ class MapViewModel : ViewModel() {
                 )
             }
         }
+    }
+
+    fun changeActualPosition(value: LatLng) {
+        this._actualPosition.value = value
     }
 
     fun changeGoToNext(value: Boolean) {
