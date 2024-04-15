@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.models.MapEvent
 import com.example.maps_map_seancostelloecacho.navigation.Navigate
+import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import kotlinx.coroutines.launch
 
@@ -65,7 +66,7 @@ fun MyScaffold(
         ) {
             Navigate(navController, navControllerLR, TIME, markerVM)
             Button(onClick = {
-                //Navegas a take photo
+                navController.navigate(Routes.CameraScreen.route)
             }) {
                 Icon(
                     imageVector = Icons.Filled.AddCircleOutline,

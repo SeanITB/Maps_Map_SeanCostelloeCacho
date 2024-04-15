@@ -63,7 +63,7 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
             }
         }
     )
-    if (!isMapPermissionsGranted) { //toDO: por eso no navega
+    if (!isMapPermissionsGranted) {
         SideEffect {
             launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
@@ -78,13 +78,12 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
         var deviceLatLng by remember {
             mutableStateOf(LatLng(0.0, 0.0))
         }
-        val locationResult = fusedLocationProviderClient.getCurrentLocation(100, null)
 
+        val locationResult = fusedLocationProviderClient.getCurrentLocation(100, null)
         locationResult.addOnCompleteListener(context as MainActivity) { task ->
             if (task.isSuccessful) {
                 lastKnowLocation = task.result
                 deviceLatLng = LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude)
-
             } else {
                 Log.e("ERROR", "Exception: %s", task.exception)
             }
