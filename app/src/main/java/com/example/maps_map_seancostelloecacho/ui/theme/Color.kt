@@ -1,4 +1,4 @@
-package com.example.maps_map_seancostelloecacho.ui.theme
+package com.example.trivialapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

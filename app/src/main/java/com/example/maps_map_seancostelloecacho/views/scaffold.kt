@@ -40,6 +40,7 @@ fun MyScaffold(
     TIME: Int,
     markerVM: MapViewModel, state: DrawerState
 ) {
+    val darkThem by markerVM.darkThem.observeAsState(false)
     Scaffold(
         topBar = {
             MyTopAppBar(state = state, markerVM = markerVM)
@@ -47,6 +48,7 @@ fun MyScaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
+                    markerVM.changeDarkThem(!darkThem)
                     markerVM.onEvent(MapEvent.ToggleFalloutMap)
                 }) {
                 Icon(

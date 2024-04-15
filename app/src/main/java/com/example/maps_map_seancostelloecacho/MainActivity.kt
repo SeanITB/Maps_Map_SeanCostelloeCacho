@@ -7,6 +7,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.maps_map_seancostelloecacho.navigation.NavigateLoginAndRegister
@@ -17,15 +19,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Maps_Map_SeanCostelloeCachoTheme {
+            val markerVM by viewModels<MapViewModel>()
+            val darkThem by markerVM.darkThem.observeAsState(false)
+            val TIME : Int = 1000
+            val navControllerLR = rememberNavController()
+
+            Maps_Map_SeanCostelloeCachoTheme(darkThem) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val markerVM by viewModels<MapViewModel>()
-                    val TIME : Int = 1000
-                    val navControllerLR = rememberNavController()
+
                     NavigateLoginAndRegister(navControllerLR = navControllerLR, TIME = TIME, markerVM = markerVM)
                 }
             }

@@ -57,6 +57,9 @@ class MapViewModel : ViewModel() {
     // app values
     var state by mutableStateOf(MapState())
 
+    private val _darkThem = MutableLiveData(true)
+    val darkThem = _darkThem
+
     private val _navigationItemsItems = MutableLiveData( //toDo: no hacer asi, poner un bucle
         mapOf(
             NavigationItems.CameraScreen.label to NavigationItems.CameraScreen.route,
@@ -319,6 +322,10 @@ class MapViewModel : ViewModel() {
 
 
     // App Methods
+    fun changeDarkThem(value: Boolean) {
+        this._darkThem.value = value
+    }
+
     fun onEvent(event: MapEvent) {
         when(event) {
             is MapEvent.ToggleFalloutMap -> {

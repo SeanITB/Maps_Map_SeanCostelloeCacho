@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.example.trivialapp.ui.theme.*
 
 private val DarkColorScheme = darkColorScheme(
     primary = light,
@@ -50,6 +51,12 @@ fun Maps_Map_SeanCostelloeCachoTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val colorScheme = if (darkTheme) {
+        DarkColorScheme
+    } else {
+        LightColorScheme
+    }
+    /*
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -59,6 +66,11 @@ fun Maps_Map_SeanCostelloeCachoTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+     */
+
+
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
