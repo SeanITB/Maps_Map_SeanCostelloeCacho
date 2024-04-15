@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
@@ -61,8 +64,13 @@ fun MyScaffold(
                 .padding(paddingValues)
         ) {
             Navigate(navController, navControllerLR, TIME, markerVM)
-            Button(onClick = { /*TODO*/ }) {
-
+            Button(onClick = {
+                //Navegas a take photo
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.AddCircleOutline,
+                    contentDescription = "Add marker with actual position",
+                )
             }
         }
     }

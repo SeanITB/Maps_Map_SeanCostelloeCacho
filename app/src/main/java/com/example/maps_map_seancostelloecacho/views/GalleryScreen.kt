@@ -86,7 +86,6 @@ fun GalleryScreen(navController: NavHostController, markerVM: MapViewModel) {
                     launchImage.launch("image/*")
                     galleryOpened = true
                 } else {
-                    //markerVM.addPhoto(bitmap!!)
                     navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
                 }
             }
