@@ -57,7 +57,7 @@ class MapViewModel : ViewModel() {
     // app values
     var state by mutableStateOf(MapState())
 
-    private val _darkThem = MutableLiveData(true)
+    private val _darkThem = MutableLiveData(false)
     val darkThem = _darkThem
 
     private val _navigationItemsItems = MutableLiveData( //toDo: no hacer asi, poner un bucle

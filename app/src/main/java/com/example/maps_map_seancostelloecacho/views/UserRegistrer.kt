@@ -5,12 +5,21 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -25,8 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
@@ -61,6 +74,7 @@ fun UsernRegistrerContent(navController: NavController, markerVM: MapViewModel) 
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserRegistrerView(
     userName: String,
@@ -75,40 +89,61 @@ fun UserRegistrerView(
     proveThatItsAEmail: (String) -> Boolean,
     passwordVerification: (String) -> Boolean,
 ) {
-    var passwordCheck by rememberSaveable {
-        mutableStateOf("")
-    }
     var show by rememberSaveable {
         mutableStateOf(false)
     }
+    var passwordCheck by rememberSaveable {
+        mutableStateOf("")
+    }
     val context = LocalContext.current
+    var passwordIncorrect by rememberSaveable {
+        mutableStateOf(true)
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ShowPaswordInstructions(modifier = Modifier.fillMaxWidth(0.6F))
-        NameAndPassword(
+        if (!passwordIncorrect) {
+            ShowPaswordInstructions(modifier = Modifier.fillMaxWidth(0.6F))
+        }
+        Spacer(modifier = Modifier.fillMaxHeight(0.05F))
+        TextField(
+            value = userName,
+            onValueChange = { onUserNameChange(it) },
+            placeholder = { Text(text = "Name") },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.background
+            ),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(0.6F)
+        )
+        Spacer(modifier = Modifier.fillMaxHeight(0.05F))
+        Password(
             modifier = Modifier.fillMaxWidth(0.6F),
-            userName = userName,
             password = password,
             passwordCheck = passwordCheck,
-            onUserNameChange = { onUserNameChange(it) },
             onPasswordChange = { onPasswordChange(it) },
-            onPasswordChaeckChange = { passwordCheck = it }
+            onPasswordCheckChange = { passwordCheck = it}
         )
+        Spacer(modifier = Modifier.fillMaxHeight(0.05F))
+
         Text(
             text = "Do you have an account? Login!!",
             modifier = Modifier.clickable {
                 navController?.navigate(Routes.LoginScreen.route)
             }
         )
+        Spacer(modifier = Modifier.fillMaxHeight(0.05F))
         RegisterButton(
             modifier = Modifier.fillMaxWidth(0.6F),
+            passwordIncorrect = passwordIncorrect,
             userName = userName,
             password = password,
             passwordCheck = passwordCheck,
             context = context,
+            onPasswordIncorrectChange = {passwordIncorrect = it},
             onShowChange = { show = it },
             passwordVerification = { passwordVerification(password) },
             proveThatItsAEmail = { proveThatItsAEmail(userName) },
@@ -133,7 +168,12 @@ fun UserRegistrerView(
 
 @Composable
 fun ShowPaswordInstructions(modifier: Modifier = Modifier) {
-    Text(text = "Password characteristics: ", modifier = modifier, fontWeight = FontWeight.Bold)
+    Text(
+        text = "Password characteristics: ",
+        modifier = modifier,
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp
+        )
     Text(
         text = """
             - 1 digit
@@ -141,26 +181,31 @@ fun ShowPaswordInstructions(modifier: Modifier = Modifier) {
             - 1 capital letter
             - 6 characters
         """.trimIndent(),
+        fontSize = 12.sp,
         modifier = modifier
     )
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NameAndPassword(
+fun Password(
     modifier: Modifier,
-    userName: String,
     password: String,
     passwordCheck: String,
-    onUserNameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onPasswordChaeckChange: (String) -> Unit
+    onPasswordCheckChange: (String) -> Unit,
 ) {
-    val arrItems = arrayOf(userName, password, passwordCheck)
-    val arrChangeItems = arrayOf(onUserNameChange, onPasswordChange, onPasswordChaeckChange)
-    val arrPasswordLable = arrayOf("Name", "Password", "Repeat password")
-
+    var visability by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var visabilityCheck by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val arrItems = arrayOf(password, passwordCheck)
+    val arrChangeItems = arrayOf(onPasswordChange,onPasswordCheckChange)
+    val arrPasswordLable = arrayOf("Password", "Repeat password")
+    val arrVisibility = arrayOf(visability, visabilityCheck)
+    val arrChangeVisibility = arrayOf({visability = !visability}, {visabilityCheck = !visabilityCheck})
     for (index in arrItems.indices) {
         TextField(
             value = arrItems[index],
@@ -171,6 +216,22 @@ fun NameAndPassword(
                 unfocusedBorderColor = MaterialTheme.colorScheme.background
             ),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                val image = if (arrVisibility[index]) {
+                    Icons.Filled.VisibilityOff
+                } else {
+                    Icons.Filled.Visibility
+                }
+                IconButton(onClick =  arrChangeVisibility[index] ) {
+                    Icon(imageVector = image, contentDescription = "Visibility password")
+                }
+            },
+            visualTransformation = if (arrVisibility[index]) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
             modifier = modifier
         )
     }
@@ -180,10 +241,12 @@ fun NameAndPassword(
 @Composable
 fun RegisterButton(
     modifier: Modifier = Modifier,
+    passwordIncorrect: Boolean,
     userName: String,
     password: String,
     passwordCheck: String,
     context: Context,
+    onPasswordIncorrectChange: (Boolean) -> Unit,
     onShowChange: (Boolean) -> Unit,
     passwordVerification: (String) -> Boolean,
     proveThatItsAEmail: (String) -> Boolean,
@@ -196,6 +259,7 @@ fun RegisterButton(
             if (!password.equals(passwordCheck)) {
                 Toast.makeText(context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
             } else if (!passwordVerification(password)) {
+                onPasswordIncorrectChange(!passwordIncorrect)
                 Toast.makeText(context, "Incorrect password.", Toast.LENGTH_LONG).show()
             } else if (!proveThatItsAEmail(userName)) {
                 Toast.makeText(context, "Incorrect email.", Toast.LENGTH_LONG).show()

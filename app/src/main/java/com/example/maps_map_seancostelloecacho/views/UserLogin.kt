@@ -6,7 +6,9 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,6 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -125,9 +129,8 @@ fun UserLoginView(
                 unfocusedBorderColor = MaterialTheme.colorScheme.background
             ),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
-        //println("user: "+ storeUserData.value.get(0))
-        Log.i("password", "password: $password")
         TextField(
             value = password,
             onValueChange = { onPasswordChange(it) },
@@ -155,6 +158,8 @@ fun UserLoginView(
                 PasswordVisualTransformation()
             }
         )
+
+        SaveAcountCheckBox(userPrefs, userName, password)
         Text(
             text = "Don't have an account? Register!!",
             modifier = Modifier.clickable {
@@ -165,18 +170,6 @@ fun UserLoginView(
         )
         Button(
             onClick = {
-                if (storedUserData.value.isEmpty() || storedUserData.value.get(0) == "" && storedUserData.value.get(
-                        1
-                    ) == ""
-                ) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        userPrefs.saveUserData(userName, password)
-                    }
-                } else {
-                    onUserNameChange(storedUserData.value.get(0))
-                    onPasswordChange(storedUserData.value.get(1))
-                }
-                Log.i("USERÑ", "username: $userName password: $password")
                 login()
             }
         ) {
@@ -199,3 +192,37 @@ fun UserLoginView(
         }
     }
 }
+
+@Composable
+private fun SaveAcountCheckBox(
+    userPrefs: UserPrefs,
+    userName: String,
+    password: String
+) {
+    var check by rememberSaveable {
+        mutableStateOf(false)
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(text = "Save the account")
+        Checkbox(
+            checked = check,
+            onCheckedChange = {
+                check = it
+                CoroutineScope(Dispatchers.IO).launch {
+                    userPrefs.saveUserData(userName, password)
+                }
+
+            },
+            colors = CheckboxDefaults.colors(
+                checkedColor = MaterialTheme.colorScheme.background,
+                uncheckedColor = MaterialTheme.colorScheme.secondary,
+                checkmarkColor = MaterialTheme.colorScheme.secondary
+            )
+        )
+    }
+}
+
+
