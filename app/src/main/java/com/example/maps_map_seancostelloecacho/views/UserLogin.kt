@@ -89,7 +89,7 @@ fun UserLoginContent(navController: NavController, markerVM: MapViewModel) {
         storedUserData = storedUserData,
         onUserNameChange = { markerVM.changeUserName(it) },
         onPasswordChange = { markerVM.changePassword(it) },
-        login = { markerVM.login() },
+        login = { markerVM.login(context) },
         modifyProcessing = { markerVM.modifiyProcessing() }
     )
 }
@@ -109,7 +109,7 @@ fun UserLoginView(
     storedUserData: State<List<String>>,
     onUserNameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    login: () -> Unit,
+    login: (Context) -> Unit,
     modifyProcessing: () -> Unit
 ) {
     var visability by rememberSaveable {
@@ -189,7 +189,7 @@ fun UserLoginView(
         )
         Button(
             onClick = {
-                login()
+                login(context)
             }
         ) {
             Text(text = "Login")

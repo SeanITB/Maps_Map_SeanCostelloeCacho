@@ -298,7 +298,7 @@ class MapViewModel : ViewModel() {
         this._isLoading.value = false
     }
 
-    fun login() {
+    fun login(context: Context) {
         auth.signInWithEmailAndPassword(this.userName.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -307,11 +307,12 @@ class MapViewModel : ViewModel() {
                     _goToNext.value = true
                 } else {
                     _goToNext.value = false
-                    Log.d("ERROR", "Error signing in: ${task.result}")
                 }
                 modifiyProcessing()
             }
-            .addOnFailureListener{} // toDo: si contra no esta bien
+            .addOnFailureListener{task ->
+                Toast.makeText(context, "Incorrect email or password.", Toast.LENGTH_LONG).show()
+            } // toDo: si contra no esta bien
     }
 
     fun logout() {
