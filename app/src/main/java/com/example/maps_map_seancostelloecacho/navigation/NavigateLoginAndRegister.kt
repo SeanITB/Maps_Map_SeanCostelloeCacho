@@ -20,7 +20,7 @@ import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 fun NavigateLoginAndRegister(navControllerLR: NavController, TIME: Int, markerVM: MapViewModel) {
     NavHost(
         navController = navControllerLR as NavHostController,
-        startDestination = Routes.LunchScreen.route,
+        startDestination = Routes.LoginScreen.route,
         enterTransition = {
             fadeIn(animationSpec = tween(TIME)) + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left, tween(TIME)

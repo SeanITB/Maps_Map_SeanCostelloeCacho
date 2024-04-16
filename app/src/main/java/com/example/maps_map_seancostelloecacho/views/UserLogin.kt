@@ -65,7 +65,6 @@ fun UserLoginContent(navController: NavController, markerVM: MapViewModel) {
     }
 
     //only enters the first time
-    Log.i("firstTime", "firstTime: $firstTime")
     if (
         firstTime &&
         storedUserData.value.isNotEmpty() &&
@@ -191,10 +190,6 @@ fun UserLoginView(
         Button(
             onClick = {
                 login()
-                if (!show) {
-                    onUserNameChange("")
-                    onPasswordChange("")
-                }
             }
         ) {
             Text(text = "Login")
@@ -207,7 +202,7 @@ fun UserLoginView(
             isLoading = isLoading
         )
     } else {
-        Log.i("goToNext", "goToNext: $goToNext")
+        Log.i("isChack", "isChack: $check")
         LaunchedEffect(key1 = goToNext) {
             if (goToNext) {
                 onGoToNextChange(false)
@@ -227,14 +222,13 @@ private fun SaveAcountCheckBox(
     check: Boolean,
     onCheckChange: (Boolean) -> Unit
 ) {
-    Log.i("saveAcount", "SaveAcount: $check")
     LaunchedEffect(key1 = storedUserData.value.isNotEmpty()) {
         if (
             storedUserData.value.isNotEmpty() &&
             storedUserData.value.get(0) != "" &&
             storedUserData.value.get(1) != ""
         ) {
-            onCheckChange(!check)
+            onCheckChange(true)
         }
     }
     Row(
@@ -246,12 +240,8 @@ private fun SaveAcountCheckBox(
             checked = check,
             onCheckedChange = {
                 onCheckChange(!check)
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (!check) {
-                        userPrefs.saveUserData("", "")
-                    } else {
-                        userPrefs.saveUserData(userName, password)
-                    }
+                CoroutineScope(Dispatchers.IO).launch {//toDo: eliminar registros de login si quito el check
+                    if (!check) userPrefs.saveUserData("", "")
                 }
             },
             colors = CheckboxDefaults.colors(
