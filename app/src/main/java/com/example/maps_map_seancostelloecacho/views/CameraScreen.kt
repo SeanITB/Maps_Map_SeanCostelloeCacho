@@ -59,17 +59,7 @@ fun CameraScreen(markerVM: MapViewModel, navController: NavController) {
             }
         }
     )
-    val fusedLocationProviderClient =
-        remember {
-            LocationServices.getFusedLocationProviderClient(context)
-        }
-    var lastKnowLocation by remember {
-        mutableStateOf<Location?>(null)
-    }
-    var deviceLatLng by remember {
-        mutableStateOf(LatLng(0.0, 0.0))
-    }
-    val locationResult = fusedLocationProviderClient.getCurrentLocation(100, null)
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,16 +71,8 @@ fun CameraScreen(markerVM: MapViewModel, navController: NavController) {
                 if (!isCameraPermissionsGranted) {
                     launcher.launch(Manifest.permission.CAMERA)
                 } else {
-                    locationResult.addOnCompleteListener(context as MainActivity) { task ->
-                        if (task.isSuccessful) {
-                            lastKnowLocation = task.result
-                            deviceLatLng = LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude)
-
-                        } else {
-                            Log.e("ERROR", "Exception: %s", task.exception)
-                        }
-                    }
                     navController.navigate(Routes.TakePhotoScreen.route)
+                    markerVM.changeShowBottomSheet(true)
                 }
             }) {
             Text(text = "Take photo")

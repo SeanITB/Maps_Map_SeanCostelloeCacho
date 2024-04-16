@@ -84,10 +84,12 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
             if (task.isSuccessful) {
                 lastKnowLocation = task.result
                 deviceLatLng = LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude)
+                markerVM.changeActualPosition(deviceLatLng)
             } else {
                 Log.e("ERROR", "Exception: %s", task.exception)
             }
         }
+
         markerVM.setShowMapPermissionDenied(false)
         navController.navigate(Routes.MapScreen.route)
     }

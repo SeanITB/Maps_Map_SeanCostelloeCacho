@@ -127,6 +127,7 @@ fun UserLoginView(
             singleLine = true,
         )
         //println("user: "+ storeUserData.value.get(0))
+        Log.i("password", "password: $password")
         TextField(
             value = password,
             onValueChange = { onPasswordChange(it) },

@@ -67,6 +67,7 @@ fun MyScaffold(
                 .padding(paddingValues)
         ) {
             Navigate(navController, navControllerLR, TIME, markerVM)
+
             Button(onClick = {
                 navController.navigate(Routes.CameraScreen.route)
             }) {
