@@ -1,6 +1,7 @@
 package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
+import android.view.WindowInsets.Side
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -156,10 +158,12 @@ fun UserRegistrerView(
                 isLoading = isLoading
             )
         } else {
-            if (goToNext) {
-                navController!!.navigate(Routes.MyDrawer.route)
-            } else {//toDo: quando entra por aqui que se salga del dialog
-                Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show()
+            LaunchedEffect(key1 = goToNext) {
+                if (goToNext) {
+                    navController!!.navigate(Routes.MyDrawer.route)
+                } else {//toDo: quando entra por aqui que se salga del dialog
+                    Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show()
+                }
             }
         }
 

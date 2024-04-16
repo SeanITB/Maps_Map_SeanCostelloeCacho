@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.TextField
@@ -25,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.models.UserPrefs
 import com.example.maps_map_seancostelloecacho.navigation.Routes
@@ -57,18 +61,20 @@ fun UserLoginContent(navController: NavController, markerVM: MapViewModel) {
     val userPrefs = UserPrefs(context)
     val storedUserData = userPrefs.getUserData.collectAsState(initial = emptyList())
     var firstTime by rememberSaveable {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
 
     //only enters the first time
-    if (!firstTime && storedUserData.value.isNotEmpty() && storedUserData.value.get(0) != "" && storedUserData.value.get(
-            1
-        ) != ""
+    Log.i("firstTime", "firstTime: $firstTime")
+    if (
+        firstTime &&
+        storedUserData.value.isNotEmpty() &&
+        storedUserData.value.get(0) != "" &&
+        storedUserData.value.get(1) != ""
     ) {
-        Log.i("USERÑ", "Que esta passando")
         markerVM.changeUserName(storedUserData.value.get(0))
         markerVM.changePassword(storedUserData.value.get(1))
-        firstTime = true
+        firstTime = false
     }
 
     UserLoginView(
@@ -113,6 +119,11 @@ fun UserLoginView(
     var show by rememberSaveable {
         mutableStateOf(false)
     }
+    var check by rememberSaveable {
+        mutableStateOf(
+            false
+        )
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -131,6 +142,7 @@ fun UserLoginView(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
+        Spacer(modifier = Modifier.fillMaxHeight(0.05F))
         TextField(
             value = password,
             onValueChange = { onPasswordChange(it) },
@@ -158,8 +170,16 @@ fun UserLoginView(
                 PasswordVisualTransformation()
             }
         )
-
-        SaveAcountCheckBox(userPrefs, userName, password)
+        Spacer(modifier = Modifier.fillMaxHeight(0.05F))
+        SaveAcountCheckBox(
+            userPrefs,
+            storedUserData,
+            userName,
+            password,
+            check,
+            {check = it}
+        )
+        Spacer(modifier = Modifier.fillMaxHeight(0.05F))
         Text(
             text = "Don't have an account? Register!!",
             modifier = Modifier.clickable {
@@ -171,6 +191,10 @@ fun UserLoginView(
         Button(
             onClick = {
                 login()
+                if (!show) {
+                    onUserNameChange("")
+                    onPasswordChange("")
+                }
             }
         ) {
             Text(text = "Login")
@@ -184,11 +208,12 @@ fun UserLoginView(
         )
     } else {
         Log.i("goToNext", "goToNext: $goToNext")
-        if (goToNext) {
-            onGoToNextChange(false)
-            navController!!.navigate(Routes.MyDrawer.route)
-        } else {//toDo: quando entra por aqui que se salga del dialog
-            Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show()
+        LaunchedEffect(key1 = goToNext) {
+            if (goToNext) {
+                onGoToNextChange(false)
+                navController!!.navigate(Routes.MyDrawer.route)
+                if (check) userPrefs.saveUserData(userName, password)
+            }
         }
     }
 }
@@ -196,25 +221,38 @@ fun UserLoginView(
 @Composable
 private fun SaveAcountCheckBox(
     userPrefs: UserPrefs,
+    storedUserData: State<List<String>>,
     userName: String,
-    password: String
+    password: String,
+    check: Boolean,
+    onCheckChange: (Boolean) -> Unit
 ) {
-    var check by rememberSaveable {
-        mutableStateOf(false)
+    Log.i("saveAcount", "SaveAcount: $check")
+    LaunchedEffect(key1 = storedUserData.value.isNotEmpty()) {
+        if (
+            storedUserData.value.isNotEmpty() &&
+            storedUserData.value.get(0) != "" &&
+            storedUserData.value.get(1) != ""
+        ) {
+            onCheckChange(!check)
+        }
     }
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.Center
     ) {
-        Text(text = "Save the account")
+        Text(text = "Save the account: ", fontSize = 12.sp)
         Checkbox(
             checked = check,
             onCheckedChange = {
-                check = it
+                onCheckChange(!check)
                 CoroutineScope(Dispatchers.IO).launch {
-                    userPrefs.saveUserData(userName, password)
+                    if (!check) {
+                        userPrefs.saveUserData("", "")
+                    } else {
+                        userPrefs.saveUserData(userName, password)
+                    }
                 }
-
             },
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.background,
