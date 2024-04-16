@@ -61,7 +61,6 @@ fun MyDrawer(navController: NavController, navControllerLR: NavController, marke
                     onClick = {
                         scope.launch {
                             state.close()
-                            //markerVM.changeTypeMarker("All markers") toDo: ahora me da paereza mejorarlo
                             navController.navigate(Routes.MapScreen.route)
                         }
                     }

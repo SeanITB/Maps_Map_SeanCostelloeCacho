@@ -4,6 +4,7 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -55,6 +56,8 @@ fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewM
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
+
+    Log.i("idMarker", "idMarker inn: ${markerVM.idMarker.value}")
 
     markerVM.changeActualScreen("BottomSheet")
     MyBottomSheetScreen(
@@ -139,7 +142,6 @@ private fun MyBottomSheetScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ImageItem(navController: NavController, uri: Uri?, navigationItems:  Map<String, String>) {
-
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(8.dp),

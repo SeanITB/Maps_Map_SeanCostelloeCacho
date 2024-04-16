@@ -195,7 +195,7 @@ fun CategoryItem(
     modifier: Modifier = Modifier,
     markerVM: MapViewModel
 ) {
-
+    Log.i("idMarker", "idMarker: $id name: $text")
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
         shape = RoundedCornerShape(8.dp),
@@ -226,46 +226,14 @@ fun CategoryItem(
 @Composable
 @OptIn(ExperimentalGlideComposeApi::class)
 private fun ImageMarker(uri: Uri, text: String) {
-    //val typeMarker by markerVM.typeMarker.observeAsState("")
-    val defultIcons = mapOf(
-        "Park" to Icons.Filled.Park,
-        "Bookstore" to Icons.Filled.MenuBook,
-        "Sports Center" to Icons.Filled.SportsBasketball,
-        "Museum" to Icons.Filled.Museum,
-        "Restaurant" to Icons.Filled.Restaurant
+    GlideImage(
+        model = uri,
+        contentDescription = "$text image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxWidth(0.2F)
+            .fillMaxHeight()
     )
-    Log.i("image", "state of image: $uri")
-    if (uri.equals(null)) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Defult images for marker",
-            modifier = Modifier
-                //.width(1000.dp)
-                //.height(1000.dp)
-                .fillMaxWidth()
-                .fillMaxHeight()
-
-        )
-    } else {
-        /*
-                                Icon(
-                                    imageVector = defultIcons[typeMarker]!!,
-                                    contentDescription = "Close menu",
-                                )
-
-                                 */
-
-        GlideImage(
-            model = uri,
-            contentDescription = "$text image",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth(0.2F)
-                .fillMaxHeight()
-        )
-
-
-    }
 }
 
 @Composable
@@ -301,6 +269,9 @@ private fun EditButton(
                 longitude = longitude,
                 uriImage = uri
             )
+            markerVM.changeIdMarker(id)
+            Log.i("idMarker", "idMarker in list: ${markerVM.idMarker.value}")
+            markerVM.changeIsEditing(true)
             markerVM.changeShowBottomSheet(true)
             navController.navigate(Routes.MapGeolocalisationScreen.route)
         },

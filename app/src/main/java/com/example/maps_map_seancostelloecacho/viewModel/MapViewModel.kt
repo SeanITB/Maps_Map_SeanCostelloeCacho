@@ -57,6 +57,9 @@ class MapViewModel : ViewModel() {
     // app values
     var state by mutableStateOf(MapState())
 
+    private val _isEditing = MutableLiveData(false)
+    val isEditing = _isEditing
+
     private val _darkThem = MutableLiveData(false)
     val darkThem = _darkThem
 
@@ -323,6 +326,10 @@ class MapViewModel : ViewModel() {
 
 
     // App Methods
+    fun changeIsEditing(value: Boolean) {
+        this._isEditing.value = value
+    }
+
     fun changeDarkThem(value: Boolean) {
         this._darkThem.value = value
     }
@@ -520,6 +527,8 @@ class MapViewModel : ViewModel() {
     fun whenAddMarker(
         context: Context
     ) {
+        Log.i("idMarker", "idMarker: ${idMarker.value!!}")
+        if (isEditing.value!!) deleteMarker("TL45wQPSDQrMoPFGfGjY")
         if (this.proveThatMarkerIsCorrect()) {
             this.changeShowBottomSheet(false)
             if (this.uri.value != null) this.uploadImage()
@@ -633,6 +642,10 @@ class MapViewModel : ViewModel() {
             photo = "",
             location = Location(latitude = latitude, longitude = longitude)
         )
+    }
+
+    fun changeIdMarker(id: String) {
+        this._idMarker.value = id
     }
 
 }

@@ -70,6 +70,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
         modifier = Modifier
             .fillMaxSize()
     ) {
+        Log.i("idMarker", "idMarker in map ${markerVM.idMarker.value} for marker ${markerVM.nameMarker.value} and for type: ${markerVM.typeMarker.value}")
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
