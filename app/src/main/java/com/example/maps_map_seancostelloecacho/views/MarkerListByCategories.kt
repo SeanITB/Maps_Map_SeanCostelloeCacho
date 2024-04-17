@@ -56,17 +56,15 @@ fun MarkerListContent(
     navController: NavController,
     markerVM: MapViewModel
 ) {
-    val typeMarker by rememberSaveable {
-        mutableStateOf("")
-    }
+    val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
     val getMarkersComplet by markerVM.markersComplet.observeAsState(false)
     val turnOnSecondProcess by markerVM.turnOnSeconProcess.observeAsState(false)
     val finishSort by markerVM.finishSort.observeAsState(false)
     val markerList by markerVM.markerList.observeAsState(emptyList())
 
-    Log.i("ActualType", "ActualType in list: $typeMarker")
-    LaunchedEffect(key1 = typeMarker, key2 = markerList) {
-        if (typeMarker.equals("All markers")) {
+    Log.i("ActualType", "ActualType in list: $typeMarkerForFilter")
+    LaunchedEffect(key1 = typeMarkerForFilter, key2 = markerList) {
+        if (typeMarkerForFilter.equals("All markers")) {
             markerVM.getMarkers()
         } else {
             markerVM.getFilterMarkers()
@@ -83,7 +81,7 @@ fun MarkerListContent(
         MarkerListScreen(
             markerVM = markerVM,
             navController = navController,
-            typeMarker = typeMarker
+            typeMarker = typeMarkerForFilter
         )
     } else {
         Column(
@@ -206,7 +204,6 @@ fun CategoryItem(
             NameMarker(text)
             EditButton(
                 actualMarker = actualMarker,
-                navController = navController,
                 markerVM = markerVM,
                 id = id,
             )
@@ -242,7 +239,6 @@ private fun NameMarker(text: String) {
 @Composable
 private fun EditButton(
     actualMarker: MarkerData?,
-    navController: NavController,
     markerVM: MapViewModel,
     id: String,
 ) {
@@ -269,8 +265,8 @@ private fun EditButton(
         markerVM.getMarker(id)
         LaunchedEffect(key1 = actualMarker) {
             markerVM.changeIsEditing(true)
-            Log.i("MarkerDataÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name}")
-            markerVM.changeShowBottomFromMapSheet(true)
+            Log.i("MarkerDataÑÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name} ")
+            markerVM.changeShowBottomSheetFromList(true)
             onEdit = false
         }
     }
@@ -330,7 +326,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         markerVM.changeNameMarke(actualMarker!!.name)
         markerVM.changeTypeMarker(actualMarker!!.type)
         markerVM.changeDescriptionMarker(actualMarker!!.description)
-        markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
+        //markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
         isFirstTime = false
     }
     Log.i("MarkerDataÑ", "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uri")
@@ -343,7 +339,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         description = description,
         onNameChange = { markerVM.changeNameMarke(it) },
         onDescriptionChange = {markerVM.changeDescriptionMarker(it)},
-        onShowBottomSheetChange = { markerVM.changeShowBottomSheetFromListSheet(it) },
+        onShowBottomSheetChange = { markerVM.changeShowBottomSheetFromList(it) },
         typeMarker = typeMarker,
         changeTypeMarker = { markerVM.changeTypeMarker(it) },
         listTypeMarker = newListMarkersType,

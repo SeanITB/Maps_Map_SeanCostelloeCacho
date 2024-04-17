@@ -89,9 +89,7 @@ fun MyScaffold(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel) {
-    var typeMarker by rememberSaveable {
-        mutableStateOf("All markers")
-    }
+    val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
     val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val scope = rememberCoroutineScope()
@@ -118,8 +116,8 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel) {
         actions = {
             TypeMarkerScreen(
                 arrTypeMarkers = listMarkerType,
-                typeMarker = typeMarker,
-                onTypeMarkerChange = { typeMarker = it },
+                typeMarker = typeMarkerForFilter,
+                onTypeMarkerChange = { markerVM.changeTypeMarkerForFilter(it) },
                 expanded = expandedTopBar,
                 onExpandedChange = { markerVM.changeExpandedTopBar(it) }
             )

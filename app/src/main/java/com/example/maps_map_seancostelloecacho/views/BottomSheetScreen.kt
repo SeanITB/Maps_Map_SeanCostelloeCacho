@@ -63,6 +63,8 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
     val actualPosition by markerVM.actualPosition.observeAsState()
 
+    Log.i("typeMarkerÑ", "typeMarkerÑ: $typeMarker")
+
     markerVM.changeActualScreen("BottomSheet")
     MyBottomSheetScreen(
         actualMarker = actualMarker,
@@ -145,7 +147,6 @@ fun MyBottomSheetScreen(
             ImageItem(navigationController, uri, navigationItems)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(
-                changeTypeMarker = {changeTypeMarker(it)},
                 actualMarker = actualMarker,
                 name = name,
                 typeMarker = typeMarker,
@@ -194,7 +195,6 @@ fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<Stri
 
 @Composable
 fun WhenAddMarkerScreen(
-    changeTypeMarker: (String) -> Unit,
     actualMarker: MarkerData?,
     name: String,
     typeMarker: String,
@@ -217,7 +217,6 @@ fun WhenAddMarkerScreen(
             )
             changeNewMarker(newMarker)
             whenAddMarker(context)
-            changeTypeMarker("All markers")
         }
     ) {
         Text(text = "Add Marker")

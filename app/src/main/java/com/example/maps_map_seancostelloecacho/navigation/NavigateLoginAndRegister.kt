@@ -47,7 +47,6 @@ fun NavigateLoginAndRegister(navControllerLR: NavController, TIME: Int, markerVM
         composable(Routes.LoginScreen.route,) { UserLoginContent(navControllerLR, markerVM) }
         composable(Routes.MyDrawer.route) {
             val navController = rememberNavController()
-            markerVM.changeTypeMarker("All markers") // toDo: ns si es un poco guarro hacerlo aqui
             MyDrawer(navController = navController, navControllerLR = navControllerLR, markerVM = markerVM, TIME = TIME)
         }
 

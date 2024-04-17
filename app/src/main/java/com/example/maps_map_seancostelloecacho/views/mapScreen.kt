@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -29,14 +28,10 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val markerList by markerVM.markerList.observeAsState(emptyList())
     val showBottomSheet by markerVM.showBottomSheetFromMap.observeAsState(false)
     val getMarkersComlet by markerVM.markersComplet.observeAsState(false)
-    val typeMarker by markerVM.typeMarker.observeAsState("")
-    val context = LocalContext.current
+    val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
     val recentMarker by markerVM.recentMarker.observeAsState(null)
     val actualPosition by markerVM.actualPosition.observeAsState(LatLng(0.0, 0.0))
     val actualMarker by markerVM.actualMarker.observeAsState(null)
-    Log.i("MarkerDataÑ", "in map id: ${actualMarker?.id}, name: ${actualMarker?.name}")
-
-
 
     val cameraPositionState =
         rememberCameraPositionState {
@@ -46,8 +41,8 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
         MapUiSettings(zoomControlsEnabled = false)
     }
     markerVM.changeActualScreen("mapScreen")
-    LaunchedEffect(key1 = typeMarker) {
-        if (typeMarker.equals("All markers")) {
+    LaunchedEffect(key1 = typeMarkerForFilter) {
+        if (typeMarkerForFilter.equals("All markers")) {
             markerVM.getMarkers()
         } else {
             markerVM.getFilterMarkers()
@@ -112,37 +107,9 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                 )
             }
         }
-        //AddActualPositionMarkerContent(markerVM)
         if (showBottomSheet)
             MyBottomSheetFromMapContent(navigationController = navigationController, markerVM = markerVM)
     }
 }
-
-/*
-@Composable
-fun AddActualPositionMarkerContent(markerVM: MapViewModel) {
-    ConstraintLayout {
-        val (addActualPossition) = createRefs()
-        Button(
-            onClick = {
-                markerVM.restartMarkerAtributes()
-                markerVM.changeLatitude(0.0)
-                markerVM.changeLongitude(0.0)
-                markerVM.changeShowBottomSheet(true)
-            },
-            modifier = Modifier.constrainAs(addActualPossition) {
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "New Marker",
-            )
-        }
-    }
-}
-
- */
 
 

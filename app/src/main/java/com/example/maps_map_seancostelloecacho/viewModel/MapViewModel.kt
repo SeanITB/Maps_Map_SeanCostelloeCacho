@@ -154,6 +154,9 @@ class MapViewModel : ViewModel() {
     private val _isEditing = MutableLiveData(false)
     val isEditing = _isEditing
 
+    private val _typeMarkerForFilter = MutableLiveData("All markers")
+    val typeMarkerForFilter = _typeMarkerForFilter
+
     private val _typeMarker = MutableLiveData("")
     val typeMarker = _typeMarker
 
@@ -264,7 +267,6 @@ class MapViewModel : ViewModel() {
                 }
                 _actualMarker.value = marker
                 _uri.value = marker!!.photo.toUri()
-
             } else {
                 Log.d("Markers", "Current data; null")
             }
@@ -467,7 +469,10 @@ class MapViewModel : ViewModel() {
 
     fun changeTypeMarker(value: String) {
         this._typeMarker.value = value
-        //dataToSave.put(TYPE_KEY, this.typeMarker)
+    }
+
+    fun changeTypeMarkerForFilter(value: String) {
+        this._typeMarkerForFilter.value = value
     }
 
     fun changeUri(value: Uri?) {
@@ -604,7 +609,7 @@ class MapViewModel : ViewModel() {
         this._actualMarker.value = newMarker
     }
 
-    fun changeShowBottomSheetFromListSheet(value: Boolean) {
+    fun changeShowBottomSheetFromList(value: Boolean) {
         this._showBottomSheetFromListSheet.value = value
     }
 
