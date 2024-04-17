@@ -36,7 +36,7 @@ class Repository {
                 NAME_KEY to editMarker.name,
                 TYPE_KEY to editMarker.type,
                 DESCRIPTION_KEY to editMarker.description,
-                //PHOTOS_KEY to editMarker.photos,
+                PHOTOS_KEY to editMarker.photo,
                 LATITUDE_KEY to editMarker.location.latitude,
                 LONGITUDE_KEY to editMarker.location.longitude
             )

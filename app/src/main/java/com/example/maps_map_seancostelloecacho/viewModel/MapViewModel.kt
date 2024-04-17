@@ -55,9 +55,6 @@ class MapViewModel : ViewModel() {
     // app values
     var state by mutableStateOf(MapState())
 
-    private val _isEditing = MutableLiveData(false)
-    val isEditing = _isEditing
-
     private val _darkThem = MutableLiveData(false)
     val darkThem = _darkThem
 
@@ -146,6 +143,9 @@ class MapViewModel : ViewModel() {
 
     private val _actualMarker = MutableLiveData<MarkerData?>(null)
     val actualMarker = _actualMarker
+
+    private val _isEditing = MutableLiveData(false)
+    val isEditing = _isEditing
 
     private val _typeMarker = MutableLiveData("")
     val typeMarker = _typeMarker
@@ -253,8 +253,9 @@ class MapViewModel : ViewModel() {
                 val marker = value.toObject(MarkerData::class.java)
                 if (marker != null) {
                     marker.id = markerId
+                    marker.photo = value.get("photos").toString()
                 }
-                Log.i("MarkerDataÑ", "MarkerDataÑ id: ${marker?.id}, name: ${marker?.name}")
+                Log.i("MarkerDataÑ", "MarkerDataÑ id: ${marker?.id}, name: ${marker?.name} photo: ${marker?.photo}")
                 _actualMarker.value = marker
                 _typeMarker.value = _actualMarker.value!!.type
                 _photoUrl.value = _actualMarker.value!!.photo
@@ -263,6 +264,10 @@ class MapViewModel : ViewModel() {
                 Log.d("Markers", "Current data; null")
             }
         }
+    }
+
+    fun editMarker(actualMarker: MarkerData) {
+        repository.editMarker(actualMarker)
     }
 
     // Firebase Authentication
@@ -308,10 +313,6 @@ class MapViewModel : ViewModel() {
 
 
     // App Methods
-    fun changeIsEditing(value: Boolean) {
-        this._isEditing.value = value
-    }
-
     fun changeDarkThem(value: Boolean) {
         this._darkThem.value = value
     }
@@ -329,6 +330,10 @@ class MapViewModel : ViewModel() {
                 )
             }
         }
+    }
+
+    fun changeIsEditing(value: Boolean) {
+        this._isEditing.value = value
     }
 
     fun changeActualPosition(value: LatLng) {
@@ -474,11 +479,14 @@ class MapViewModel : ViewModel() {
     fun whenAddMarker(
         context: Context,
     ) {
-        if (isEditing.value!!) deleteMarker(this.actualMarker.value!!.id!!)
+        Log.i("actualMarkerId", "actualMarkerId: ${this.actualMarker.value!!.id!!}")
         if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) {
             this.changeShowBottomSheet(false)
             if (this.uri.value != null) this.uploadImage()
-            this.addMarker()
+            if (isEditing.value!!){
+                this.editMarker(actualMarker.value!!)
+                this._isEditing.value = false
+            } else this.addMarker()
             this.restartMarkerAtributes()
         } else
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)

@@ -4,6 +4,7 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -47,6 +49,7 @@ import com.example.maps_map_seancostelloecacho.R
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
+import com.google.android.gms.maps.model.LatLng
 
 
 @Composable
@@ -61,10 +64,23 @@ fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewM
     val context = LocalContext.current
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
-    val uri by markerVM.uri.observeAsState(null)
+    var uri: Uri? by rememberSaveable {
+        mutableStateOf(null)
+    }
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
+    var isFirstTime by rememberSaveable {
+        mutableStateOf(true)
+    }
+    if (isFirstTime && actualMarker != null) {
+        name = actualMarker!!.name
+        description = actualMarker!!.description
+        uri = actualMarker!!.photo.toUri()
+        markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
+        isFirstTime = false
+    }
+    Log.i("MarkerDataÑ", "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uri")
 
 
     markerVM.changeActualScreen("BottomSheet")
@@ -126,7 +142,7 @@ private fun MyBottomSheetScreen(
             ) {
                 NameMarkerScreen(
                     name = name,
-                    onNameChange = onNameChange,
+                    onNameChange = { onNameChange(it) },
                     modifier = Modifier.fillMaxWidth(0.5f),
                 )
                 TypeMarkerScreen(
@@ -171,6 +187,7 @@ fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<Stri
             .fillMaxWidth(0.25f)
             .fillMaxHeight(0.25f)
     ) {
+        Log.i("MarkerDataÑ", "photo: $uri")
         if (uri != null) {
             GlideImage(
                 model = uri,
@@ -205,12 +222,12 @@ fun WhenAddMarkerScreen(
     Button(
         onClick = {
             val newMarker = MarkerData(
-                id = if (actualMarker!!.id != null) actualMarker.id else null,
+                id = actualMarker!!.id,
                 name = name,
                 type = typeMarker,
                 description = description,
                 photo = photo.toString(),
-                location = Location(latitude = actualMarker.location.latitude, longitude = actualMarker.location.longitude)
+                location = Location(latitude = actualMarker!!.location.latitude, longitude = actualMarker!!.location.longitude) //toDo: add actual position
             )
             changeNewMarker(newMarker)
             whenAddMarker(context)
@@ -231,7 +248,7 @@ fun NameMarkerScreen(
 
     TextField(
         value = name,
-        onValueChange = { onNameChange(name) },
+        onValueChange = { onNameChange(it) },
         placeholder = { Text(text = "Name") },
         modifier = modifier
     )

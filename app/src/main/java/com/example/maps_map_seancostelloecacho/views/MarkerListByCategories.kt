@@ -269,8 +269,8 @@ private fun EditButton(
     if (onEdit) {
         markerVM.getMarker(id)
         LaunchedEffect(key1 = actualMarker) {
-            Log.i("MarkerDataÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name}")
             markerVM.changeIsEditing(true)
+            Log.i("MarkerDataÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name}")
             markerVM.changeShowBottomSheet(true)
             navController.navigate(Routes.MapGeolocalisationScreen.route)
         }
