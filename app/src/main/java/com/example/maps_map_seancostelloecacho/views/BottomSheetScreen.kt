@@ -61,12 +61,23 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
-    val actualPosition by markerVM.actualPosition.observeAsState()
+    val lastPosition by markerVM.actualPosition.observeAsState()
+    var actualPosition: LatLng by rememberSaveable {
+        mutableStateOf(LatLng(0.0, 0.0))
+    }
+    var isFirstTime by rememberSaveable { //toDo: parch feo no magrada
+        mutableStateOf(true)
+    }
+    if (isFirstTime) {
+        actualPosition = lastPosition!!
+        isFirstTime = false
+    }
 
     Log.i("typeMarkerÑ", "typeMarkerÑ: $typeMarker")
 
     markerVM.changeActualScreen("BottomSheet")
     MyBottomSheetScreen(
+        onFirstTimeChange = {isFirstTime = it},
         actualMarker = actualMarker,
         name = name,
         description = description,
@@ -92,6 +103,7 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun MyBottomSheetScreen(
+    onFirstTimeChange: (Boolean) -> Unit,
     actualMarker : MarkerData?,
     name: String,
     description: String,
@@ -147,6 +159,7 @@ fun MyBottomSheetScreen(
             ImageItem(navigationController, uri, navigationItems)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(
+                onFirstTimeChange = {onFirstTimeChange(it)},
                 actualMarker = actualMarker,
                 name = name,
                 typeMarker = typeMarker,
@@ -195,6 +208,7 @@ fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<Stri
 
 @Composable
 fun WhenAddMarkerScreen(
+    onFirstTimeChange: (Boolean) -> Unit,
     actualMarker: MarkerData?,
     name: String,
     typeMarker: String,
@@ -217,6 +231,7 @@ fun WhenAddMarkerScreen(
             )
             changeNewMarker(newMarker)
             whenAddMarker(context)
+            onFirstTimeChange(true)
         }
     ) {
         Text(text = "Add Marker")

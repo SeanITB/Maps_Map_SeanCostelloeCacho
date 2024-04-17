@@ -555,6 +555,9 @@ class MapViewModel : ViewModel() {
 
     fun restartMarkerAtributes() {
         this._actualMarker.value = null
+        this._typeMarker.value = ""
+        this._uri.value = null
+        this._nameMarker.value = ""
     }
 
     fun chngeUserId(value: String) {

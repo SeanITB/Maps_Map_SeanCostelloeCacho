@@ -351,6 +351,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         context = context,
         changeNewMarker = {markerVM.changeNewMarker(it)},
         whenAddMarker = { markerVM.whenAddMarkerFromList(it) },
-        actualPosition = actualPosition
+        actualPosition = actualPosition,
+        onFirstTimeChange = {isFirstTime = it}
     )
 }

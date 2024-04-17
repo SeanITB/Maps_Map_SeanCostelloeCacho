@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 @Composable
@@ -82,7 +83,7 @@ fun TakePhotoScreen(markerVM: MapViewModel, navController: NavController) {
                         if (uri != null) {
                             markerVM.changeUri(uri)
                         }
-                        navController.navigate(navigationItems["mapGeolocalisationScreen"]!!)
+                        navController.navigate(Routes.MapScreen.route)
                     }
                 }
             ) {
