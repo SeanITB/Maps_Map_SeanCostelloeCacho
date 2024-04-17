@@ -24,7 +24,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -85,7 +89,9 @@ fun MyScaffold(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel) {
-    val typeMarker by markerVM.typeMarker.observeAsState("")
+    var typeMarker by rememberSaveable {
+        mutableStateOf("All markers")
+    }
     val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val scope = rememberCoroutineScope()
@@ -113,7 +119,7 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel) {
             TypeMarkerScreen(
                 arrTypeMarkers = listMarkerType,
                 typeMarker = typeMarker,
-                onTypeMarkerChange = { markerVM.changeTypeMarker(it) },
+                onTypeMarkerChange = { typeMarker = it },
                 expanded = expandedTopBar,
                 onExpandedChange = { markerVM.changeExpandedTopBar(it) }
             )

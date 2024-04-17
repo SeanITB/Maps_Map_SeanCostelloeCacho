@@ -61,8 +61,10 @@ fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewM
     var description by rememberSaveable {
         mutableStateOf("")
     }
+    var typeMarker by rememberSaveable {
+        mutableStateOf("")
+    }
     val context = LocalContext.current
-    val typeMarker by markerVM.typeMarker.observeAsState("")
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
     var uri: Uri? by rememberSaveable {
         mutableStateOf(null)
@@ -75,6 +77,7 @@ fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewM
     }
     if (isFirstTime && actualMarker != null) {
         name = actualMarker!!.name
+        typeMarker = actualMarker!!.type
         description = actualMarker!!.description
         uri = actualMarker!!.photo.toUri()
         markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
@@ -163,6 +166,7 @@ private fun MyBottomSheetScreen(
             ImageItem(navigationController, uri, navigationItems)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(
+                changeTypeMarker = {changeTypeMarker(it)},
                 actualMarker = actualMarker,
                 name = name,
                 typeMarker = typeMarker,
@@ -210,6 +214,7 @@ fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<Stri
 
 @Composable
 fun WhenAddMarkerScreen(
+    changeTypeMarker: (String) -> Unit,
     actualMarker: MarkerData?,
     name: String,
     typeMarker: String,
@@ -231,6 +236,7 @@ fun WhenAddMarkerScreen(
             )
             changeNewMarker(newMarker)
             whenAddMarker(context)
+            changeTypeMarker("All markers")
         }
     ) {
         Text(text = "Add Marker")

@@ -69,9 +69,10 @@ fun MarkerListContent(
     val turnOnSecondProcess by markerVM.turnOnSeconProcess.observeAsState(false)
     val finishSort by markerVM.finishSort.observeAsState(false)
     val justDelete by markerVM.justDelete.observeAsState(false)
+    val markerList by markerVM.markerList.observeAsState(emptyList())
 
-
-    LaunchedEffect(key1 = typeMarker, key2 = justDelete) {
+    Log.i("ActualType", "ActualType in list: $typeMarker")
+    LaunchedEffect(key1 = typeMarker, key2 = justDelete, key3 = markerList) {
         if (typeMarker.equals("All markers")) {
             markerVM.getMarkers()
         } else {

@@ -255,11 +255,7 @@ class MapViewModel : ViewModel() {
                     marker.id = markerId
                     marker.photo = value.get("photos").toString()
                 }
-                Log.i("MarkerDataÑ", "MarkerDataÑ id: ${marker?.id}, name: ${marker?.name} photo: ${marker?.photo}")
                 _actualMarker.value = marker
-                _typeMarker.value = _actualMarker.value!!.type
-                _photoUrl.value = _actualMarker.value!!.photo
-                _markerList.value = listOf(marker!!)
             } else {
                 Log.d("Markers", "Current data; null")
             }
