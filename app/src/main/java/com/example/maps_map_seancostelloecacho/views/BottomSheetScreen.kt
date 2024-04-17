@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_EXPRESSION")
-
 package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
@@ -41,7 +39,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -53,47 +50,27 @@ import com.google.android.gms.maps.model.LatLng
 
 
 @Composable
-fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewModel) {
+fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: MapViewModel) {
     val actualMarker by markerVM.actualMarker.observeAsState(null)
-    var name by rememberSaveable {
-        mutableStateOf("")
-    }
-    var description by rememberSaveable {
-        mutableStateOf("")
-    }
-    var typeMarker by rememberSaveable {
-        mutableStateOf("")
-    }
+    val name by markerVM.nameMarker.observeAsState("")
+    val description by markerVM.descriptionMarker.observeAsState("")
+    val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
-    var uri: Uri? by rememberSaveable {
-        mutableStateOf(null)
-    }
+    val uri by markerVM.uri.observeAsState(null)
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
-    var isFirstTime by rememberSaveable {
-        mutableStateOf(true)
-    }
-    if (isFirstTime && actualMarker != null) {
-        name = actualMarker!!.name
-        typeMarker = actualMarker!!.type
-        description = actualMarker!!.description
-        uri = actualMarker!!.photo.toUri()
-        markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
-        isFirstTime = false
-    }
-    Log.i("MarkerDataÑ", "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uri")
-
+    val actualPosition by markerVM.actualPosition.observeAsState()
 
     markerVM.changeActualScreen("BottomSheet")
     MyBottomSheetScreen(
         actualMarker = actualMarker,
         name = name,
         description = description,
-        onNameChange = {name = it},
-        onDescriptionChange = {description = it},
-        onShowBottomSheetChange = { markerVM.changeShowBottomSheet(it) },
+        onNameChange = { markerVM.changeNameMarke(it) },
+        onDescriptionChange = {markerVM.changeDescriptionMarker(it)},
+        onShowBottomSheetChange = { markerVM.changeShowBottomFromMapSheet(it) },
         typeMarker = typeMarker,
         changeTypeMarker = { markerVM.changeTypeMarker(it) },
         listTypeMarker = newListMarkersType,
@@ -104,14 +81,15 @@ fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewM
         navigationItems = navigationItems,
         context = context,
         changeNewMarker = {markerVM.changeNewMarker(it)},
-        whenAddMarker = { markerVM.whenAddMarker(it) }
+        whenAddMarker = { markerVM.whenAddMarkerFromMap(it) },
+        actualPosition = actualPosition
     )
 }
 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun MyBottomSheetScreen(
+fun MyBottomSheetScreen(
     actualMarker : MarkerData?,
     name: String,
     description: String,
@@ -128,7 +106,8 @@ private fun MyBottomSheetScreen(
     navigationItems: Map<String, String>,
     context: Context,
     changeNewMarker: (MarkerData) -> Unit,
-    whenAddMarker: (Context) -> Unit
+    whenAddMarker: (Context) -> Unit,
+    actualPosition: LatLng?
 ) {
     ModalBottomSheet(
         onDismissRequest = {
@@ -174,7 +153,8 @@ private fun MyBottomSheetScreen(
                 photo = uri,
                 whenAddMarker = { whenAddMarker(it) },
                 changeNewMarker = { changeNewMarker(it) },
-                context = context
+                context = context,
+                actualPosition = actualPosition
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         }
@@ -222,17 +202,18 @@ fun WhenAddMarkerScreen(
     photo: Uri?,
     whenAddMarker: (Context) -> Unit,
     changeNewMarker: (MarkerData) -> Unit,
-    context: Context
+    context: Context,
+    actualPosition: LatLng?
 ) {
     Button(
         onClick = {
             val newMarker = MarkerData(
-                id = actualMarker!!.id,
+                id = actualMarker?.id,
                 name = name,
                 type = typeMarker,
                 description = description,
                 photo = photo.toString(),
-                location = Location(latitude = actualMarker!!.location.latitude, longitude = actualMarker!!.location.longitude) //toDo: add actual position
+                location = Location(latitude = actualPosition!!.latitude, longitude = actualPosition!!.longitude) //toDo: add actual position
             )
             changeNewMarker(newMarker)
             whenAddMarker(context)

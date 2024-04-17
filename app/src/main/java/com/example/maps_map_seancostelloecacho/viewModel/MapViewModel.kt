@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.maps_map_seancostelloecacho.firebase.Repository
@@ -78,9 +79,6 @@ class MapViewModel : ViewModel() {
     private val _listMarkerType = MutableLiveData(mutableListOf("All markers", "Park", "Bookstore", "Sports Center", "Museum", "Restaurant"))
     val listMarkerType = _listMarkerType
 
-    private val _justDelete = MutableLiveData(false)
-    val justDelete = _justDelete
-
     private val _turnOnSeconProcess = MutableLiveData(false)
     val turnOnSeconProcess = _turnOnSeconProcess
 
@@ -89,6 +87,12 @@ class MapViewModel : ViewModel() {
 
     private val _password = MutableLiveData<String>("")
     val password = _password
+
+    private val _nameMarker = MutableLiveData<String>("")
+    val nameMarker = _nameMarker
+
+    private val _descriptionMarker = MutableLiveData<String>("")
+    val descriptionMarker = _descriptionMarker
 
     private val _goToNext = MutableLiveData<Boolean>(false)
     val goToNext = _goToNext
@@ -126,6 +130,9 @@ class MapViewModel : ViewModel() {
     private val _actualScreen = MutableLiveData(MAP_SCREEN_KEY)
     val actualScreen = _actualScreen
 
+    private val _showBottomSheetFromListSheet = MutableLiveData(false)
+    val showBottomFromListSheet = _showBottomSheetFromListSheet
+
     private val _isFilitered = MutableLiveData(false)
     val isFiltered = _isFilitered
 
@@ -153,14 +160,14 @@ class MapViewModel : ViewModel() {
     private val _photoUrl = MutableLiveData("")
     val photoUrl = _photoUrl
 
-    private var _expandedBottomSheet = MutableLiveData<Boolean>(false)
+    private var _expandedBottomSheet = MutableLiveData(false)
     val expandedBottomSheet = _expandedBottomSheet
 
-    private var _expandedTopBar = MutableLiveData<Boolean>(false)
+    private var _expandedTopBar = MutableLiveData(false)
     val expandedTopBar = _expandedTopBar
 
-    private var _showBottomSheet = MutableLiveData<Boolean>(false)
-    val showBottomSheet = _showBottomSheet
+    private var _showBottomSheetFromMap = MutableLiveData(false)
+    val showBottomSheetFromMap = _showBottomSheetFromMap
 
     private val _uri = MutableLiveData<Uri?>(null)
     val uri = _uri
@@ -256,6 +263,8 @@ class MapViewModel : ViewModel() {
                     marker.photo = value.get("photos").toString()
                 }
                 _actualMarker.value = marker
+                _uri.value = marker!!.photo.toUri()
+
             } else {
                 Log.d("Markers", "Current data; null")
             }
@@ -282,6 +291,14 @@ class MapViewModel : ViewModel() {
 
     fun modifiyProcessing() {
         this._isLoading.value = false
+    }
+
+    fun changeNameMarke(value: String) {
+        this._nameMarker.value = value
+    }
+
+    fun changeDescriptionMarker(value: String) {
+        this._descriptionMarker.value = value
     }
 
     fun login(context: Context) {
@@ -468,21 +485,17 @@ class MapViewModel : ViewModel() {
         return isCorrect
     }
 
-    fun changeShowBottomSheet(value: Boolean) {
-        this.showBottomSheet.value = value
+    fun changeShowBottomFromMapSheet(value: Boolean) {
+        this.showBottomSheetFromMap.value = value
     }
 
-    fun whenAddMarker(
+    fun whenAddMarkerFromMap(
         context: Context,
     ) {
-        Log.i("actualMarkerId", "actualMarkerId: ${this.actualMarker.value!!.id!!}")
-        if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) {
-            this.changeShowBottomSheet(false)
+        if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) { //toDo: la comprovacion mal
+            this.changeShowBottomFromMapSheet(false)
             if (this.uri.value != null) this.uploadImage()
-            if (isEditing.value!!){
-                this.editMarker(actualMarker.value!!)
-                this._isEditing.value = false
-            } else this.addMarker()
+            this.addMarker()
             this.restartMarkerAtributes()
         } else
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
@@ -576,10 +589,6 @@ class MapViewModel : ViewModel() {
         return p.matcher(password).matches()
     }
 
-    fun changeJustDelete(value: Boolean) {
-        this._justDelete.value = value
-    }
-
     fun initializeRecentMarker(name: String, type: String, description: String, latitude: Double, longitude: Double) {
         this._recentMarker.value = MarkerData(
             id = null,
@@ -593,6 +602,15 @@ class MapViewModel : ViewModel() {
 
     fun changeNewMarker(newMarker: MarkerData) {
         this._actualMarker.value = newMarker
+    }
+
+    fun changeShowBottomSheetFromListSheet(value: Boolean) {
+        this._showBottomSheetFromListSheet.value = value
+    }
+
+    fun whenAddMarkerFromList(it: Context) {
+        this.editMarker(actualMarker.value!!)
+        this._showBottomSheetFromListSheet.value = false
     }
 
 }

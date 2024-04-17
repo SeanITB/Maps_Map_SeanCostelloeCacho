@@ -2,7 +2,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,11 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.Museum
-import androidx.compose.material.icons.filled.Park
-import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material.icons.filled.SportsBasketball
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -35,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -43,9 +36,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,26 +45,27 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.maps_map_seancostelloecacho.R
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
-import com.example.maps_map_seancostelloecacho.views.MyBottomSheetContent
+import com.example.maps_map_seancostelloecacho.views.MyBottomSheetScreen
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun MarkerListContent(
     navController: NavController,
     markerVM: MapViewModel
 ) {
-    val typeMarker by markerVM.typeMarker.observeAsState("")
+    val typeMarker by rememberSaveable {
+        mutableStateOf("")
+    }
     val getMarkersComplet by markerVM.markersComplet.observeAsState(false)
     val turnOnSecondProcess by markerVM.turnOnSeconProcess.observeAsState(false)
     val finishSort by markerVM.finishSort.observeAsState(false)
-    val justDelete by markerVM.justDelete.observeAsState(false)
     val markerList by markerVM.markerList.observeAsState(emptyList())
 
     Log.i("ActualType", "ActualType in list: $typeMarker")
-    LaunchedEffect(key1 = typeMarker, key2 = justDelete, key3 = markerList) {
+    LaunchedEffect(key1 = typeMarker, key2 = markerList) {
         if (typeMarker.equals("All markers")) {
             markerVM.getMarkers()
         } else {
@@ -90,7 +83,7 @@ fun MarkerListContent(
         MarkerListScreen(
             markerVM = markerVM,
             navController = navController,
-            justDelete = justDelete
+            typeMarker = typeMarker
         )
     } else {
         Column(
@@ -119,12 +112,11 @@ fun MarkerListContent(
 fun MarkerListScreen(
     navController: NavController,
     markerVM: MapViewModel,
-    justDelete: Boolean
+    typeMarker: String,
 ) {
-    val typeMarker by markerVM.typeMarker.observeAsState("")
     val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
     val actualMarker by markerVM.actualMarker.observeAsState(null)
-    val showBottomSheet by markerVM.showBottomSheet.observeAsState(false)
+    val showBottomFromListSheet by markerVM.showBottomFromListSheet.observeAsState(false)
 
     if (categoryMarkerList.isNotEmpty()) {
         Column(
@@ -160,17 +152,14 @@ fun MarkerListScreen(
                                     navController.navigate(Routes.MapGeolocalisationScreen.route)
                                 },
                             markerVM = markerVM,
-                            justDelete = justDelete,
                         )
                     }
                 }
             }
-            if (showBottomSheet)
-                MyBottomSheetContent(navigationController = navController, markerVM = markerVM)
+            if (showBottomFromListSheet)
+                MyBottomSheetFromListContent(navigationController = navController, markerVM = markerVM)
         }
     } else {
-        Log.i("MARKER", "actual type: $typeMarker")
-
         ErrorMsg(
             msg = if (typeMarker.equals("All markers")) "For the moment, you don't have any marker." else "For the moment, for the type ${typeMarker} there isn't any marker.",
             modifier = Modifier.fillMaxSize()
@@ -200,7 +189,6 @@ fun CategoryItem(
     id: String,
     uri: Uri,
     text: String,
-    justDelete: Boolean,
     modifier: Modifier = Modifier,
     markerVM: MapViewModel
 ) {
@@ -222,7 +210,7 @@ fun CategoryItem(
                 markerVM = markerVM,
                 id = id,
             )
-            DeleteButtom(markerVM, justDelete, id)
+            DeleteButtom(markerVM, id)
         }
 
     }
@@ -282,7 +270,7 @@ private fun EditButton(
         LaunchedEffect(key1 = actualMarker) {
             markerVM.changeIsEditing(true)
             Log.i("MarkerDataÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name}")
-            markerVM.changeShowBottomSheet(true)
+            markerVM.changeShowBottomFromMapSheet(true)
             onEdit = false
         }
     }
@@ -291,13 +279,11 @@ private fun EditButton(
 @Composable
 private fun DeleteButtom(
     markerVM: MapViewModel,
-    justDelete: Boolean,
     id: String
 ) {
     IconButton(
         onClick = {
             markerVM.deleteMarker(id)
-            markerVM.changeJustDelete(!justDelete)
         },
         colors = IconButtonColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -322,4 +308,53 @@ fun ErrorMsg(msg: String, modifier: Modifier = Modifier) {
     ) {
         Text(text = msg, color = MaterialTheme.colorScheme.primary)
     }
+}
+
+@Composable
+fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: MapViewModel) {
+    val actualMarker by markerVM.actualMarker.observeAsState(null)
+    val name by markerVM.nameMarker.observeAsState("")
+    val description by markerVM.descriptionMarker.observeAsState("")
+    val typeMarker by markerVM.typeMarker.observeAsState("")
+    val context = LocalContext.current
+    val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
+    val uri by markerVM.uri.observeAsState(null)
+    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
+    val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
+    val newListMarkersType = listMarkerType.drop(1).toMutableList()
+    var isFirstTime by rememberSaveable {
+        mutableStateOf(true)
+    }
+    val actualPosition by markerVM.actualPosition.observeAsState()
+    if (isFirstTime && actualMarker != null) {
+        markerVM.changeNameMarke(actualMarker!!.name)
+        markerVM.changeTypeMarker(actualMarker!!.type)
+        markerVM.changeDescriptionMarker(actualMarker!!.description)
+        markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
+        isFirstTime = false
+    }
+    Log.i("MarkerDataÑ", "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uri")
+
+
+    markerVM.changeActualScreen("BottomSheet")
+    MyBottomSheetScreen(
+        actualMarker = actualMarker,
+        name = name,
+        description = description,
+        onNameChange = { markerVM.changeNameMarke(it) },
+        onDescriptionChange = {markerVM.changeDescriptionMarker(it)},
+        onShowBottomSheetChange = { markerVM.changeShowBottomSheetFromListSheet(it) },
+        typeMarker = typeMarker,
+        changeTypeMarker = { markerVM.changeTypeMarker(it) },
+        listTypeMarker = newListMarkersType,
+        expandedBottomSheet = expandedBottomSheet,
+        onExpandedBottomSheetChange = { markerVM.changeExpandedBottomSheet(it) },
+        navigationController = navigationController,
+        uri = uri,
+        navigationItems = navigationItems,
+        context = context,
+        changeNewMarker = {markerVM.changeNewMarker(it)},
+        whenAddMarker = { markerVM.whenAddMarkerFromList(it) },
+        actualPosition = actualPosition
+    )
 }

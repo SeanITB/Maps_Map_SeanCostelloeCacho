@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.location.Location
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
@@ -22,16 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.navigation.NavController
-import com.example.maps_map_seancostelloecacho.MainActivity
 import com.example.maps_map_seancostelloecacho.navigation.Routes
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 
 @SuppressLint("MissingPermission")
 @Composable
@@ -72,7 +65,7 @@ fun CameraScreen(markerVM: MapViewModel, navController: NavController) {
                     launcher.launch(Manifest.permission.CAMERA)
                 } else {
                     navController.navigate(Routes.TakePhotoScreen.route)
-                    markerVM.changeShowBottomSheet(true)
+                    markerVM.changeShowBottomFromMapSheet(true)
                 }
             }) {
             Text(text = "Take photo")

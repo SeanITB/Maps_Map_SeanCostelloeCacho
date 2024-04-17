@@ -1,33 +1,23 @@
 package com.example.maps_map_seancostelloecacho.views
 
 import android.annotation.SuppressLint
-import android.location.Location
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.example.maps_map_seancostelloecacho.MainActivity
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
@@ -37,7 +27,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val markerList by markerVM.markerList.observeAsState(emptyList())
-    val showBottomSheet by markerVM.showBottomSheet.observeAsState(false)
+    val showBottomSheet by markerVM.showBottomSheetFromMap.observeAsState(false)
     val getMarkersComlet by markerVM.markersComplet.observeAsState(false)
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
@@ -90,7 +80,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
             onMapLongClick = {
                 markerVM.changeActualPosition(it)
                 markerVM.restartMarkerAtributes()
-                markerVM.changeShowBottomSheet(true)
+                markerVM.changeShowBottomFromMapSheet(true)
             },
         ) {
             if (markerList.isNotEmpty()) {
@@ -124,7 +114,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
         }
         //AddActualPositionMarkerContent(markerVM)
         if (showBottomSheet)
-            MyBottomSheetContent(navigationController = navigationController, markerVM = markerVM)
+            MyBottomSheetFromMapContent(navigationController = navigationController, markerVM = markerVM)
     }
 }
 
