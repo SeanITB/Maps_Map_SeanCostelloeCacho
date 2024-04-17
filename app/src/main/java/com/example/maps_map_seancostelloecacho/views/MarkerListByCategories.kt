@@ -57,6 +57,7 @@ import com.example.maps_map_seancostelloecacho.R
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
+import com.example.maps_map_seancostelloecacho.views.MyBottomSheetContent
 
 @Composable
 fun MarkerListContent(
@@ -122,41 +123,49 @@ fun MarkerListScreen(
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
     val actualMarker by markerVM.actualMarker.observeAsState(null)
+    val showBottomSheet by markerVM.showBottomSheet.observeAsState(false)
 
     if (categoryMarkerList.isNotEmpty()) {
-        LazyColumn() {
-            for (m in categoryMarkerList) {
-                stickyHeader {
-                    CategoryHeader(
-                        text = m.name,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primary)
-                            .padding(16.dp)
-                    )
-                }
-                items(m.items) { element ->
-                    val actualUri = element.photo.toUri()
-                    CategoryItem(
-                        actualMarker = actualMarker,
-                        navController = navController,
-                        id = element.id!!,
-                        uri = actualUri,
-                        text = element.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp)
-                            .background(MaterialTheme.colorScheme.secondary)
-                            .padding(16.dp)
-                            .clickable {
-                                markerVM.getMarker(element.id!!)
-                                navController.navigate(Routes.MapGeolocalisationScreen.route)
-                            },
-                        markerVM = markerVM,
-                        justDelete = justDelete,
-                    )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            LazyColumn() {
+                for (m in categoryMarkerList) {
+                    stickyHeader {
+                        CategoryHeader(
+                            text = m.name,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.primary)
+                                .padding(16.dp)
+                        )
+                    }
+                    items(m.items) { element ->
+                        val actualUri = element.photo.toUri()
+                        CategoryItem(
+                            actualMarker = actualMarker,
+                            navController = navController,
+                            id = element.id!!,
+                            uri = actualUri,
+                            text = element.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp)
+                                .background(MaterialTheme.colorScheme.secondary)
+                                .padding(16.dp)
+                                .clickable {
+                                    markerVM.getMarker(element.id!!)
+                                    navController.navigate(Routes.MapGeolocalisationScreen.route)
+                                },
+                            markerVM = markerVM,
+                            justDelete = justDelete,
+                        )
+                    }
                 }
             }
+            if (showBottomSheet)
+                MyBottomSheetContent(navigationController = navController, markerVM = markerVM)
         }
     } else {
         Log.i("MARKER", "actual type: $typeMarker")
@@ -214,6 +223,7 @@ fun CategoryItem(
             )
             DeleteButtom(markerVM, justDelete, id)
         }
+
     }
 }
 
@@ -272,7 +282,6 @@ private fun EditButton(
             markerVM.changeIsEditing(true)
             Log.i("MarkerDataÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name}")
             markerVM.changeShowBottomSheet(true)
-            navController.navigate(Routes.MapGeolocalisationScreen.route)
         }
     }
 }
