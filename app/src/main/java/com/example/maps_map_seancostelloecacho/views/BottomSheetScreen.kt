@@ -4,7 +4,6 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +31,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -42,39 +44,47 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.R
+import com.example.maps_map_seancostelloecacho.models.Location
+import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 
 @Composable
 fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewModel) {
+    val actualMarker by markerVM.actualMarker.observeAsState(null)
+    var name by rememberSaveable {
+        mutableStateOf("")
+    }
+    var description by rememberSaveable {
+        mutableStateOf("")
+    }
     val context = LocalContext.current
-    val name by markerVM.nameMarker.observeAsState("")
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
-    val descriptionMarker by markerVM.descriptionMarker.observeAsState("")
     val uri by markerVM.uri.observeAsState(null)
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
 
-    Log.i("idMarker", "idMarker inn: ${markerVM.idForMarker.value}")
 
     markerVM.changeActualScreen("BottomSheet")
     MyBottomSheetScreen(
-        onShowBottomSheetChange = {markerVM.changeShowBottomSheet(it) },
+        actualMarker = actualMarker,
         name = name,
-        changeNameMarker = { markerVM.changeNameMarker(it) },
+        description = description,
+        onNameChange = {name = it},
+        onDescriptionChange = {description = it},
+        onShowBottomSheetChange = { markerVM.changeShowBottomSheet(it) },
         typeMarker = typeMarker,
         changeTypeMarker = { markerVM.changeTypeMarker(it) },
         listTypeMarker = newListMarkersType,
         expandedBottomSheet = expandedBottomSheet,
         onExpandedBottomSheetChange = { markerVM.changeExpandedBottomSheet(it) },
-        descriptionMarker = descriptionMarker,
-        onDescriptionMarkerChange = { markerVM.changeDescription(it) },
         navigationController = navigationController,
         uri = uri,
         navigationItems = navigationItems,
         context = context,
+        changeNewMarker = {markerVM.changeNewMarker(it)},
         whenAddMarker = { markerVM.whenAddMarker(it) }
     )
 }
@@ -83,20 +93,22 @@ fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewM
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun MyBottomSheetScreen(
-    onShowBottomSheetChange: (Boolean) -> Unit,
+    actualMarker : MarkerData?,
     name: String,
-    changeNameMarker: (String) -> Unit,
+    description: String,
+    onNameChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onShowBottomSheetChange: (Boolean) -> Unit,
     typeMarker: String,
     changeTypeMarker: (String) -> Unit,
     listTypeMarker: MutableList<String>,
     expandedBottomSheet: Boolean,
     onExpandedBottomSheetChange: (Boolean) -> Unit,
-    descriptionMarker: String,
-    onDescriptionMarkerChange: (String) -> Unit,
     navigationController: NavController,
     uri: Uri?,
     navigationItems: Map<String, String>,
     context: Context,
+    changeNewMarker: (MarkerData) -> Unit,
     whenAddMarker: (Context) -> Unit
 ) {
     ModalBottomSheet(
@@ -113,9 +125,10 @@ private fun MyBottomSheetScreen(
                 modifier = Modifier.fillMaxWidth(0.9f),
             ) {
                 NameMarkerScreen(
-                    modifier = Modifier.fillMaxWidth(0.5f),
                     name = name,
-                    onNameChange = { changeNameMarker(it) })
+                    onNameChange = onNameChange,
+                    modifier = Modifier.fillMaxWidth(0.5f),
+                )
                 TypeMarkerScreen(
                     arrTypeMarkers = listTypeMarker,
                     typeMarker = typeMarker,
@@ -126,14 +139,23 @@ private fun MyBottomSheetScreen(
             }
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             DescriptionMarkerScreen(
+                description = description,
+                onDescriptionChange = onDescriptionChange,
                 modifier = Modifier.fillMaxWidth(0.9f),
-                descriptionMarker = descriptionMarker,
-                onDescriptionMarkerChange = { onDescriptionMarkerChange(it) }
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             ImageItem(navigationController, uri, navigationItems)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            WhenAddMarkerScreen(context = context, whenAddMarker = { whenAddMarker(it) })
+            WhenAddMarkerScreen(
+                actualMarker = actualMarker,
+                name = name,
+                typeMarker = typeMarker,
+                description = description,
+                photo = uri,
+                whenAddMarker = { whenAddMarker(it) },
+                changeNewMarker = { changeNewMarker(it) },
+                context = context
+            )
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         }
     }
@@ -141,7 +163,7 @@ private fun MyBottomSheetScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImageItem(navController: NavController, uri: Uri?, navigationItems:  Map<String, String>) {
+fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<String, String>) {
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(8.dp),
@@ -171,11 +193,26 @@ fun ImageItem(navController: NavController, uri: Uri?, navigationItems:  Map<Str
 
 @Composable
 fun WhenAddMarkerScreen(
+    actualMarker: MarkerData?,
+    name: String,
+    typeMarker: String,
+    description: String,
+    photo: Uri?,
     whenAddMarker: (Context) -> Unit,
+    changeNewMarker: (MarkerData) -> Unit,
     context: Context
 ) {
     Button(
         onClick = {
+            val newMarker = MarkerData(
+                id = if (actualMarker!!.id != null) actualMarker.id else null,
+                name = name,
+                type = typeMarker,
+                description = description,
+                photo = photo.toString(),
+                location = Location(latitude = actualMarker.location.latitude, longitude = actualMarker.location.longitude)
+            )
+            changeNewMarker(newMarker)
             whenAddMarker(context)
         }
     ) {
@@ -187,19 +224,19 @@ fun WhenAddMarkerScreen(
 // todo (done): setting expanding sizes in sub-composables
 @Composable
 fun NameMarkerScreen(
-    modifier: Modifier = Modifier,
     name: String,
     onNameChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+
     TextField(
         value = name,
-        onValueChange = { onNameChange(it) },
+        onValueChange = { onNameChange(name) },
         placeholder = { Text(text = "Name") },
         modifier = modifier
     )
 
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -257,18 +294,18 @@ fun TypeMarkerScreen(
 
 @Composable
 fun DescriptionMarkerScreen(
+    description: String,
+    onDescriptionChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    descriptionMarker: String,
-    onDescriptionMarkerChange: (String) -> Unit
+
 ) {
     TextField(
-        value = descriptionMarker,
-        onValueChange = { onDescriptionMarkerChange(it) },
+        value = description,
+        onValueChange = { onDescriptionChange(description) },
         placeholder = { Text(text = "Description (optional)") },
         modifier = modifier
     )
 }
-
 
 
 /* // todo: no me funciona el preview

@@ -91,7 +91,6 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
         }
 
         markerVM.setShowMapPermissionDenied(false)
-        Log.i("idMarker", "idMarker in gelocalitzation ${markerVM.idForMarker.value} for marker ${markerVM.nameMarker.value} and for type: ${markerVM.typeMarker.value}")
 
         navController.navigate(Routes.MapScreen.route)
     }

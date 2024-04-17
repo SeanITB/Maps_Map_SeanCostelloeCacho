@@ -43,6 +43,8 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val context = LocalContext.current
     val recentMarker by markerVM.recentMarker.observeAsState(null)
     val actualPosition by markerVM.actualPosition.observeAsState(LatLng(0.0, 0.0))
+    val actualMarker by markerVM.actualMarker.observeAsState(null)
+    Log.i("MarkerDataÑ", "in map id: ${actualMarker?.id}, name: ${actualMarker?.name}")
 
 
 
@@ -70,7 +72,6 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Log.i("idMarker", "idMarker in map ${markerVM.idForMarker.value} for marker ${markerVM.nameMarker.value} and for type: ${markerVM.typeMarker.value}")
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
@@ -89,8 +90,6 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
             onMapLongClick = {
                 markerVM.changeActualPosition(it)
                 markerVM.restartMarkerAtributes()
-                markerVM.changeLatitude(it.latitude)
-                markerVM.changeLongitude(it.longitude)
                 markerVM.changeShowBottomSheet(true)
             },
         ) {
@@ -104,7 +103,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                             )
                         ),
                         title = marker.name,
-                        snippet = "Marker at ${markerVM.nameMarker.value}",
+                        snippet = "Marker at ${marker.name}",
                         icon = BitmapDescriptorFactory.defaultMarker(HUE_VIOLET)
                     )
                 }

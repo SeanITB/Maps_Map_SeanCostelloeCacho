@@ -36,8 +36,6 @@ import java.util.regex.Pattern
 
 class MapViewModel : ViewModel() {
 
-
-
     // firebase values
     private val repository = Repository()
 
@@ -146,29 +144,14 @@ class MapViewModel : ViewModel() {
     var categoryMap: SortedMap<String, MutableList<MarkerData>>? by mutableStateOf(sortedMapOf())
         private set
 
-    private val _actualMarker = MutableLiveData<MarkerData>(MarkerData("", "", "", "", "", Location(0.0, 0.0)))
+    private val _actualMarker = MutableLiveData<MarkerData?>(null)
     val actualMarker = _actualMarker
 
-    private val _idForMarker = MutableLiveData<String>("")
-    val idForMarker = _idForMarker
-
-    private val _nameMarker = MutableLiveData<String>("")
-    val nameMarker = _nameMarker
-
-    private val _typeMarker = MutableLiveData<String>("")
+    private val _typeMarker = MutableLiveData("")
     val typeMarker = _typeMarker
-
-    private val _descriptionMarker = MutableLiveData<String>("")
-    val descriptionMarker = _descriptionMarker
 
     private val _photoUrl = MutableLiveData("")
     val photoUrl = _photoUrl
-
-    private val _latitudeMarker = MutableLiveData<Double>(0.0)
-    val latitudeMarker = _latitudeMarker
-
-    private val _longitudeMarker = MutableLiveData<Double>(0.0)
-    val longitudeMarker = _longitudeMarker
 
     private var _expandedBottomSheet = MutableLiveData<Boolean>(false)
     val expandedBottomSheet = _expandedBottomSheet
@@ -184,12 +167,14 @@ class MapViewModel : ViewModel() {
 
     // Firebase Methods
     fun addMarker() {
-        instanceActualMarker()
+        //instanceActualMarker(newMarker)
+
         Log.i("makerList", "marker contetnt befor firestore: ${actualMarker.value}")
         repository.addMarker(this.actualMarker.value!!)
     }
 
-    fun instanceActualMarker() {
+    /*
+    fun instanceActualMarker(newMarker: MarkerData) {
         this.actualMarker.value = MarkerData(
             id = this.idForMarker.value,
             name = this.nameMarker.value!!,
@@ -202,6 +187,8 @@ class MapViewModel : ViewModel() {
             )
         )
     }
+
+     */
 
     fun deleteMarker(idMarker: String) {
         repository.deleteMarker(idMarker)
@@ -267,14 +254,10 @@ class MapViewModel : ViewModel() {
                 if (marker != null) {
                     marker.id = markerId
                 }
-                _nameMarker.value = _actualMarker.value!!.name
-                _idForMarker.value = _actualMarker.value!!.id
+                Log.i("MarkerDataÑ", "MarkerDataÑ id: ${marker?.id}, name: ${marker?.name}")
                 _actualMarker.value = marker
                 _typeMarker.value = _actualMarker.value!!.type
-                _descriptionMarker.value = _actualMarker.value!!.description
                 _photoUrl.value = _actualMarker.value!!.photo
-                _latitudeMarker.value = _actualMarker.value!!.location.latitude
-                _longitudeMarker.value = _actualMarker.value!!.location.longitude
                 _markerList.value = listOf(marker!!)
             } else {
                 Log.d("Markers", "Current data; null")
@@ -354,24 +337,6 @@ class MapViewModel : ViewModel() {
 
     fun changeGoToNext(value: Boolean) {
         this._goToNext.value = value
-    }
-
-    fun initializeMarker(
-        id: String,
-        name: String,
-        type: String,
-        description: String,
-        latitude: Double,
-        longitude: Double,
-        uriImage: Uri?
-    ) {
-        this._idForMarker.value = id
-        this._nameMarker.value = name
-        this._typeMarker.value = type
-        this._descriptionMarker.value = description
-        this._latitudeMarker.value = latitude
-        this._longitudeMarker.value = longitude
-        this._uri.value = uriImage
     }
 
     fun changeMarkerComplete(value: Boolean) {
@@ -481,41 +446,22 @@ class MapViewModel : ViewModel() {
         this._expandedTopBar.value = value
     }
 
-    fun changeNameMarker(value: String) {
-        this._nameMarker.value = value
-        Log.i("makerList", "change name marker: ${_nameMarker.value}")
-        //dataToSave.put(NAME_KEY, this.nameMarker)
-    }
 
     fun changeTypeMarker(value: String) {
         this._typeMarker.value = value
         //dataToSave.put(TYPE_KEY, this.typeMarker)
     }
 
-    fun changeDescription(value: String) {
-        this._descriptionMarker.value = value
-        //dataToSave.put(DESCRIPTION_KEY, this.description)
-    }
-
-    fun changeLatitude(value: Double) {
-        this._latitudeMarker.value = value
-        //dataToSave.put(LATITUDE_KEY, this.latitude)
-    }
-
-    fun changeLongitude(value: Double) {
-        this._longitudeMarker.value = value
-        //dataToSave.put(LONGITUDE_KEY, this.longitude)
-    }
-
     fun changeUri(value: Uri?) {
         this._uri.value = value
     }
 
-    fun proveThatMarkerIsCorrect(): Boolean {
+    fun proveThatMarkerIsCorrect(newMarker: MarkerData): Boolean {
         var isCorrect = false
         if (
-            this.nameMarker.value != "" &&
-            this.typeMarker.value != ""
+            newMarker.name != "" &&
+            newMarker.type != "" &&
+            newMarker.photo != ""
         )
             isCorrect = true
         return isCorrect
@@ -526,11 +472,10 @@ class MapViewModel : ViewModel() {
     }
 
     fun whenAddMarker(
-        context: Context
+        context: Context,
     ) {
-        Log.i("idMarker", "idMarker in VM: ${idForMarker.value!!}")
-        if (isEditing.value!!) deleteMarker(idForMarker.value!!)
-        if (this.proveThatMarkerIsCorrect()) {
+        if (isEditing.value!!) deleteMarker(this.actualMarker.value!!.id!!)
+        if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) {
             this.changeShowBottomSheet(false)
             if (this.uri.value != null) this.uploadImage()
             this.addMarker()
@@ -587,10 +532,7 @@ class MapViewModel : ViewModel() {
 
 
     fun restartMarkerAtributes() {
-        this._nameMarker.value = ""
-        this._typeMarker.value = "All markers"
-        this._descriptionMarker.value = ""
-        this._uri.value = null
+        this._actualMarker.value = null
     }
 
     fun chngeUserId(value: String) {
@@ -645,8 +587,8 @@ class MapViewModel : ViewModel() {
         )
     }
 
-    fun changeIdMarker(id: String) {
-        this._idForMarker.value = id
+    fun changeNewMarker(newMarker: MarkerData) {
+        this._actualMarker.value = newMarker
     }
 
 }

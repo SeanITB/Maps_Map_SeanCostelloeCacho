@@ -35,8 +35,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -50,6 +54,7 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.R
+import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
@@ -115,9 +120,8 @@ fun MarkerListScreen(
     justDelete: Boolean
 ) {
     val typeMarker by markerVM.typeMarker.observeAsState("")
-    val description by markerVM.descriptionMarker.observeAsState("")
     val categoryMarkerList by markerVM.categoryMarkerList.observeAsState(emptyList())
-
+    val actualMarker by markerVM.actualMarker.observeAsState(null)
 
     if (categoryMarkerList.isNotEmpty()) {
         LazyColumn() {
@@ -134,12 +138,11 @@ fun MarkerListScreen(
                 items(m.items) { element ->
                     val actualUri = element.photo.toUri()
                     CategoryItem(
+                        actualMarker = actualMarker,
                         navController = navController,
                         id = element.id!!,
                         uri = actualUri,
                         text = element.name,
-                        latitude = element.location.latitude,
-                        longitude = element.location.longitude,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -151,8 +154,6 @@ fun MarkerListScreen(
                             },
                         markerVM = markerVM,
                         justDelete = justDelete,
-                        typeMarker = typeMarker,
-                        description = description
                     )
                 }
             }
@@ -184,14 +185,11 @@ fun CategoryHeader(
 
 @Composable
 fun CategoryItem(
+    actualMarker : MarkerData?,
     navController: NavController,
     id: String,
     uri: Uri,
     text: String,
-    latitude: Double,
-    longitude: Double,
-    typeMarker: String,
-    description: String,
     justDelete: Boolean,
     modifier: Modifier = Modifier,
     markerVM: MapViewModel
@@ -209,15 +207,10 @@ fun CategoryItem(
             ImageMarker(uri, text)
             NameMarker(text)
             EditButton(
+                actualMarker = actualMarker,
                 navController = navController,
                 markerVM = markerVM,
                 id = id,
-                name = text,
-                type = typeMarker,
-                description = description,
-                latitude = latitude,
-                longitude = longitude,
-                uri = uri
             )
             DeleteButtom(markerVM, justDelete, id)
         }
@@ -249,32 +242,17 @@ private fun NameMarker(text: String) {
 
 @Composable
 private fun EditButton(
+    actualMarker: MarkerData?,
     navController: NavController,
     markerVM: MapViewModel,
     id: String,
-    name: String,
-    type: String,
-    description: String,
-    latitude: Double,
-    longitude: Double,
-    uri: Uri
 ) {
+    var onEdit by rememberSaveable {
+        mutableStateOf(false)
+    }
     IconButton(
         onClick = {
-            markerVM.getMarker(id)
-            markerVM.initializeMarker(
-                id = id,
-                name = name,
-                type = type,
-                description = description,
-                latitude = latitude,
-                longitude = longitude,
-                uriImage = uri
-            )
-            Log.i("idMarker", "idMarker in list: ${markerVM.idForMarker.value} with name: ${markerVM.nameMarker.value}")
-            markerVM.changeIsEditing(true)
-            markerVM.changeShowBottomSheet(true)
-            navController.navigate(Routes.MapGeolocalisationScreen.route)
+            onEdit = !onEdit
         },
         colors = IconButtonColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -287,6 +265,15 @@ private fun EditButton(
             imageVector = Icons.Filled.Edit,
             contentDescription = "Edit Marker",
         )
+    }
+    if (onEdit) {
+        markerVM.getMarker(id)
+        LaunchedEffect(key1 = actualMarker) {
+            Log.i("MarkerDataÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name}")
+            markerVM.changeIsEditing(true)
+            markerVM.changeShowBottomSheet(true)
+            navController.navigate(Routes.MapGeolocalisationScreen.route)
+        }
     }
 }
 
