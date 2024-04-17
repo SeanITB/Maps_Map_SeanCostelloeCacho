@@ -282,6 +282,7 @@ private fun EditButton(
             markerVM.changeIsEditing(true)
             Log.i("MarkerDataÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name}")
             markerVM.changeShowBottomSheet(true)
+            onEdit = false
         }
     }
 }
