@@ -70,7 +70,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Log.i("idMarker", "idMarker in map ${markerVM.idMarker.value} for marker ${markerVM.nameMarker.value} and for type: ${markerVM.typeMarker.value}")
+        Log.i("idMarker", "idMarker in map ${markerVM.idForMarker.value} for marker ${markerVM.nameMarker.value} and for type: ${markerVM.typeMarker.value}")
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
@@ -109,7 +109,6 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                     )
                 }
             }
-            Log.i("RECENT_MARKER", "Recent marker: $recentMarker")
             if (recentMarker != null) {
                 Marker(
                     state = MarkerState(

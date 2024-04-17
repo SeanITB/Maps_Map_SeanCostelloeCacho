@@ -64,6 +64,7 @@ fun MarkerListContent(
     val finishSort by markerVM.finishSort.observeAsState(false)
     val justDelete by markerVM.justDelete.observeAsState(false)
 
+
     LaunchedEffect(key1 = typeMarker, key2 = justDelete) {
         if (typeMarker.equals("All markers")) {
             markerVM.getMarkers()
@@ -262,6 +263,7 @@ private fun EditButton(
         onClick = {
             markerVM.getMarker(id)
             markerVM.initializeMarker(
+                id = id,
                 name = name,
                 type = type,
                 description = description,
@@ -269,8 +271,7 @@ private fun EditButton(
                 longitude = longitude,
                 uriImage = uri
             )
-            markerVM.changeIdMarker(id)
-            Log.i("idMarker", "idMarker in list: ${markerVM.idMarker.value}")
+            Log.i("idMarker", "idMarker in list: ${markerVM.idForMarker.value} with name: ${markerVM.nameMarker.value}")
             markerVM.changeIsEditing(true)
             markerVM.changeShowBottomSheet(true)
             navController.navigate(Routes.MapGeolocalisationScreen.route)

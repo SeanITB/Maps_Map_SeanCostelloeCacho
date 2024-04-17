@@ -91,8 +91,7 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
         }
 
         markerVM.setShowMapPermissionDenied(false)
-        //toDo: elimina el nom and id pero no type
-        Log.i("idMarker", "idMarker in gelocalitzation ${markerVM.idMarker.value} for marker ${markerVM.nameMarker.value} and for type: ${markerVM.typeMarker.value}")
+        Log.i("idMarker", "idMarker in gelocalitzation ${markerVM.idForMarker.value} for marker ${markerVM.nameMarker.value} and for type: ${markerVM.typeMarker.value}")
 
         navController.navigate(Routes.MapScreen.route)
     }

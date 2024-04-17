@@ -57,7 +57,7 @@ fun MyBottomSheetContent(navigationController: NavController, markerVM: MapViewM
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
 
-    Log.i("idMarker", "idMarker inn: ${markerVM.idMarker.value}")
+    Log.i("idMarker", "idMarker inn: ${markerVM.idForMarker.value}")
 
     markerVM.changeActualScreen("BottomSheet")
     MyBottomSheetScreen(
