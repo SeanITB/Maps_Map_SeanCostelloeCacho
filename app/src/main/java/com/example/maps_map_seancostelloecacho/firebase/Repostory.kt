@@ -12,7 +12,6 @@ class Repository {
     val MARKERS_KEY = "markers"
     val NAME_KEY = "name"
     val TYPE_KEY = "type"
-    val DESCRIPTION_KEY = "description"
     val PHOTOS_KEY = "photos"
     val LATITUDE_KEY = "latitude"
     val LONGITUDE_KEY = "longitude"
@@ -25,7 +24,6 @@ class Repository {
                     "owner" to user,
                     NAME_KEY to marker.name,
                     TYPE_KEY to marker.type,
-                    DESCRIPTION_KEY to marker.description,
                     PHOTOS_KEY to uriUrl,
                     LATITUDE_KEY to marker.location.latitude,
                     LONGITUDE_KEY to marker.location.longitude
@@ -38,7 +36,6 @@ class Repository {
             hashMapOf(
                 NAME_KEY to editMarker.name,
                 TYPE_KEY to editMarker.type,
-                DESCRIPTION_KEY to editMarker.description,
                 PHOTOS_KEY to editMarker.photo,
                 LATITUDE_KEY to editMarker.location.latitude,
                 LONGITUDE_KEY to editMarker.location.longitude

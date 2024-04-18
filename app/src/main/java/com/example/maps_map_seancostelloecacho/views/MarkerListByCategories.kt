@@ -310,7 +310,6 @@ fun ErrorMsg(msg: String, modifier: Modifier = Modifier) {
 fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: MapViewModel) {
     val actualMarker by markerVM.actualMarker.observeAsState(null)
     val name by markerVM.nameMarker.observeAsState("")
-    val description by markerVM.descriptionMarker.observeAsState("")
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
@@ -325,7 +324,6 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     if (isFirstTime && actualMarker != null) {
         markerVM.changeNameMarke(actualMarker!!.name)
         markerVM.changeTypeMarker(actualMarker!!.type)
-        markerVM.changeDescriptionMarker(actualMarker!!.description)
         //markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
         isFirstTime = false
     }
@@ -336,9 +334,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     MyBottomSheetScreen(
         actualMarker = actualMarker,
         name = name,
-        description = description,
         onNameChange = { markerVM.changeNameMarke(it) },
-        onDescriptionChange = {markerVM.changeDescriptionMarker(it)},
         onShowBottomSheetChange = { markerVM.changeShowBottomSheetFromList(it) },
         typeMarker = typeMarker,
         changeTypeMarker = { markerVM.changeTypeMarker(it) },

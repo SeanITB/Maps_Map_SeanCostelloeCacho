@@ -53,7 +53,6 @@ import com.google.android.gms.maps.model.LatLng
 fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: MapViewModel) {
     val actualMarker by markerVM.actualMarker.observeAsState(null)
     val name by markerVM.nameMarker.observeAsState("")
-    val description by markerVM.descriptionMarker.observeAsState("")
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
@@ -80,9 +79,7 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         onFirstTimeChange = {isFirstTime = it},
         actualMarker = actualMarker,
         name = name,
-        description = description,
         onNameChange = { markerVM.changeNameMarke(it) },
-        onDescriptionChange = {markerVM.changeDescriptionMarker(it)},
         onShowBottomSheetChange = { markerVM.changeShowBottomFromMapSheet(it) },
         typeMarker = typeMarker,
         changeTypeMarker = { markerVM.changeTypeMarker(it) },
@@ -106,9 +103,7 @@ fun MyBottomSheetScreen(
     onFirstTimeChange: (Boolean) -> Unit,
     actualMarker : MarkerData?,
     name: String,
-    description: String,
     onNameChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
     onShowBottomSheetChange: (Boolean) -> Unit,
     typeMarker: String,
     changeTypeMarker: (String) -> Unit,
@@ -150,11 +145,6 @@ fun MyBottomSheetScreen(
                 )
             }
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            DescriptionMarkerScreen(
-                description = description,
-                onDescriptionChange = onDescriptionChange,
-                modifier = Modifier.fillMaxWidth(0.9f),
-            )
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             ImageItem(navigationController, uri, navigationItems)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
@@ -163,7 +153,6 @@ fun MyBottomSheetScreen(
                 actualMarker = actualMarker,
                 name = name,
                 typeMarker = typeMarker,
-                description = description,
                 photo = uri,
                 whenAddMarker = { whenAddMarker(it) },
                 changeNewMarker = { changeNewMarker(it) },
@@ -212,7 +201,6 @@ fun WhenAddMarkerScreen(
     actualMarker: MarkerData?,
     name: String,
     typeMarker: String,
-    description: String,
     photo: Uri?,
     whenAddMarker: (Context) -> Unit,
     changeNewMarker: (MarkerData) -> Unit,
@@ -225,7 +213,6 @@ fun WhenAddMarkerScreen(
                 id = actualMarker?.id,
                 name = name,
                 type = typeMarker,
-                description = description,
                 photo = photo.toString(),
                 location = Location(latitude = actualPosition!!.latitude, longitude = actualPosition!!.longitude) //toDo: add actual position
             )
@@ -310,20 +297,7 @@ fun TypeMarkerScreen(
     }
 }
 
-@Composable
-fun DescriptionMarkerScreen(
-    description: String,
-    onDescriptionChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
 
-) {
-    TextField(
-        value = description,
-        onValueChange = { onDescriptionChange(description) },
-        placeholder = { Text(text = "Description (optional)") },
-        modifier = modifier
-    )
-}
 
 
 /* // todo: no me funciona el preview

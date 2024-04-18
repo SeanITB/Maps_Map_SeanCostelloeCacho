@@ -6,9 +6,8 @@ data class MarkerData(
     var id: String?,
     val name: String,
     val type: String,
-    val description: String,
     var photo: String,
     val location: Location
 ) {
-    constructor() : this(null, "", "", "", "", Location(0.0, 0.0))
+    constructor() : this(null, "", "", "", Location(0.0, 0.0))
 }

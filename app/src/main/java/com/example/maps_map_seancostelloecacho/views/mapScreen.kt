@@ -41,7 +41,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
         MapUiSettings(zoomControlsEnabled = false)
     }
     markerVM.changeActualScreen("mapScreen")
-    /*
+
     LaunchedEffect(key1 = typeMarkerForFilter) {
         if (typeMarkerForFilter.equals("All markers")) {
             markerVM.getMarkers()
@@ -54,7 +54,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
         markerVM.changeMarkerComplete(false)
     }
 
-     */
+
 
     Column(
         modifier = Modifier
@@ -70,7 +70,6 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                 markerVM.initializeRecentMarker(
                     name = "New Marker",
                     type = "Recent Marker",
-                    description = "Hello!!!",
                     latitude = it.latitude,
                     longitude = it.longitude,
                 )
@@ -105,7 +104,6 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                         )
                     ),
                     title = recentMarker!!.name,
-                    snippet = recentMarker!!.description,
                     icon = defaultMarker(HUE_RED)
                 )
             }

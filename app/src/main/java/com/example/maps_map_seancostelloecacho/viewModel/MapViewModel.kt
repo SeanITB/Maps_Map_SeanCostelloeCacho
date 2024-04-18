@@ -46,7 +46,6 @@ class MapViewModel : ViewModel() {
     val NAME_KEY = "name"
 
     val TYPE_KEY = "type"
-    val DESCRIPTION_KEY = "description"
     val PHOTOS_KEY = "photos"
     val LATITUDE_KEY = "latitude"
     val LONGITUDE_KEY = "longitude"
@@ -101,9 +100,6 @@ class MapViewModel : ViewModel() {
 
     private val _nameMarker = MutableLiveData<String>("")
     val nameMarker = _nameMarker
-
-    private val _descriptionMarker = MutableLiveData<String>("")
-    val descriptionMarker = _descriptionMarker
 
     private val _goToNext = MutableLiveData<Boolean>(false)
     val goToNext = _goToNext
@@ -253,7 +249,6 @@ class MapViewModel : ViewModel() {
                     id = dc.document.id,
                     name = dc.document.get(NAME_KEY).toString(),
                     type = dc.document.get(TYPE_KEY).toString(),
-                    description = dc.document.get(DESCRIPTION_KEY).toString(),
                     photo = dc.document.get(PHOTOS_KEY).toString(),
                     location = Location(
                         latitude = dc.document.get(LATITUDE_KEY).toString().toDouble(),
@@ -313,10 +308,6 @@ class MapViewModel : ViewModel() {
 
     fun changeNameMarke(value: String) {
         this._nameMarker.value = value
-    }
-
-    fun changeDescriptionMarker(value: String) {
-        this._descriptionMarker.value = value
     }
 
     var hola = auth.currentUser
@@ -621,7 +612,6 @@ class MapViewModel : ViewModel() {
     fun initializeRecentMarker(
         name: String,
         type: String,
-        description: String,
         latitude: Double,
         longitude: Double
     ) {
@@ -629,7 +619,6 @@ class MapViewModel : ViewModel() {
             id = null,
             name = name,
             type = type,
-            description = description,
             photo = "",
             location = Location(latitude = latitude, longitude = longitude)
         )
