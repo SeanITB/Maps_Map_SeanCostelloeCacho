@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -238,7 +239,11 @@ fun NameMarkerScreen(
         value = name,
         onValueChange = { onNameChange(it) },
         placeholder = { Text(text = "Name") },
-        modifier = modifier
+        modifier = modifier,
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.primary
+        ),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
     )
 
 }
@@ -260,12 +265,10 @@ fun TypeMarkerScreen(
             label = { Text(text = "Marker Type", color = MaterialTheme.colorScheme.primary) },
             enabled = false,
             readOnly = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-                focusedLabelColor = MaterialTheme.colorScheme.primary,
-                cursorColor = MaterialTheme.colorScheme.primary
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.primary
             ),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
             modifier = Modifier
                 .clickable {
                     onExpandedChange(!expanded)

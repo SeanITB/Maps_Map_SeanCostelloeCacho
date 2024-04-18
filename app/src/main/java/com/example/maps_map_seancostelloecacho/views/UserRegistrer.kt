@@ -28,9 +28,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +42,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +58,7 @@ import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
+import com.example.trivialapp.ui.theme.lightWrongAswer
 
 
 @Composable
@@ -125,17 +129,18 @@ fun UserRegistrerView(
             value = userName,
             onValueChange = { onUserNameChange(it) },
             placeholder = {
-                Row{
+                Row {
                     Text(text = "Name ", style = TextStyle(fontWeight = FontWeight.Bold))
                     Text(text = "(required)")
                 }
-                          },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.background
+            },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.primary
             ),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth(0.6F)
+            modifier = Modifier
+                .fillMaxWidth(0.6F)
         )
         Spacer(modifier = Modifier.fillMaxHeight(0.05F))
         Password(
@@ -145,7 +150,7 @@ fun UserRegistrerView(
             onPasswordChange = { onPasswordChange(it) },
             onPasswordCheckChange = { passwordCheck = it }
         )
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth(0.5F)
                 .fillMaxHeight(0.05F),
@@ -206,19 +211,19 @@ fun UserRegistrerView(
 }
 
 @Composable
-fun MyDialog(show: Boolean, onDismiss: () -> Unit){
+fun MyDialog(show: Boolean, onDismiss: () -> Unit) {
     if (show) {
         Dialog(
-            onDismissRequest = { onDismiss()},
+            onDismissRequest = { onDismiss() },
             properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = true)
         ) {
             Column(
                 Modifier
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.onSurface)
                     .padding(24.dp)
                     .fillMaxWidth()
             ) {
-                ShowPaswordInstructions(modifier = Modifier)
+                ShowPaswordInstructions(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
 
         }
@@ -232,15 +237,18 @@ fun ShowPaswordInstructions(modifier: Modifier = Modifier) {
         text = "Password characteristics: ",
         modifier = modifier,
         fontWeight = FontWeight.Bold,
-        fontSize = 12.sp
-    )
+        fontSize = 17.sp,
+        color = MaterialTheme.colorScheme.primary,
+
+        )
     Text(
         text = """
             - 1 digit
             - 6 characters
         """.trimIndent(),
-        fontSize = 12.sp,
-        modifier = modifier
+        fontSize = 15.sp,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier,
     )
 }
 
@@ -270,10 +278,10 @@ fun Password(
             value = arrItems[index],
             onValueChange = { arrChangeItems[index](it) },
             placeholder = { Text(text = arrPasswordLable[index]) },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.background
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.primary
             ),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
