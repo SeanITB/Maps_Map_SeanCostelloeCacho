@@ -1,5 +1,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -48,7 +49,7 @@ fun MyScaffold(
     val darkThem by markerVM.darkThem.observeAsState(false)
     Scaffold(
         topBar = {
-            MyTopAppBar(state = state, markerVM = markerVM)
+            MyTopAppBar(state = state, markerVM = markerVM, navController = navController)
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -88,14 +89,16 @@ fun MyScaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel) {
+fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavController) {
     val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
     val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val scope = rememberCoroutineScope()
 
     TopAppBar(
-        title = { Text(text = "My SuperApp") },
+        title = { Text(text = "My SuperApp", modifier = Modifier.clickable {
+            navController.navigate(Routes.MapScreen.route)
+        }) },
         colors = TopAppBarDefaults.largeTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.background
