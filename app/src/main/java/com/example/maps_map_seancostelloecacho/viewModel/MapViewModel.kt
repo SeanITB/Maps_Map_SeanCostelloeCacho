@@ -553,7 +553,7 @@ class MapViewModel : ViewModel() {
     }
 
      */
-    fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
+    fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? { //toDo: passarlo al storage con url
         val filename = "${System.currentTimeMillis()}.jpg"
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.TITLE, filename)
