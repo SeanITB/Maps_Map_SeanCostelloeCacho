@@ -3,17 +3,23 @@ package com.example.maps_map_seancostelloecacho.views
 import android.content.Context
 import android.view.WindowInsets.Side
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -35,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -48,6 +55,7 @@ import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
+
 
 @Composable
 fun UsernRegistrerContent(navController: NavController, markerVM: MapViewModel) {
@@ -94,6 +102,9 @@ fun UserRegistrerView(
     var show by rememberSaveable {
         mutableStateOf(false)
     }
+    var showPasswordInfo by rememberSaveable {
+        mutableStateOf(false)
+    }
     var passwordCheck by rememberSaveable {
         mutableStateOf("")
     }
@@ -113,7 +124,12 @@ fun UserRegistrerView(
         TextField(
             value = userName,
             onValueChange = { onUserNameChange(it) },
-            placeholder = { Text(text = "Name") },
+            placeholder = {
+                Row{
+                    Text(text = "Name ", style = TextStyle(fontWeight = FontWeight.Bold))
+                    Text(text = "(required)")
+                }
+                          },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.background
@@ -127,8 +143,27 @@ fun UserRegistrerView(
             password = password,
             passwordCheck = passwordCheck,
             onPasswordChange = { onPasswordChange(it) },
-            onPasswordCheckChange = { passwordCheck = it}
+            onPasswordCheckChange = { passwordCheck = it }
         )
+        Row (
+            modifier = Modifier
+                .fillMaxWidth(0.5F)
+                .fillMaxHeight(0.05F),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Info,
+                contentDescription = "Password info",
+                modifier = Modifier
+                    //.fillMaxSize()
+                    .clickable {
+                        showPasswordInfo = true
+                    }
+            )
+        }
+        MyDialog(show = showPasswordInfo) {
+            showPasswordInfo = false
+        }
         Spacer(modifier = Modifier.fillMaxHeight(0.05F))
 
         Text(
@@ -145,7 +180,7 @@ fun UserRegistrerView(
             password = password,
             passwordCheck = passwordCheck,
             context = context,
-            onPasswordIncorrectChange = {passwordIncorrect = it},
+            onPasswordIncorrectChange = { passwordIncorrect = it },
             onShowChange = { show = it },
             passwordVerification = { passwordVerification(password) },
             proveThatItsAEmail = { proveThatItsAEmail(userName) },
@@ -171,18 +206,37 @@ fun UserRegistrerView(
 }
 
 @Composable
+fun MyDialog(show: Boolean, onDismiss: () -> Unit){
+    if (show) {
+        Dialog(
+            onDismissRequest = { onDismiss()},
+            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = true)
+        ) {
+            Column(
+                Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(24.dp)
+                    .fillMaxWidth()
+            ) {
+                ShowPaswordInstructions(modifier = Modifier)
+            }
+
+        }
+    }
+}
+
+
+@Composable
 fun ShowPaswordInstructions(modifier: Modifier = Modifier) {
     Text(
         text = "Password characteristics: ",
         modifier = modifier,
         fontWeight = FontWeight.Bold,
         fontSize = 12.sp
-        )
+    )
     Text(
         text = """
             - 1 digit
-            - 1 postmark expression
-            - 1 capital letter
             - 6 characters
         """.trimIndent(),
         fontSize = 12.sp,
@@ -206,10 +260,11 @@ fun Password(
         mutableStateOf(false)
     }
     val arrItems = arrayOf(password, passwordCheck)
-    val arrChangeItems = arrayOf(onPasswordChange,onPasswordCheckChange)
-    val arrPasswordLable = arrayOf("Password", "Repeat password")
+    val arrChangeItems = arrayOf(onPasswordChange, onPasswordCheckChange)
+    val arrPasswordLable = arrayOf("Password (required)", "Repeat password (required)")
     val arrVisibility = arrayOf(visability, visabilityCheck)
-    val arrChangeVisibility = arrayOf({visability = !visability}, {visabilityCheck = !visabilityCheck})
+    val arrChangeVisibility =
+        arrayOf({ visability = !visability }, { visabilityCheck = !visabilityCheck })
     for (index in arrItems.indices) {
         TextField(
             value = arrItems[index],
@@ -227,7 +282,7 @@ fun Password(
                 } else {
                     Icons.Filled.Visibility
                 }
-                IconButton(onClick =  arrChangeVisibility[index] ) {
+                IconButton(onClick = arrChangeVisibility[index]) {
                     Icon(imageVector = image, contentDescription = "Visibility password")
                 }
             },
@@ -238,6 +293,8 @@ fun Password(
             },
             modifier = modifier
         )
+        Spacer(modifier = Modifier.fillMaxHeight(0.05F))
+
     }
 
 }
@@ -270,7 +327,6 @@ fun RegisterButton(
             } else {
                 register()
             }
-
         }
     ) {
         Text(text = "Registresr")

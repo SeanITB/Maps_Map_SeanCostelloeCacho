@@ -612,8 +612,8 @@ class MapViewModel : ViewModel() {
 
     fun passwordVerification(password: String): Boolean {
         // Regex expression that verify that the password, at less, has:
-        // 1 digit, 1 postmark expression, 1 capital letter and 6 characters.
-        val regualarExpresionPasword = "(?=.*[\\d])(?=.*[!@#\$%^&*()])(?=.*[A-Z]).{6,}"
+        // 1 digit and 6 characters.
+        val regualarExpresionPasword = "(?=.*[\\d])(?=.*[a-z]).{6,}"
         val p: Pattern = Pattern.compile(regualarExpresionPasword)
         return p.matcher(password).matches()
     }
