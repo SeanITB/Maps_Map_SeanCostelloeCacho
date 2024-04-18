@@ -1,5 +1,6 @@
 package com.example.maps_map_seancostelloecacho.firebase
 
+import android.util.Log
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -16,14 +17,16 @@ class Repository {
     val LATITUDE_KEY = "latitude"
     val LONGITUDE_KEY = "longitude"
 
-    fun addMarker(marker: MarkerData){
+    fun addMarker(marker: MarkerData, user:String, uriUrl: String){
+        Log.i("addMarker", "addMarker in repository hihih")
         database.collection(MARKERS_KEY)
             .add(
                 hashMapOf(
+                    "owner" to user,
                     NAME_KEY to marker.name,
                     TYPE_KEY to marker.type,
                     DESCRIPTION_KEY to marker.description,
-                    PHOTOS_KEY to marker.photo,
+                    PHOTOS_KEY to uriUrl,
                     LATITUDE_KEY to marker.location.latitude,
                     LONGITUDE_KEY to marker.location.longitude
                 )

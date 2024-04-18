@@ -50,6 +50,7 @@ class MapViewModel : ViewModel() {
     val PHOTOS_KEY = "photos"
     val LATITUDE_KEY = "latitude"
     val LONGITUDE_KEY = "longitude"
+
     // APP CONSTANTS
     val MAP_SCREEN_KEY = "mapScreen"
 
@@ -76,7 +77,16 @@ class MapViewModel : ViewModel() {
     private val _recentMarker = MutableLiveData<MarkerData?>(null)
     val recentMarker = _recentMarker
 
-    private val _listMarkerType = MutableLiveData(mutableListOf("All markers", "Park", "Bookstore", "Sports Center", "Museum", "Restaurant"))
+    private val _listMarkerType = MutableLiveData(
+        mutableListOf(
+            "All markers",
+            "Park",
+            "Bookstore",
+            "Sports Center",
+            "Museum",
+            "Restaurant"
+        )
+    )
     val listMarkerType = _listMarkerType
 
     private val _turnOnSeconProcess = MutableLiveData(false)
@@ -87,6 +97,7 @@ class MapViewModel : ViewModel() {
 
     private val _password = MutableLiveData<String>("")
     val password = _password
+
 
     private val _nameMarker = MutableLiveData<String>("")
     val nameMarker = _nameMarker
@@ -176,11 +187,14 @@ class MapViewModel : ViewModel() {
     val uri = _uri
 
     // Firebase Methods
-    fun addMarker() {
+    fun addMarker(uriUrl: String) {
         //instanceActualMarker(newMarker)
 
-        Log.i("makerList", "marker contetnt befor firestore: ${actualMarker.value}")
-        repository.addMarker(this.actualMarker.value!!)
+        Log.i("addMarker", "addMarker in VM hihih")
+
+        repository.addMarker(this.actualMarker.value!!, auth.currentUser?.email!!, uriUrl)
+
+        getMarkers()
     }
 
     /*
@@ -205,18 +219,20 @@ class MapViewModel : ViewModel() {
     }
 
     fun getMarkers() {
-        repository.getMarkers().addSnapshotListener { value, error ->
-            processOfGettingMarkerFormDataStore(error, value)
-        }
+        repository.getMarkers().whereEqualTo("owner", auth.currentUser?.email)
+            .addSnapshotListener { value, error ->
+                processOfGettingMarkerFormDataStore(error, value)
+            }
         Log.i("markers", "values in all markers: ${categoryMarkerList.value}")
 
     }
 
     fun getFilterMarkers() {
         Log.i("markers", "hola")
-        repository.getMarkers().whereEqualTo(TYPE_KEY, this.typeMarker.value!!).addSnapshotListener { value, error ->
-            processOfGettingMarkerFormDataStore(error, value)
-        }
+        repository.getMarkers().whereEqualTo(TYPE_KEY, this.typeMarker.value!!)
+            .addSnapshotListener { value, error ->
+                processOfGettingMarkerFormDataStore(error, value)
+            }
         Log.i("markers", "values other markers: ${categoryMarkerList.value}")
 
     }
@@ -303,6 +319,8 @@ class MapViewModel : ViewModel() {
         this._descriptionMarker.value = value
     }
 
+    var hola = auth.currentUser
+
     fun login(context: Context) {
         auth.signInWithEmailAndPassword(this.userName.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
@@ -315,7 +333,7 @@ class MapViewModel : ViewModel() {
                 }
                 modifiyProcessing()
             }
-            .addOnFailureListener{task ->
+            .addOnFailureListener { task ->
                 Toast.makeText(context, "Incorrect email or password.", Toast.LENGTH_LONG).show()
             } // toDo: si contra no esta bien
     }
@@ -325,15 +343,13 @@ class MapViewModel : ViewModel() {
     }
 
 
-
-
     // App Methods
     fun changeDarkThem(value: Boolean) {
         this._darkThem.value = value
     }
 
     fun onEvent(event: MapEvent) {
-        when(event) {
+        when (event) {
             is MapEvent.ToggleFalloutMap -> {
                 state = state.copy(
                     properties = state.properties.copy(
@@ -499,15 +515,18 @@ class MapViewModel : ViewModel() {
     ) {
         if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) { //toDo: la comprovacion mal
             this.changeShowBottomFromMapSheet(false)
-            if (this.uri.value != null) this.uploadImage()
-            this.addMarker()
+            if (this.uri.value != null) {
+                this.uploadImage() { uriURL ->
+                    this.addMarker(uriURL)
+                }
+            }
             this.restartMarkerAtributes()
         } else
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
                 .show()
     }
 
-    fun uploadImage() {
+    fun uploadImage(onUriUpload: (String) -> Unit) {
         val formatter = SimpleDateFormat("yyyy_MM_DD_HH_mm_ss", Locale.getDefault())
         val now = Date()
         val fileName = formatter.format(now)
@@ -517,7 +536,8 @@ class MapViewModel : ViewModel() {
                 Log.i("IMAGE UPLOAD", "Image uploaded successfully!")
                 storage.downloadUrl.addOnCanceledListener {
                     Log.i("IMAGE", it.toString())
-                    //changeImageUrl(it.toString())
+                    val uriUrl = it.toString()
+                    onUriUpload(uriUrl)
                 }
             }
             .addOnFailureListener {
@@ -525,6 +545,7 @@ class MapViewModel : ViewModel() {
             }
 
     }
+
 
     /*
     fun changeImageUrl(value: String) {
@@ -597,7 +618,13 @@ class MapViewModel : ViewModel() {
         return p.matcher(password).matches()
     }
 
-    fun initializeRecentMarker(name: String, type: String, description: String, latitude: Double, longitude: Double) {
+    fun initializeRecentMarker(
+        name: String,
+        type: String,
+        description: String,
+        latitude: Double,
+        longitude: Double
+    ) {
         this._recentMarker.value = MarkerData(
             id = null,
             name = name,
