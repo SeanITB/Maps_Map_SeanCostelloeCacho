@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,7 +51,6 @@ import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.example.maps_map_seancostelloecacho.views.MyBottomSheetScreen
-import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun MarkerListContent(
@@ -155,7 +156,10 @@ fun MarkerListScreen(
                 }
             }
             if (showBottomFromListSheet)
-                MyBottomSheetFromListContent(navigationController = navController, markerVM = markerVM)
+                MyBottomSheetFromListContent(
+                    navigationController = navController,
+                    markerVM = markerVM
+                )
         }
     } else {
         ErrorMsg(
@@ -182,7 +186,7 @@ fun CategoryHeader(
 
 @Composable
 fun CategoryItem(
-    actualMarker : MarkerData?,
+    actualMarker: MarkerData?,
     navController: NavController,
     id: String,
     uri: Uri,
@@ -191,6 +195,9 @@ fun CategoryItem(
     markerVM: MapViewModel
 ) {
     Log.i("idMarker", "idMarker: $id name: $text")
+    var showConfimDelete by rememberSaveable {
+        mutableStateOf(false)
+    }
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
         shape = RoundedCornerShape(8.dp),
@@ -207,7 +214,13 @@ fun CategoryItem(
                 markerVM = markerVM,
                 id = id,
             )
-            DeleteButtom(markerVM, id)
+            DeleteButtom { showConfimDelete = it }
+            MyAlertDialog(
+                showConfimDelete,
+                { showConfimDelete = false },
+                { showConfimDelete = false },
+                id,
+                { markerVM.deleteMarker(it) })
         }
 
     }
@@ -274,12 +287,11 @@ private fun EditButton(
 
 @Composable
 private fun DeleteButtom(
-    markerVM: MapViewModel,
-    id: String
+    onShowConfirmDelete: (Boolean) -> Unit
 ) {
     IconButton(
         onClick = {
-            markerVM.deleteMarker(id)
+            onShowConfirmDelete(true)
         },
         colors = IconButtonColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -327,7 +339,10 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         //markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
         isFirstTime = false
     }
-    Log.i("MarkerDataÑ", "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uri")
+    Log.i(
+        "MarkerDataÑ",
+        "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uri"
+    )
 
 
     markerVM.changeActualScreen("BottomSheet")
@@ -345,9 +360,34 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         uri = uri,
         navigationItems = navigationItems,
         context = context,
-        changeNewMarker = {markerVM.changeNewMarker(it)},
+        changeNewMarker = { markerVM.changeNewMarker(it) },
         whenAddMarker = { markerVM.whenAddMarkerFromList(it) },
         actualPosition = actualPosition,
-        onFirstTimeChange = {isFirstTime = it}
+        onFirstTimeChange = { isFirstTime = it }
     )
+}
+
+@Composable
+fun MyAlertDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    id: String,
+    deleteMarker: (String) -> Unit
+) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = {},
+            text = { Text("Are you sure that you want to delete.", modifier = Modifier.fillMaxWidth()) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onConfirm()
+                        deleteMarker(id)
+                    }
+                ) { Text(text = "OK") }
+            },
+            dismissButton = { TextButton(onClick = { onDismiss() }, modifier = Modifier.background(MaterialTheme.colorScheme.primary)) { Text(text = "Cancel")} }
+        )
+    }
 }
