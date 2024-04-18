@@ -1,6 +1,7 @@
 package com.example.maps_map_seancostelloecacho.navigation
 
 import MarkerListContent
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -57,9 +58,13 @@ fun Navigate(
             )
         }
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
-        composable(Routes.MarkerListScreen.route) { MarkerListContent(navController, markerVM) }
-        composable(Routes.CameraScreen.route) { CameraScreen(markerVM, navController) }
+        composable(Routes.MarkerListScreen.route) {
+            Log.i("navigationñññ", "navigationñññ he passado hacia list")
+            MarkerListContent(navController, markerVM) }
+        composable(Routes.CameraFromMapScreen.route) { CameraFromMapContent(markerVM, navController) }
+        composable(Routes.CameraFromMarkerListScreen.route) { CameraFromMarkerListContent(markerVM, navController) }
         composable(Routes.GalleryScreen.route) { GalleryScreen(navController, markerVM) }
-        composable(Routes.TakePhotoScreen.route) { TakePhotoScreen(markerVM, navController) }
+        composable(Routes.TakePhotoFromMapScreen.route) { TakePhotoFromMapScreen(markerVM, navController) }
+        composable(Routes.TakePhotoFromMarkerListScreen.route) { TakePhotoMarkerListScreen(markerVM, navController) }
     }
 }

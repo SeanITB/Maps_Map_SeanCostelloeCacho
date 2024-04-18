@@ -182,7 +182,7 @@ fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<Stri
                 contentDescription = "Image from the new marker",
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable { navController.navigate(navigationItems["cameraScreen"]!!) }
+                    .clickable { navController.navigate(navigationItems["cameraFromMarkerListScreen"]!!) }
             )
         } else {
             Image(
@@ -190,7 +190,7 @@ fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<Stri
                 contentDescription = "Defult images for marker",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { navController.navigate(navigationItems["cameraScreen"]!!) }
+                    .clickable { navController.navigate(navigationItems["cameraFromMapScreen"]!!) }
             )
         }
     }

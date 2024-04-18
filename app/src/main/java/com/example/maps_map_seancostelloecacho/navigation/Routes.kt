@@ -7,9 +7,10 @@ sealed class Routes (val route: String) {
     object MapGeolocalisationScreen: Routes("mapGeolocalisationScreen")
     object MapScreen: Routes("mapScreen")
     object MarkerListScreen: Routes("markerListScreen")
-    object MarkerFilterListScreen: Routes("markerFilterListScreen")
-    object CameraScreen: Routes("cameraScreen")
+    object CameraFromMapScreen: Routes("cameraFromMapScreen")
+    object CameraFromMarkerListScreen: Routes("cameraFromMarkerListScreen")
     object GalleryScreen: Routes("galleryScreen")
-    object TakePhotoScreen: Routes("takePhotoScreen")
+    object TakePhotoFromMapScreen: Routes("takePhotoFromMapScreen")
+    object TakePhotoFromMarkerListScreen: Routes("takePhotoFromMarkerListScreen")
     object MyDrawer: Routes("myDrawer")
 }

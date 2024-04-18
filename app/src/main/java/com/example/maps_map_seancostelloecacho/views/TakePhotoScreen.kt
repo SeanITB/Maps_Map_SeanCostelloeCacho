@@ -38,7 +38,23 @@ import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 @Composable
-fun TakePhotoScreen(markerVM: MapViewModel, navController: NavController) {
+fun TakePhotoFromMapScreen(markerVM: MapViewModel, navController: NavController) {
+    Log.i("navigationñññ", "navigationñññ im from map")
+    TakePhotoView(navController = navController, whereToNavigate = "mapScreen", markerVM = markerVM)
+}
+
+@Composable
+fun TakePhotoMarkerListScreen(markerVM: MapViewModel, navController: NavController) {
+    Log.i("navigationñññ", "navigationñññ im from lis")
+    TakePhotoView(navController = navController, whereToNavigate = "markerListScreen", markerVM = markerVM)
+}
+
+@Composable
+private fun TakePhotoView(
+    navController: NavController,
+    whereToNavigate: String,
+    markerVM: MapViewModel
+) {
     val context = LocalContext.current
     val controller = remember {
         LifecycleCameraController(context).apply {
@@ -69,7 +85,7 @@ fun TakePhotoScreen(markerVM: MapViewModel, navController: NavController) {
         ) {
             IconButton(
                 onClick = {
-                    navController.navigate(navigationItems["galleryScreen"]!!)
+                    navController.navigate(Routes.GalleryScreen.route)
                 }
             ) {
                 Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
@@ -83,7 +99,7 @@ fun TakePhotoScreen(markerVM: MapViewModel, navController: NavController) {
                         if (uri != null) {
                             markerVM.changeUri(uri)
                         }
-                        navController.navigate(Routes.MapScreen.route)
+                        navController.navigate(navigationItems[whereToNavigate]!!)
                     }
                 }
             ) {

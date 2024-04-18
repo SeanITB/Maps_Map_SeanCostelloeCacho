@@ -61,11 +61,14 @@ class MapViewModel : ViewModel() {
 
     private val _navigationItemsItems = MutableLiveData( //toDo: no hacer asi, poner un bucle
         mapOf(
-            NavigationItems.CameraScreen.label to NavigationItems.CameraScreen.route,
             NavigationItems.GalleryScreen.label to NavigationItems.GalleryScreen.route,
             NavigationItems.MapGeolocalisationScreen.label to NavigationItems.MapGeolocalisationScreen.route,
             NavigationItems.MarkerCategoriesListScreen.label to NavigationItems.MarkerCategoriesListScreen.route,
-            NavigationItems.MarkerFilterCategoriesListScreen.label to NavigationItems.MarkerFilterCategoriesListScreen.route
+            NavigationItems.CameraFromMapScreen.label to NavigationItems.CameraFromMapScreen.route,
+            NavigationItems.CameraFromMarkerListScreen.label to NavigationItems.CameraFromMarkerListScreen.route,
+            NavigationItems.MapScreen.label to NavigationItems.MapScreen.route,
+            NavigationItems.TakePhotoFromMapScreen.label to NavigationItems.TakePhotoFromMapScreen.route,
+            NavigationItems.TakePhotoFromMarkerListScreen.label to NavigationItems.TakePhotoFromMarkerListScreen.route
         )
     )
     val navigationItems = _navigationItemsItems

@@ -75,7 +75,7 @@ fun MyScaffold(
             Navigate(navController, navControllerLR, TIME, markerVM)
 
             Button(onClick = {
-                navController.navigate(Routes.CameraScreen.route)
+                navController.navigate(Routes.CameraFromMapScreen.route)
             }) {
                 Icon(
                     imageVector = Icons.Filled.AddCircleOutline,

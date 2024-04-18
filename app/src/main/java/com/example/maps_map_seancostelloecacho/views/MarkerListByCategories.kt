@@ -51,6 +51,7 @@ import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.example.maps_map_seancostelloecacho.views.MyBottomSheetScreen
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun MarkerListContent(
@@ -147,8 +148,14 @@ fun MarkerListScreen(
                                 .background(MaterialTheme.colorScheme.secondary)
                                 .padding(16.dp)
                                 .clickable {
-                                    markerVM.getMarker(element.id!!)
-                                    navController.navigate(Routes.MapGeolocalisationScreen.route)
+                                    markerVM.changeActualPosition(
+                                        LatLng(
+                                            element.location.latitude,
+                                            element.location.longitude
+                                        )
+                                    )
+                                    navController.navigate(Routes.MapScreen.route)
+
                                 },
                             markerVM = markerVM,
                         )
@@ -167,6 +174,8 @@ fun MarkerListScreen(
             modifier = Modifier.fillMaxSize()
         )
     }
+
+
 }
 
 

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,13 +27,24 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 
+@Composable
+fun CameraFromMapContent(markerVM: MapViewModel, navController: NavController) {
+    CameraScreen(markerVM = markerVM, navController = navController, whereToNavigate = "takePhotoFromMapScreen")
+}
+
+@Composable
+fun CameraFromMarkerListContent(markerVM: MapViewModel, navController: NavController) {
+    CameraScreen(markerVM = markerVM, navController = navController, whereToNavigate = "takePhotoFromMarkerListScreen")
+}
+
 @SuppressLint("MissingPermission")
 @Composable
-fun CameraScreen(markerVM: MapViewModel, navController: NavController) {
+fun CameraScreen(markerVM: MapViewModel, navController: NavController, whereToNavigate: String) {
     val context = LocalContext.current
     val isCameraPermissionsGranted by markerVM.camaeraPermissionGranted.observeAsState(false)
     val shouldShowPermissionRationale by markerVM.shouldShowCameraPermissionRationale.observeAsState(false)
     val showPermissionDenied by markerVM.showCameraPermissionDenied.observeAsState(false)
+    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {isGranted ->
@@ -54,22 +66,12 @@ fun CameraScreen(markerVM: MapViewModel, navController: NavController) {
     )
 
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Button(
-            onClick = {
-                if (!isCameraPermissionsGranted) {
-                    launcher.launch(Manifest.permission.CAMERA)
-                } else {
-                    navController.navigate(Routes.TakePhotoScreen.route)
-                    markerVM.changeShowBottomFromMapSheet(true)
-                }
-            }) {
-            Text(text = "Take photo")
+    if (!isCameraPermissionsGranted) {
+        SideEffect {
+            launcher.launch(Manifest.permission.CAMERA)
         }
+    } else {
+        navController.navigate(navigationItems[whereToNavigate]!!)
     }
     if (showPermissionDenied)
         PermissionDeclinedScreen()
