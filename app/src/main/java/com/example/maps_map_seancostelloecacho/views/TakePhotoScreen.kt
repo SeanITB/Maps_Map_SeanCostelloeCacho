@@ -39,13 +39,11 @@ import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 @Composable
 fun TakePhotoFromMapScreen(markerVM: MapViewModel, navController: NavController) {
-    Log.i("navigationñññ", "navigationñññ im from map")
     TakePhotoView(navController = navController, whereToNavigate = "mapScreen", markerVM = markerVM)
 }
 
 @Composable
 fun TakePhotoMarkerListScreen(markerVM: MapViewModel, navController: NavController) {
-    Log.i("navigationñññ", "navigationñññ im from lis")
     TakePhotoView(navController = navController, whereToNavigate = "markerListScreen", markerVM = markerVM)
 }
 
