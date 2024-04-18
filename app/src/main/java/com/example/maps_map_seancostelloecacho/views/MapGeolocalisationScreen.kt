@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -78,21 +80,24 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
         var deviceLatLng by remember {
             mutableStateOf(LatLng(0.0, 0.0))
         }
-
+        var actualPositionFound by rememberSaveable {
+            mutableStateOf(false)
+        }
         val locationResult = fusedLocationProviderClient.getCurrentLocation(100, null)
         locationResult.addOnCompleteListener(context as MainActivity) { task ->
             if (task.isSuccessful) {
                 lastKnowLocation = task.result
                 deviceLatLng = LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude)
                 markerVM.changeActualPosition(deviceLatLng)
+                actualPositionFound = true
             } else {
                 Log.e("ERROR", "Exception: %s", task.exception)
             }
         }
-
-        markerVM.setShowMapPermissionDenied(false)
-
-        navController.navigate(Routes.MapScreen.route)
+        LaunchedEffect(key1 = actualPositionFound) {
+            markerVM.setShowMapPermissionDenied(false)
+            navController.navigate(Routes.MapScreen.route)
+        }
     }
 
     if (showMapPermissionDenied)
