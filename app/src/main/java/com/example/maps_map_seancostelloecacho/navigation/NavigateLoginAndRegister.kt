@@ -13,7 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.example.maps_map_seancostelloecacho.views.LunchScreen
 import com.example.maps_map_seancostelloecacho.views.MyDrawer
-import com.example.maps_map_seancostelloecacho.views.UserLoginContent
+import com.example.maps_map_seancostelloecacho.views.UserLoginOnCreateContent
 import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
@@ -44,7 +44,7 @@ fun NavigateLoginAndRegister(navControllerLR: NavController, TIME: Int, markerVM
     ) {
         composable(Routes.LunchScreen.route) { LunchScreen(navControllerLR) }
         composable(Routes.RegisterScreen.route,) { UsernRegistrerContent(navControllerLR, markerVM) }
-        composable(Routes.LoginScreen.route,) { UserLoginContent(navControllerLR, markerVM) }
+        composable(Routes.LoginScreen.route,) { UserLoginOnCreateContent(navControllerLR, markerVM) }
         composable(Routes.MyDrawer.route) {
             val navController = rememberNavController()
             MyDrawer(navController = navController, navControllerLR = navControllerLR, markerVM = markerVM, TIME = TIME)

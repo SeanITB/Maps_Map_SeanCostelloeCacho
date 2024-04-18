@@ -2,7 +2,6 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,7 +51,53 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun UserLoginContent(navController: NavController, markerVM: MapViewModel) {
+fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewModel) {
+    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
+    val userName by markerVM.userName.observeAsState("")
+    val password by markerVM.password.observeAsState("")
+    val goToNext by markerVM.goToNext.observeAsState(false)
+    val isLoading by markerVM.isLoading.observeAsState(true)
+    val context = LocalContext.current
+    val userPrefs = UserPrefs(context)
+    val storedUserData = userPrefs.getUserData.collectAsState(initial = emptyList())
+    /*var firstTime by rememberSaveable {
+        mutableStateOf(true)
+    }*/
+
+    //only enters the first time
+    if (
+    //firstTime &&
+        storedUserData.value.isNotEmpty() &&
+        storedUserData.value.get(0) != "" &&
+        storedUserData.value.get(1) != ""
+    ) {
+        markerVM.changeUserName(storedUserData.value.get(0))
+        markerVM.changePassword(storedUserData.value.get(1))
+        markerVM.login(context)
+        //firstTime = false
+    }
+
+    UserLoginView(
+        navController = navController,
+        navigationItems = navigationItems,
+        userName = userName,
+        password = password,
+        goToNext = goToNext,
+        onGoToNextChange = { markerVM.changeGoToNext(it) },
+        isLoading = isLoading,
+        context = context,
+        userPrefs = userPrefs,
+        storedUserData = storedUserData,
+        onUserNameChange = { markerVM.changeUserName(it) },
+        onPasswordChange = { markerVM.changePassword(it) },
+        login = { markerVM.login(context) },
+        modifyProcessing = { markerVM.modifiyProcessing() }
+    )
+
+}
+
+@Composable
+fun UserLoginOnLogOutContent(navController: NavController, markerVM: MapViewModel) {
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val userName by markerVM.userName.observeAsState("")
     val password by markerVM.password.observeAsState("")
@@ -94,9 +138,9 @@ fun UserLoginContent(navController: NavController, markerVM: MapViewModel) {
         login = { markerVM.login(context) },
         modifyProcessing = { markerVM.modifiyProcessing() }
     )
+
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserLoginView(
     navController: NavController?,
@@ -176,7 +220,7 @@ fun UserLoginView(
             userName,
             password,
             check,
-            {check = it}
+            { check = it }
         )
         Spacer(modifier = Modifier.fillMaxHeight(0.05F))
         Text(
