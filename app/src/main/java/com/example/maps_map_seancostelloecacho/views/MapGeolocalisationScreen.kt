@@ -45,6 +45,7 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
         true
     )
     val showMapPermissionDenied by markerVM.showMapPermissionDenied.observeAsState(false)
+    val actualPosition by markerVM.actualPosition.observeAsState(null)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
@@ -77,26 +78,28 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
         var lastKnowLocation by remember {
             mutableStateOf<Location?>(null)
         }
-        var deviceLatLng by remember {
-            mutableStateOf(LatLng(0.0, 0.0))
-        }
-        var actualPositionFound by rememberSaveable {
+        var fountActualPosition by rememberSaveable {
             mutableStateOf(false)
         }
         val locationResult = fusedLocationProviderClient.getCurrentLocation(100, null)
         locationResult.addOnCompleteListener(context as MainActivity) { task ->
             if (task.isSuccessful) {
                 lastKnowLocation = task.result
-                deviceLatLng = LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude)
-                markerVM.changeActualPosition(deviceLatLng)
-                actualPositionFound = true
+                Log.i("Actual position", "Actual position suscesful, with ${LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude)}")
+
+                markerVM.changeActualPosition(LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude))
+                fountActualPosition = true
             } else {
                 Log.e("ERROR", "Exception: %s", task.exception)
             }
         }
-        LaunchedEffect(key1 = actualPositionFound) {
-            markerVM.setShowMapPermissionDenied(false)
-            navController.navigate(Routes.MapScreen.route)
+        Log.i("Actual position", "Actual position in map geolocalitzation: $actualPosition")
+
+        LaunchedEffect(key1 = fountActualPosition) {
+            if (fountActualPosition) {
+                markerVM.setShowMapPermissionDenied(false)
+                navController.navigate(Routes.MapScreen.route)
+            }
         }
     }
 

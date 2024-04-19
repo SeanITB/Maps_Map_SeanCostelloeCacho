@@ -11,6 +11,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory.*
@@ -27,11 +28,8 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val markerList by markerVM.markerList.observeAsState(emptyList())
     val showBottomSheet by markerVM.showBottomSheetFromMap.observeAsState(false)
-    val getMarkersComlet by markerVM.markersComplet.observeAsState(false)
-    val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
     val recentMarker by markerVM.recentMarker.observeAsState(null)
     val actualPosition by markerVM.actualPosition.observeAsState(LatLng(0.0, 0.0))
-    val actualMarker by markerVM.actualMarker.observeAsState(null)
 
     val cameraPositionState =
         rememberCameraPositionState {
@@ -40,25 +38,14 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val uiSetings = remember {
         MapUiSettings(zoomControlsEnabled = false)
     }
-    markerVM.changeActualScreen("mapScreen")
+    Log.i("Actual position", "Actual position actualPosition in map $actualPosition")
 
     /*
-    LaunchedEffect(key1 = typeMarkerForFilter) {
-        if (typeMarkerForFilter.equals("All markers")) {
-            markerVM.getMarkers()
-        } else {
-            markerVM.getFilterMarkers()
-        }
-        markerVM.changeMarkerComplete(true)
-    }
-    LaunchedEffect(key1 = getMarkersComlet) {
-        markerVM.changeMarkerComplete(false)
+    LaunchedEffect(key1 = actualPosition) {
+        navigationController.navigate(Routes.MapScreen.route)
     }
 
      */
-
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
