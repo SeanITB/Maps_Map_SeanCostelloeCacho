@@ -60,13 +60,8 @@ fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewMode
     val context = LocalContext.current
     val userPrefs = UserPrefs(context)
     val storedUserData = userPrefs.getUserData.collectAsState(initial = emptyList())
-    /*var firstTime by rememberSaveable {
-        mutableStateOf(true)
-    }*/
 
-    //only enters the first time
     if (
-    //firstTime &&
         storedUserData.value.isNotEmpty() &&
         storedUserData.value.get(0) != "" &&
         storedUserData.value.get(1) != ""
@@ -74,7 +69,6 @@ fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewMode
         markerVM.changeUserName(storedUserData.value.get(0))
         markerVM.changePassword(storedUserData.value.get(1))
         markerVM.login(context)
-        //firstTime = false
     }
 
     UserLoginView(
@@ -97,7 +91,7 @@ fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewMode
 }
 
 @Composable
-fun UserLoginOnLogOutContent(navController: NavController, markerVM: MapViewModel) {
+fun UserLoginOnLogOutContent(navControllerLR: NavController, markerVM: MapViewModel) {
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val userName by markerVM.userName.observeAsState("")
     val password by markerVM.password.observeAsState("")
@@ -110,7 +104,6 @@ fun UserLoginOnLogOutContent(navController: NavController, markerVM: MapViewMode
         mutableStateOf(true)
     }
 
-    //only enters the first time
     if (
         firstTime &&
         storedUserData.value.isNotEmpty() &&
@@ -123,7 +116,7 @@ fun UserLoginOnLogOutContent(navController: NavController, markerVM: MapViewMode
     }
 
     UserLoginView(
-        navController = navController,
+        navController = navControllerLR,
         navigationItems = navigationItems,
         userName = userName,
         password = password,

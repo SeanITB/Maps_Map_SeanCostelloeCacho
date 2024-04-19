@@ -14,6 +14,7 @@ import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.example.maps_map_seancostelloecacho.views.LunchScreen
 import com.example.maps_map_seancostelloecacho.views.MyDrawer
 import com.example.maps_map_seancostelloecacho.views.UserLoginOnCreateContent
+import com.example.maps_map_seancostelloecacho.views.UserLoginOnLogOutContent
 import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
@@ -47,10 +48,9 @@ fun AuthNavigation( markerVM: MapViewModel) {
         composable(Routes.LunchScreen.route) { LunchScreen(navControllerLR) }
         composable(Routes.RegisterScreen.route,) { UsernRegistrerContent(navControllerLR, markerVM) }
         composable(Routes.LoginScreen.route,) { UserLoginOnCreateContent(navControllerLR, markerVM) }
-        composable(Routes.AuthNavigation.route,) { AuthNavigation(markerVM = markerVM) }
+        composable(Routes.UserLoginOnLogOutContent.route,) { UserLoginOnLogOutContent(navControllerLR = navControllerLR, markerVM = markerVM) }
         composable(Routes.MyDrawer.route) {
-
-            MyDrawer(navControllerLR = navControllerLR, markerVM = markerVM, TIME = TIME)
+            MyDrawer( navControllerLR = navControllerLR, markerVM = markerVM, TIME = TIME)
         }
 
     }

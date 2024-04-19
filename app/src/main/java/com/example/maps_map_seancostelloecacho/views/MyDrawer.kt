@@ -91,7 +91,7 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
                         scope.launch {
                             state.close()
                             markerVM.logout()
-                            navControllerLR.navigate(Routes.AuthNavigation.route)
+                            navControllerLR.navigate(Routes.UserLoginOnLogOutContent.route)
                         }
                     }
                 )
