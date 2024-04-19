@@ -91,49 +91,6 @@ fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewMode
 }
 
 @Composable
-fun UserLoginOnLogOutContent(navControllerLR: NavController, markerVM: MapViewModel) {
-    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
-    val userName by markerVM.userName.observeAsState("")
-    val password by markerVM.password.observeAsState("")
-    val goToNext by markerVM.goToNext.observeAsState(false)
-    val isLoading by markerVM.isLoading.observeAsState(true)
-    val context = LocalContext.current
-    val userPrefs = UserPrefs(context)
-    val storedUserData = userPrefs.getUserData.collectAsState(initial = emptyList())
-    var firstTime by rememberSaveable {
-        mutableStateOf(true)
-    }
-
-    if (
-        firstTime &&
-        storedUserData.value.isNotEmpty() &&
-        storedUserData.value.get(0) != "" &&
-        storedUserData.value.get(1) != ""
-    ) {
-
-        firstTime = false
-    }
-
-    UserLoginView(
-        navController = navControllerLR,
-        navigationItems = navigationItems,
-        userName = userName,
-        password = password,
-        goToNext = goToNext,
-        onGoToNextChange = { markerVM.changeGoToNext(it) },
-        isLoading = isLoading,
-        context = context,
-        userPrefs = userPrefs,
-        storedUserData = storedUserData,
-        onUserNameChange = { markerVM.changeUserName(it) },
-        onPasswordChange = { markerVM.changePassword(it) },
-        login = { markerVM.login(context) },
-        modifyProcessing = { markerVM.modifiyProcessing() }
-    )
-
-}
-
-@Composable
 fun UserLoginView(
     navController: NavController?,
     navigationItems: Map<String, String>,

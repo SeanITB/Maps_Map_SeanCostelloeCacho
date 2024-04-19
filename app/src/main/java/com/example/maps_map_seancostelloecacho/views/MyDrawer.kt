@@ -1,5 +1,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -42,6 +44,9 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
     val scope = rememberCoroutineScope()
     val state: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val context = LocalContext.current
+    var logUtCompleat by rememberSaveable {
+        mutableStateOf(false)
+    }
     ModalNavigationDrawer(
         drawerState = state,
         gesturesEnabled = false,
@@ -91,23 +96,31 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
                     label = { Text(text = "Logout") },
                     selected = false,
                     onClick = {
-                        scope.launch {
-                            state.close()
-                        }
                         val userPrefs = UserPrefs(context)
                         markerVM.logout()
                         CoroutineScope(Dispatchers.IO).launch {
                             userPrefs.saveUserData("", "")
+                            logUtCompleat = true
                         }
-                        markerVM.changeUserName("")
-                        markerVM.changePassword("")
-                        //Thread.sleep(2000)
-                        navControllerLR.navigate(Routes.UserLoginOnLogOutContent.route)
+                        Log.i("logOut", "logOut state $logUtCompleat")
+
                     }
                 )
             }
         }
     ) {
+        LaunchedEffect(key1 = logUtCompleat) {
+            Log.i("logOut", "logOut state $logUtCompleat")
+            if (logUtCompleat) {
+                scope.launch {
+                    state.close()
+                }
+                val void = ""
+                markerVM.changeUserName(void)
+                markerVM.changePassword(void)
+                navControllerLR.navigate(Routes.AuthNavigation.route)
+            }
+        }
         MyScaffold(navController, TIME, markerVM, state)
     }
 }

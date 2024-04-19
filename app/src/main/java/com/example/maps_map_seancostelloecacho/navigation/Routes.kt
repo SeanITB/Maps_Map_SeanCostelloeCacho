@@ -4,7 +4,6 @@ sealed class Routes (val route: String) {
     object LunchScreen: Routes("lunchScreen")
     object RegisterScreen: Routes("registerScreen")
     object LoginScreen: Routes("loginScreen")
-    object UserLoginOnLogOutContent: Routes("userLoginOnLogOutContent")
     object MapGeolocalisationScreen: Routes("mapGeolocalisationScreen")
     object AuthNavigation: Routes("authNavigation")
     object MapScreen: Routes("mapScreen")
