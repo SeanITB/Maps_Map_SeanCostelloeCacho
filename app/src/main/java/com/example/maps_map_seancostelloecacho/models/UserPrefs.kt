@@ -28,10 +28,11 @@ class UserPrefs(private val context: Context) {
     }
 
     // SAVE THE USER DATA
-    suspend fun saveUserData(username: String, userpass: String) {
+    suspend fun saveUserData(username: String, userpass: String): Boolean {
         context.dataStore.edit { prefs ->
             prefs[STORE_USERNAME] = username
             prefs[STORE_USERPASS] = userpass
         }
+        return true
     }
 }

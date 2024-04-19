@@ -47,6 +47,8 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
     var logUtCompleat by rememberSaveable {
         mutableStateOf(false)
     }
+    val userName by markerVM.userName.observeAsState("")
+    val password by markerVM.password.observeAsState("")
     ModalNavigationDrawer(
         drawerState = state,
         gesturesEnabled = false,
@@ -99,27 +101,18 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
                         val userPrefs = UserPrefs(context)
                         markerVM.logout()
                         CoroutineScope(Dispatchers.IO).launch {
-                            userPrefs.saveUserData("", "")
-                            logUtCompleat = true
+                            logUtCompleat = userPrefs.saveUserData("", "")
                         }
-                        scope.launch {
-                            state.close()
-                        }
-                        val void = ""
-                        markerVM.changeUserName(void)
-                        markerVM.changePassword(void)
-                        navControllerLR.navigate(Routes.AuthNavigation.route)
-                        Log.i("logOut", "logOut state $logUtCompleat")
-
+                        markerVM.changeUserName("")
+                        markerVM.changePassword("")
                     }
                 )
             }
         }
     ) {
         LaunchedEffect(key1 = logUtCompleat) {
-            Log.i("logOut", "logOut state $logUtCompleat")
             if (logUtCompleat) {
-
+                navControllerLR.navigate(Routes.AuthNavigation.route)
                 logUtCompleat = false
             }
         }

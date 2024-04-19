@@ -85,15 +85,12 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
         locationResult.addOnCompleteListener(context as MainActivity) { task ->
             if (task.isSuccessful) {
                 lastKnowLocation = task.result
-                Log.i("Actual position", "Actual position suscesful, with ${LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude)}")
-
                 markerVM.changeActualPosition(LatLng(lastKnowLocation!!.latitude, lastKnowLocation!!.longitude))
                 fountActualPosition = true
             } else {
                 Log.e("ERROR", "Exception: %s", task.exception)
             }
         }
-        Log.i("Actual position", "Actual position in map geolocalitzation: $actualPosition")
 
         LaunchedEffect(key1 = fountActualPosition) {
             if (fountActualPosition) {
