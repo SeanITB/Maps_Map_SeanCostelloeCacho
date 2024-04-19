@@ -32,6 +32,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.maps_map_seancostelloecacho.models.UserPrefs
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -39,6 +41,7 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     val state: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val context = LocalContext.current
     ModalNavigationDrawer(
         drawerState = state,
         gesturesEnabled = false,
@@ -90,9 +93,16 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
                     onClick = {
                         scope.launch {
                             state.close()
-                            markerVM.logout()
-                            navControllerLR.navigate(Routes.UserLoginOnLogOutContent.route)
                         }
+                        val userPrefs = UserPrefs(context)
+                        markerVM.logout()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            userPrefs.saveUserData("", "")
+                        }
+                        markerVM.changeUserName("")
+                        markerVM.changePassword("")
+                        //Thread.sleep(2000)
+                        navControllerLR.navigate(Routes.UserLoginOnLogOutContent.route)
                     }
                 )
             }

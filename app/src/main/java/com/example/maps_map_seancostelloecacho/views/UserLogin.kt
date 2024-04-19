@@ -110,8 +110,7 @@ fun UserLoginOnLogOutContent(navControllerLR: NavController, markerVM: MapViewMo
         storedUserData.value.get(0) != "" &&
         storedUserData.value.get(1) != ""
     ) {
-        markerVM.changeUserName(storedUserData.value.get(0))
-        markerVM.changePassword(storedUserData.value.get(1))
+
         firstTime = false
     }
 
