@@ -97,6 +97,9 @@ class MapViewModel : ViewModel() {
     private val _userName = MutableLiveData<String>("")
     val userName = _userName
 
+    private val _uriUrl = MutableLiveData<String>("")
+    val uriUrl = _uriUrl
+
     private val _password = MutableLiveData<String>("")
     val password = _password
 
@@ -146,6 +149,9 @@ class MapViewModel : ViewModel() {
     private val _isFilitered = MutableLiveData(false)
     val isFiltered = _isFilitered
 
+    private val _isUriUpload = MutableLiveData(false)
+    val isUriUpload = _isUriUpload
+
     private val _markersComplet = MutableLiveData(false)
     val markersComplet = _markersComplet
 
@@ -186,12 +192,12 @@ class MapViewModel : ViewModel() {
     val uri = _uri
 
     // Firebase Methods
-    fun addMarker(uriUrl: String) {
+    fun addMarker() {
         //instanceActualMarker(newMarker)
 
-        Log.i("addMarker", "addMarker in VM hihih")
+        Log.i("addMarker", "addMarker in VM hihih: actualMarker: ${this.actualMarker.value!!}, currentUser: ${auth.currentUser?.email!!}, uriUrl: ${uriUrl}")
 
-        repository.addMarker(this.actualMarker.value!!, auth.currentUser?.email!!, uriUrl)
+        repository.addMarker(this.actualMarker.value!!, auth.currentUser?.email!!, this._uriUrl.value!!)
 
         getMarkers()
     }
@@ -510,9 +516,10 @@ class MapViewModel : ViewModel() {
         if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) { //toDo: la comprovacion mal
             this.changeShowBottomFromMapSheet(false)
             if (this.uri.value != null) {
-                this.uploadImage() { uriURL ->
-                    this.addMarker(uriURL)
-                }
+
+                //Log.i("addMarker", "addMarker uriURl: $uriURL")
+                this.addMarker()
+
             }
             this.restartMarkerAtributes()
         } else
@@ -520,24 +527,33 @@ class MapViewModel : ViewModel() {
                 .show()
     }
 
-    fun uploadImage(onUriUpload: (String) -> Unit) {
+    fun uploadImage(/*onUriUpload: (String) -> Unit*/) {
         val formatter = SimpleDateFormat("yyyy_MM_DD_HH_mm_ss", Locale.getDefault())
         val now = Date()
         val fileName = formatter.format(now)
         val storage = FirebaseStorage.getInstance().getReference("images/$fileName")
         storage.putFile(this.uri.value!!)
             .addOnSuccessListener {
-                Log.i("IMAGE UPLOAD", "Image uploaded successfully!")
-                storage.downloadUrl.addOnCanceledListener {
-                    Log.i("IMAGE", it.toString())
+                storage.downloadUrl.addOnSuccessListener {
                     val uriUrl = it.toString()
-                    onUriUpload(uriUrl)
+                    Log.i("IMAGE UPLOAD", "Image uploaded successfully! with image: ${uriUrl}")
+                    //changeUriUrl(uriUrl)
+                    changeUriUrl(uriUrl)
+                    changeIsUriUrlUpload(true)
                 }
             }
             .addOnFailureListener {
                 Log.i("IMAGE UPLOAD", "Ups, image upload failed!")
             }
 
+    }
+
+    fun changeIsUriUrlUpload(b: Boolean) {
+        this._isUriUpload.value = b
+    }
+
+    fun changeUriUrl(uriUrl: String) {
+        this._uriUrl.value = uriUrl
     }
 
 

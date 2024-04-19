@@ -117,7 +117,8 @@ fun MyBottomSheetScreen(
     context: Context,
     changeNewMarker: (MarkerData) -> Unit,
     whenAddMarker: (Context) -> Unit,
-    actualPosition: LatLng?
+    actualPosition: LatLng?,
+    //uploadUriUrl: () -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = {

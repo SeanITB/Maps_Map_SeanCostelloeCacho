@@ -184,7 +184,6 @@ fun CategoryHeader(
     text: String,
     modifier: Modifier = Modifier
 ) {
-    Log.i("image", "in category: $text")
     Text(
         text = text,
         modifier = modifier,
