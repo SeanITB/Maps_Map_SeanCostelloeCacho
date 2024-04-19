@@ -102,6 +102,13 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
                             userPrefs.saveUserData("", "")
                             logUtCompleat = true
                         }
+                        scope.launch {
+                            state.close()
+                        }
+                        val void = ""
+                        markerVM.changeUserName(void)
+                        markerVM.changePassword(void)
+                        navControllerLR.navigate(Routes.AuthNavigation.route)
                         Log.i("logOut", "logOut state $logUtCompleat")
 
                     }
@@ -112,13 +119,8 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
         LaunchedEffect(key1 = logUtCompleat) {
             Log.i("logOut", "logOut state $logUtCompleat")
             if (logUtCompleat) {
-                scope.launch {
-                    state.close()
-                }
-                val void = ""
-                markerVM.changeUserName(void)
-                markerVM.changePassword(void)
-                navControllerLR.navigate(Routes.AuthNavigation.route)
+
+                logUtCompleat = false
             }
         }
         MyScaffold(navController, TIME, markerVM, state)

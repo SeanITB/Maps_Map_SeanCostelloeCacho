@@ -126,6 +126,7 @@ fun openAppSettingsMapGeolocalisationScreen(activity: Activity) {
     val intent = Intent().apply {
         action = Settings.ACTION_APPLICATION_SETTINGS
         data = Uri.fromParts("package", activity.packageName, null)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     activity.startActivity(intent)
 }
