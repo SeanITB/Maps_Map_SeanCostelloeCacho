@@ -42,9 +42,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun MyScaffold(
     navController: NavController,
-    navControllerLR: NavController,
     TIME: Int,
-    markerVM: MapViewModel, state: DrawerState
+    markerVM: MapViewModel,
+    state: DrawerState
 ) {
     val darkThem by markerVM.darkThem.observeAsState(false)
     Scaffold(
@@ -73,7 +73,7 @@ fun MyScaffold(
                 .padding(paddingValues),
             contentAlignment = Alignment.BottomStart
         ) {
-            Navigate(navController, navControllerLR, TIME, markerVM)
+            Navigate(navController, TIME, markerVM)
 
             Button(onClick = {
                 navController.navigate(Routes.CameraFromMapScreen.route)

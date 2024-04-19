@@ -28,14 +28,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.maps_map_seancostelloecacho.models.UserPrefs
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun MyDrawer(navController: NavController, navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) {
-
+fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) {
+    val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     val state: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     ModalNavigationDrawer(
@@ -84,20 +85,20 @@ fun MyDrawer(navController: NavController, navControllerLR: NavController, marke
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text(text = "Log aut") },
+                    label = { Text(text = "Logout") },
                     selected = false,
                     onClick = {
                         scope.launch {
                             state.close()
                             markerVM.logout()
-                            navController.navigate(Routes.LoginScreen.route)
+                            navControllerLR.navigate(Routes.AuthNavigation.route)
                         }
                     }
                 )
             }
         }
     ) {
-        MyScaffold(navController, navControllerLR, TIME, markerVM, state)
+        MyScaffold(navController, TIME, markerVM, state)
     }
 }
 

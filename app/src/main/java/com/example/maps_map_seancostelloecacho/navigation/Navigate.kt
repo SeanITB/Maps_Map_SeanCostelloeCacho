@@ -17,7 +17,6 @@ import com.example.maps_map_seancostelloecacho.views.*
 @Composable
 fun Navigate(
     navController: NavController,
-    navControllerLR: NavController,
     TIME: Int,
     markerVM: MapViewModel
 ) {
@@ -45,12 +44,6 @@ fun Navigate(
             )
         }
     ) {
-        composable(Routes.LoginScreen.route) {
-            UserLoginOnLogOutContent(
-                navController = navControllerLR,
-                markerVM = markerVM
-            )
-        }
         composable(Routes.MapGeolocalisationScreen.route) {
             MapGeolocalisationScreen(
                 navController,

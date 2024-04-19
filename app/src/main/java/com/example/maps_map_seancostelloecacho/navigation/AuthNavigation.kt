@@ -17,7 +17,9 @@ import com.example.maps_map_seancostelloecacho.views.UserLoginOnCreateContent
 import com.example.maps_map_seancostelloecacho.views.UsernRegistrerContent
 
 @Composable
-fun NavigateLoginAndRegister(navControllerLR: NavController, TIME: Int, markerVM: MapViewModel) {
+fun AuthNavigation( markerVM: MapViewModel) {
+    val TIME : Int = 1000
+    val navControllerLR = rememberNavController()
     NavHost(
         navController = navControllerLR as NavHostController,
         startDestination = Routes.LoginScreen.route,
@@ -45,9 +47,10 @@ fun NavigateLoginAndRegister(navControllerLR: NavController, TIME: Int, markerVM
         composable(Routes.LunchScreen.route) { LunchScreen(navControllerLR) }
         composable(Routes.RegisterScreen.route,) { UsernRegistrerContent(navControllerLR, markerVM) }
         composable(Routes.LoginScreen.route,) { UserLoginOnCreateContent(navControllerLR, markerVM) }
+        composable(Routes.AuthNavigation.route,) { AuthNavigation(markerVM = markerVM) }
         composable(Routes.MyDrawer.route) {
-            val navController = rememberNavController()
-            MyDrawer(navController = navController, navControllerLR = navControllerLR, markerVM = markerVM, TIME = TIME)
+
+            MyDrawer(navControllerLR = navControllerLR, markerVM = markerVM, TIME = TIME)
         }
 
     }

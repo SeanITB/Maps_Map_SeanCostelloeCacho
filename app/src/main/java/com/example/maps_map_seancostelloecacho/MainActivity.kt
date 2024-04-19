@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.maps_map_seancostelloecacho.navigation.NavigateLoginAndRegister
+import com.example.maps_map_seancostelloecacho.navigation.AuthNavigation
 import com.example.maps_map_seancostelloecacho.ui.theme.Maps_Map_SeanCostelloeCachoTheme
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
@@ -21,8 +21,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val markerVM by viewModels<MapViewModel>()
             val darkThem by markerVM.darkThem.observeAsState(false)
-            val TIME : Int = 1000
-            val navControllerLR = rememberNavController()
 
             Maps_Map_SeanCostelloeCachoTheme(darkThem) {
                 // A surface container using the 'background' color from the theme
@@ -30,8 +28,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-                    NavigateLoginAndRegister(navControllerLR = navControllerLR, TIME = TIME, markerVM = markerVM)
+                    AuthNavigation(markerVM = markerVM)
                 }
             }
         }
