@@ -42,6 +42,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     }
     markerVM.changeActualScreen("mapScreen")
 
+    /*
     LaunchedEffect(key1 = typeMarkerForFilter) {
         if (typeMarkerForFilter.equals("All markers")) {
             markerVM.getMarkers()
@@ -53,6 +54,8 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     LaunchedEffect(key1 = getMarkersComlet) {
         markerVM.changeMarkerComplete(false)
     }
+
+     */
 
 
 

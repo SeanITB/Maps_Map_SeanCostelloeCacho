@@ -64,14 +64,16 @@ fun MarkerListContent(
     val finishSort by markerVM.finishSort.observeAsState(false)
     val markerList by markerVM.markerList.observeAsState(emptyList())
 
+    /*
     Log.i("ActualType", "ActualType in list: $typeMarkerForFilter")
     LaunchedEffect(key1 = typeMarkerForFilter, key2 = markerList) {
         if (typeMarkerForFilter.equals("All markers")) {
-            markerVM.getMarkers()
         } else {
             markerVM.getFilterMarkers()
         }
     }
+
+     */
 
     LaunchedEffect(key1 = turnOnSecondProcess) {
         markerVM.createMapOfMarkers()

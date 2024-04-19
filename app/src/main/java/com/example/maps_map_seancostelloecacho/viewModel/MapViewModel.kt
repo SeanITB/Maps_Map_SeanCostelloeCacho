@@ -221,6 +221,7 @@ class MapViewModel : ViewModel() {
 
     fun deleteMarker(idMarker: String) {
         repository.deleteMarker(idMarker)
+        getMarkers()
     }
 
     fun getMarkers() {
@@ -232,14 +233,11 @@ class MapViewModel : ViewModel() {
 
     }
 
-    fun getFilterMarkers() {
-        Log.i("markers", "hola")
-        repository.getMarkers().whereEqualTo(TYPE_KEY, this.typeMarker.value!!)
+    fun getFilterMarkers(typeMarker: String) {
+        repository.getMarkers().whereEqualTo("owner", auth.currentUser?.email).whereEqualTo(TYPE_KEY, typeMarker)
             .addSnapshotListener { value, error ->
                 processOfGettingMarkerFormDataStore(error, value)
             }
-        Log.i("markers", "values other markers: ${categoryMarkerList.value}")
-
     }
 
     private fun processOfGettingMarkerFormDataStore(
@@ -489,6 +487,12 @@ class MapViewModel : ViewModel() {
 
     fun changeTypeMarkerForFilter(value: String) {
         this._typeMarkerForFilter.value = value
+        Log.i("typeMarker", "typeMarker is: $value")
+        if (value.equals("All markers")) {
+            getMarkers()
+        } else {
+            getFilterMarkers(value)
+        }
     }
 
     fun changeUri(value: Uri?) {
