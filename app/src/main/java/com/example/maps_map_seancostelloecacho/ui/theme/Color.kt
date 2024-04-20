@@ -20,6 +20,6 @@ val darkWrongAswer = Color(0xFF910432)
 val darkCorrectAswer = Color(0xFF6033FF)
 
 // Colors clars
-val lightSecundariColor = Color(0xFF018786)
+val lightSecundariColor = Color(0xFF1D6B6B)
 val lightWrongAswer = Color(0xFFFFC107)
 val lightCorrectAswer = Color(0xFF4CAF50)

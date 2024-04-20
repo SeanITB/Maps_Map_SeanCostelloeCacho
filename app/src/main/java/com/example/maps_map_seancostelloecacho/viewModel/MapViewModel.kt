@@ -20,6 +20,7 @@ import com.example.maps_map_seancostelloecacho.models.MapEvent
 import com.example.maps_map_seancostelloecacho.models.MapState
 import com.example.maps_map_seancostelloecacho.models.MapStyle
 import com.example.maps_map_seancostelloecacho.models.MarkerData
+import com.example.maps_map_seancostelloecacho.models.RegisterValidationContent
 import com.example.maps_map_seancostelloecacho.navigation.NavigationItems
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -288,6 +289,20 @@ class MapViewModel : ViewModel() {
             } else {
                 Log.d("Markers", "Current data; null")
             }
+        }
+    }
+
+    fun registerValidation(
+        validation: RegisterValidationContent
+    ) {
+        if (!password.equals(validation.passwordCheck)) {
+            Toast.makeText(validation.context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
+        } else if (!passwordVerification(validation.password)) {
+            Toast.makeText(validation.context, "Incorrect password.", Toast.LENGTH_LONG).show()
+        } else if (!proveThatItsAEmail(validation.email)) {
+            Toast.makeText(validation.context, "Incorrect email.", Toast.LENGTH_LONG).show()
+        } else {
+            register()
         }
     }
 
