@@ -128,7 +128,7 @@ fun MarkerListScreen(
                         )
                     }
                     items(m.items) { element ->
-                        val actualUri = element.photo.toUri()
+                        val actualUri = element.uriUrl.toUri()
                         CategoryItem(
                             actualMarker = actualMarker,
                             navController = navController,
@@ -326,7 +326,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
-    val uri by markerVM.uri.observeAsState(null)
+    val uriUrl by markerVM.uriUrl.observeAsState("")
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
@@ -342,7 +342,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     }
     Log.i(
         "MarkerDataÑ",
-        "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uri"
+        "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uriUrl"
     )
 
 
@@ -358,7 +358,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         expandedBottomSheet = expandedBottomSheet,
         onExpandedBottomSheetChange = { markerVM.changeExpandedBottomSheet(it) },
         navigationController = navigationController,
-        uri = uri,
+        uriUrl = uriUrl,
         navigationItems = navigationItems,
         context = context,
         changeNewMarker = { markerVM.changeNewMarker(it) },

@@ -1,7 +1,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -40,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -57,7 +57,7 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
-    val uri by markerVM.uri.observeAsState(null)
+    val uriUrl by markerVM.uriUrl.observeAsState("")
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
@@ -88,7 +88,7 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         expandedBottomSheet = expandedBottomSheet,
         onExpandedBottomSheetChange = { markerVM.changeExpandedBottomSheet(it) },
         navigationController = navigationController,
-        uri = uri,
+        uriUrl = uriUrl,
         navigationItems = navigationItems,
         context = context,
         changeNewMarker = {markerVM.changeNewMarker(it)},
@@ -112,13 +112,12 @@ fun MyBottomSheetScreen(
     expandedBottomSheet: Boolean,
     onExpandedBottomSheetChange: (Boolean) -> Unit,
     navigationController: NavController,
-    uri: Uri?,
+    uriUrl: String,
     navigationItems: Map<String, String>,
     context: Context,
     changeNewMarker: (MarkerData) -> Unit,
     whenAddMarker: (Context) -> Unit,
     actualPosition: LatLng?,
-    //uploadUriUrl: () -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = {
@@ -148,14 +147,14 @@ fun MyBottomSheetScreen(
             }
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            ImageItem(navigationController, uri, navigationItems)
+            ImageItem(navigationController, uriUrl, navigationItems)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(
                 onFirstTimeChange = {onFirstTimeChange(it)},
                 actualMarker = actualMarker,
                 name = name,
                 typeMarker = typeMarker,
-                photo = uri,
+                uriUrl = uriUrl,
                 whenAddMarker = { whenAddMarker(it) },
                 changeNewMarker = { changeNewMarker(it) },
                 context = context,
@@ -168,7 +167,7 @@ fun MyBottomSheetScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<String, String>) {
+fun ImageItem(navController: NavController, uriUrl: String, navigationItems: Map<String, String>) {
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(8.dp),
@@ -176,10 +175,9 @@ fun ImageItem(navController: NavController, uri: Uri?, navigationItems: Map<Stri
             .fillMaxWidth(0.25f)
             .fillMaxHeight(0.25f)
     ) {
-        Log.i("MarkerDataÑ", "photo: $uri")
-        if (uri != null) {
+        if (uriUrl != "") {
             GlideImage(
-                model = uri,
+                model = uriUrl.toUri(),
                 contentDescription = "Image from the new marker",
                 modifier = Modifier
                     .fillMaxSize()
@@ -203,7 +201,7 @@ fun WhenAddMarkerScreen(
     actualMarker: MarkerData?,
     name: String,
     typeMarker: String,
-    photo: Uri?,
+    uriUrl: String,
     whenAddMarker: (Context) -> Unit,
     changeNewMarker: (MarkerData) -> Unit,
     context: Context,
@@ -215,7 +213,7 @@ fun WhenAddMarkerScreen(
                 id = actualMarker?.id,
                 name = name,
                 type = typeMarker,
-                photo = photo.toString(),
+                uriUrl = uriUrl,
                 location = Location(latitude = actualPosition!!.latitude, longitude = actualPosition!!.longitude) //toDo: add actual position
             )
             changeNewMarker(newMarker)

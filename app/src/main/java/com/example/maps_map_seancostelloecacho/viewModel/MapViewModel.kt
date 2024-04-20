@@ -256,7 +256,7 @@ class MapViewModel : ViewModel() {
                     id = dc.document.id,
                     name = dc.document.get(NAME_KEY).toString(),
                     type = dc.document.get(TYPE_KEY).toString(),
-                    photo = dc.document.get(PHOTOS_KEY).toString(),
+                    uriUrl = dc.document.get(PHOTOS_KEY).toString(),
                     location = Location(
                         latitude = dc.document.get(LATITUDE_KEY).toString().toDouble(),
                         longitude = dc.document.get(LONGITUDE_KEY).toString().toDouble()
@@ -281,10 +281,10 @@ class MapViewModel : ViewModel() {
                 val marker = value.toObject(MarkerData::class.java)
                 if (marker != null) {
                     marker.id = markerId
-                    marker.photo = value.get("photos").toString()
+                    marker.uriUrl = value.get("photos").toString()
                 }
                 _actualMarker.value = marker
-                _uri.value = marker!!.photo.toUri()
+                _uri.value = marker!!.uriUrl.toUri()
             } else {
                 Log.d("Markers", "Current data; null")
             }
@@ -500,14 +500,7 @@ class MapViewModel : ViewModel() {
     }
 
     fun proveThatMarkerIsCorrect(newMarker: MarkerData): Boolean {
-        var isCorrect = false
-        if (
-            newMarker.name != "" &&
-            newMarker.type != "" &&
-            newMarker.photo != ""
-        )
-            isCorrect = true
-        return isCorrect
+        return (newMarker.name != "" && newMarker.type != "" && newMarker.uriUrl != "")
     }
 
     fun changeShowBottomFromMapSheet(value: Boolean) {
@@ -642,7 +635,7 @@ class MapViewModel : ViewModel() {
             id = null,
             name = name,
             type = type,
-            photo = "",
+            uriUrl = "",
             location = Location(latitude = latitude, longitude = longitude)
         )
     }
