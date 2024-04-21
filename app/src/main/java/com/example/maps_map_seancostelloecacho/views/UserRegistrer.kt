@@ -1,6 +1,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
-import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,13 +63,14 @@ fun UsernRegistrerContent(navController: NavController, markerVM: MapViewModel) 
     var passwordCheck by rememberSaveable {
         mutableStateOf("")
     }
-    val gmailContent = TextFieldContent(title = email, onTitleChange = {markerVM.changeUserName(it)})
+    val gmailContent = TextFieldContent(title = email, onTitleChange = { markerVM.changeUserName(it) })
     val passwordContent = TextFieldContent(title = password, onTitleChange = {markerVM.changePassword(it)})
     val passwordCheckContent = TextFieldContent(title = passwordCheck, onTitleChange = {passwordCheck = it})
     val context = LocalContext.current
     val registerValidationContent = RegisterValidationContent(password, passwordCheck, context, email)
-    UserRegistrerView(
+    UserRegisterView(
         registerValidation = { markerVM.registerValidation(validation = registerValidationContent)},
+        //onGamigChange = { markerVM.changeUserName(it) },
         validationContent = registerValidationContent,
         gmailContent = gmailContent,
         passwordContent = passwordContent,
@@ -82,8 +82,9 @@ fun UsernRegistrerContent(navController: NavController, markerVM: MapViewModel) 
 }
 
 @Composable
-fun UserRegistrerView(
-    registerValidation: (RegisterValidationContent) -> Unit,
+fun UserRegisterView(
+    registerValidation: (RegisterValidationContent) -> Boolean,
+    //onGamigChange: (String) -> Unit,
     validationContent: RegisterValidationContent,
     gmailContent: TextFieldContent,
     passwordContent: TextFieldContent,
@@ -98,6 +99,10 @@ fun UserRegistrerView(
     var showPasswordInfo by rememberSaveable {
         mutableStateOf(false)
     }
+    var registerContentIsCorrect by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -149,7 +154,6 @@ fun UserRegistrerView(
             showPasswordInfo = false
         }
         Spacer(modifier = Modifier.fillMaxHeight(0.03F))
-
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -166,13 +170,15 @@ fun UserRegistrerView(
         }
         Spacer(modifier = Modifier.fillMaxHeight(0.05F))
         RegisterButton(
+            registerContentIsCorrect = registerContentIsCorrect,
+            onRegisterContentCorrescChange = { registerContentIsCorrect = it},
             registerValidation = {registerValidation(validationContent)},
             validationContent = validationContent,
             modifier = Modifier.fillMaxWidth(0.6F),
             onShowChange = { show = it },
         )
         if (isLoading) {
-            WhileLoding(
+            WhileLoading(
                 show = show,
                 onDismiss = { show = false },
                 isLoading = isLoading
@@ -182,16 +188,20 @@ fun UserRegistrerView(
                 if (goToNext) {
                     navController!!.navigate(Routes.MyDrawer.route)
                 }
+                else {
+                    if (registerContentIsCorrect)
+                        Toast.makeText(context, "This user already exists.", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
 }
 
 @Composable
-fun MyDialog(show: Boolean, onDismiss: () -> Unit) {
+fun MyDialog(show: Boolean, onDismiss: (Boolean) -> Unit) {
     if (show) {
         Dialog(
-            onDismissRequest = { onDismiss() },
+            onDismissRequest = { onDismiss(false) },
             properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = true)
         ) {
             Column(
@@ -200,7 +210,7 @@ fun MyDialog(show: Boolean, onDismiss: () -> Unit) {
                     .padding(24.dp)
                     .fillMaxWidth()
             ) {
-                ShowPaswordInstructions(modifier = Modifier.align(Alignment.CenterHorizontally))
+                ShowPasswordInstructions(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
 
         }
@@ -209,7 +219,7 @@ fun MyDialog(show: Boolean, onDismiss: () -> Unit) {
 
 
 @Composable
-fun ShowPaswordInstructions(modifier: Modifier = Modifier) {
+fun ShowPasswordInstructions(modifier: Modifier = Modifier) {
     Text(
         text = "Password characteristics: ",
         modifier = modifier,
@@ -284,23 +294,24 @@ fun Password(
             },
             modifier = modifier
         )
+        if (index < 2) Spacer(modifier = Modifier.fillMaxHeight(0.05F))
     }
 }
 
 @Composable
 fun RegisterButton(
+    registerContentIsCorrect: Boolean,
+    onRegisterContentCorrescChange: (Boolean) -> Unit,
     modifier: Modifier,
-    registerValidation: (RegisterValidationContent) -> Unit,
+    registerValidation: (RegisterValidationContent) -> Boolean,
     validationContent: RegisterValidationContent,
     onShowChange: (Boolean) -> Unit,
 ) {
     Button(
         modifier = modifier,
         onClick = {
-            onShowChange(true)
-            registerValidation(
-                validationContent
-            )
+            onRegisterContentCorrescChange(registerValidation(validationContent)) 
+            if (registerContentIsCorrect) onShowChange(true)
         }
     ) {
         Text(text = "Registresr")
@@ -311,7 +322,7 @@ fun RegisterButton(
 
 
 @Composable
-fun WhileLoding(
+fun WhileLoading(
     show: Boolean,
     onDismiss: () -> Unit,
     isLoading: Boolean
@@ -322,14 +333,14 @@ fun WhileLoding(
             properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = true)
         ) {
             if (isLoading) {
-                Column {
+                Column(
+                    Modifier
+                        .padding(24.dp)
+                        .fillMaxWidth()
+                ) {
                     CircularProgressIndicator(
                         modifier = Modifier.width(64.dp),
                         color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        "Waiting for a response...",
-                        modifier = Modifier
                     )
                 }
             }
@@ -342,8 +353,8 @@ fun WhileLoding(
 @Composable
 fun UserRegisterPreview() {
     Maps_Map_SeanCostelloeCachoTheme {
-        UserRegistrerView(
-            registerValidation = {},
+        UserRegisterView(
+            registerValidation = {false},
             validationContent = RegisterValidationContent("", "", LocalContext.current, ""),
             gmailContent = TextFieldContent("", {}),
             passwordContent = TextFieldContent("", {}),
@@ -354,3 +365,5 @@ fun UserRegisterPreview() {
         )
     }
 }
+
+

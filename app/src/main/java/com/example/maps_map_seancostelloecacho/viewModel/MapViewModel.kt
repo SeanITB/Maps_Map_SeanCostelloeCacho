@@ -294,16 +294,20 @@ class MapViewModel : ViewModel() {
 
     fun registerValidation(
         validation: RegisterValidationContent
-    ) {
-        if (!password.equals(validation.passwordCheck)) {
+    ): Boolean {
+        var isCorrect = false
+        Log.i("password", "password psw: $password, psw check: ${validation.passwordCheck}")
+        if (!password.value.equals(validation.passwordCheck)) {
             Toast.makeText(validation.context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
         } else if (!passwordVerification(validation.password)) {
             Toast.makeText(validation.context, "Incorrect password.", Toast.LENGTH_LONG).show()
         } else if (!proveThatItsAEmail(validation.email)) {
             Toast.makeText(validation.context, "Incorrect email.", Toast.LENGTH_LONG).show()
         } else {
+            isCorrect = true
             register()
         }
+        return isCorrect
     }
 
     fun editMarker(actualMarker: MarkerData) {
@@ -311,7 +315,7 @@ class MapViewModel : ViewModel() {
     }
 
     // Firebase Authentication
-    fun register() {
+    fun register() {// toDo: if there is an repeat user
         auth.createUserWithEmailAndPassword(this.userName.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -332,8 +336,6 @@ class MapViewModel : ViewModel() {
         this._nameMarker.value = value
     }
 
-    var hola = auth.currentUser
-
     fun login(context: Context) {
         auth.signInWithEmailAndPassword(this.userName.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
@@ -348,7 +350,7 @@ class MapViewModel : ViewModel() {
             }
             .addOnFailureListener { task ->
                 Toast.makeText(context, "Incorrect email or password.", Toast.LENGTH_LONG).show()
-            } // toDo: si contra no esta bien
+            }
     }
 
     fun logout() {
@@ -374,6 +376,10 @@ class MapViewModel : ViewModel() {
                 )
             }
         }
+    }
+
+    fun proveThatLoginContentIsCorrect(): Boolean {
+        return this.userName.value != "" && this.password.value != ""
     }
 
     fun changeIsEditing(value: Boolean) {

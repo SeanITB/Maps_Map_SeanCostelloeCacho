@@ -1,7 +1,7 @@
 package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -73,7 +73,6 @@ fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewMode
 
     UserLoginView(
         navController = navController,
-        navigationItems = navigationItems,
         userName = userName,
         password = password,
         goToNext = goToNext,
@@ -85,7 +84,7 @@ fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewMode
         onUserNameChange = { markerVM.changeUserName(it) },
         onPasswordChange = { markerVM.changePassword(it) },
         login = { markerVM.login(context) },
-        modifyProcessing = { markerVM.modifiyProcessing() }
+        proveThatLoginContentIsCorrect = {markerVM.proveThatLoginContentIsCorrect()}
     )
 
 }
@@ -93,7 +92,6 @@ fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewMode
 @Composable
 fun UserLoginView(
     navController: NavController?,
-    navigationItems: Map<String, String>,
     userName: String,
     password: String,
     goToNext: Boolean,
@@ -105,7 +103,7 @@ fun UserLoginView(
     onUserNameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     login: (Context) -> Unit,
-    modifyProcessing: () -> Unit
+    proveThatLoginContentIsCorrect: () -> Boolean,
 ) {
     var visability by rememberSaveable {
         mutableStateOf(false)
@@ -172,30 +170,38 @@ fun UserLoginView(
             { check = it }
         )
         Spacer(modifier = Modifier.fillMaxHeight(0.05F))
-        Text(
-            text = "Don't have an account? Register!!",
-            modifier = Modifier.clickable {
-                onUserNameChange("")
-                onPasswordChange("")
-                navController?.navigate(Routes.RegisterScreen.route)
-            }
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Do you have an account? ",
+            )
+            Text(
+                text = "Register!!!",
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.clickable {
+                    onUserNameChange("")
+                    onPasswordChange("")
+                    navController?.navigate(Routes.RegisterScreen.route)
+                }
+            )
+        }
         Button(
             onClick = {
-                login(context)
+                if (proveThatLoginContentIsCorrect()) login(context)
+                else Toast.makeText(context, "You have to fill the fields.", Toast.LENGTH_LONG).show()
             }
         ) {
             Text(text = "Login")
         }
     }
     if (isLoading) {
-        WhileLoding(
+        WhileLoading(
             show = show,
             onDismiss = { show = false },
             isLoading = isLoading
         )
     } else {
-        Log.i("isChack", "isChack: $check")
         LaunchedEffect(key1 = goToNext) {
             if (goToNext) {
                 onGoToNextChange(false)
@@ -205,6 +211,8 @@ fun UserLoginView(
         }
     }
 }
+
+
 
 @Composable
 private fun SaveAcountCheckBox(
@@ -226,14 +234,15 @@ private fun SaveAcountCheckBox(
     }
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = "Save the account: ", fontSize = 12.sp)
         Checkbox(
             checked = check,
             onCheckedChange = {
                 onCheckChange(!check)
-                CoroutineScope(Dispatchers.IO).launch {//toDo: eliminar registros de login si quito el check
+                CoroutineScope(Dispatchers.IO).launch {
                     if (!check) userPrefs.saveUserData("", "")
                 }
             },
