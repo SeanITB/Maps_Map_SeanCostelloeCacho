@@ -150,7 +150,7 @@ fun MyBottomSheetScreen(
             ImageItem(navigationController, uriUrl, navigationItems)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(
-                onFirstTimeChange = {onFirstTimeChange(it)},
+                onFirstTimeChange = { onFirstTimeChange(it) },
                 actualMarker = actualMarker,
                 name = name,
                 typeMarker = typeMarker,
@@ -214,8 +214,9 @@ fun WhenAddMarkerScreen(
                 name = name,
                 type = typeMarker,
                 uriUrl = uriUrl,
-                location = Location(latitude = actualPosition!!.latitude, longitude = actualPosition!!.longitude) //toDo: add actual position
+                location = Location(latitude = actualPosition!!.latitude, longitude = actualPosition!!.longitude)
             )
+            Log.i("nooo", "nooo editant amb valors image $uriUrl , name $name id: ${actualMarker?.id}, type $typeMarker, location: ${Location(latitude = actualPosition.latitude, longitude = actualPosition.longitude)}")
             changeNewMarker(newMarker)
             whenAddMarker(context)
             onFirstTimeChange(true)

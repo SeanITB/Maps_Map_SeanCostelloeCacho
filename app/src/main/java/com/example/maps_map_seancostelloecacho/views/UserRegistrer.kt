@@ -117,7 +117,7 @@ fun UserRegisterView(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Name ", style = TextStyle(fontWeight = FontWeight.Bold))
+                    Text(text = "Email ", style = TextStyle(fontWeight = FontWeight.Bold))
                     Text(text = "(required)")
                 }
             },

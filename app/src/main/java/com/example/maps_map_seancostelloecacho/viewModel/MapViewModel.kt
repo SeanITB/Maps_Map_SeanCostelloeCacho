@@ -168,9 +168,6 @@ class MapViewModel : ViewModel() {
     private val _actualMarker = MutableLiveData<MarkerData?>(null)
     val actualMarker = _actualMarker
 
-    private val _isEditing = MutableLiveData(false)
-    val isEditing = _isEditing
-
     private val _typeMarkerForFilter = MutableLiveData("All markers")
     val typeMarkerForFilter = _typeMarkerForFilter
 
@@ -218,7 +215,6 @@ class MapViewModel : ViewModel() {
             .addSnapshotListener { value, error ->
                 processOfGettingMarkerFormDataStore(error, value)
             }
-        Log.i("markers", "values in all markers: ${categoryMarkerList.value}")
 
     }
 
@@ -241,7 +237,6 @@ class MapViewModel : ViewModel() {
         val tempList = mutableListOf<MarkerData>()
         for (dc: DocumentChange in value?.documentChanges!!) {
             if (dc.type == DocumentChange.Type.ADDED) {
-                Log.i("photo", "photo in VM ${dc.document.get(PHOTOS_KEY).toString()}")
                 val newMarker = MarkerData(
                     id = dc.document.id,
                     name = dc.document.get(NAME_KEY).toString(),
@@ -255,7 +250,6 @@ class MapViewModel : ViewModel() {
                 tempList.add(newMarker)
             }
         }
-        Log.i("markers", "temList: $tempList")
         _markerList.value = tempList
         _markersComplet.value = true
         _turnOnSeconProcess.value = if (_turnOnSeconProcess.value!!) false else true
@@ -302,6 +296,7 @@ class MapViewModel : ViewModel() {
 
     fun editMarker(actualMarker: MarkerData) {
         repository.editMarker(actualMarker)
+        Log.i("Estic editant", "Estic editant")
     }
 
     // Firebase Authentication
@@ -373,9 +368,6 @@ class MapViewModel : ViewModel() {
         return this.userName.value != "" && this.password.value != ""
     }
 
-    fun changeIsEditing(value: Boolean) {
-        this._isEditing.value = value
-    }
 
     fun changeActualPosition(value: LatLng) {
         this._actualPosition.value = value
@@ -454,7 +446,6 @@ class MapViewModel : ViewModel() {
         if (this.categoryMap!!.isNotEmpty()) {
             this.categoryMap!!.clear()
         }
-        Log.i("markers", "value of create map: ${markerList.value} ")
         if (markerList.value!!.isNotEmpty()) {
             for (m in markerList.value!!) {
                 addMarkerToMap(m)
@@ -662,7 +653,7 @@ class MapViewModel : ViewModel() {
         this._showBottomSheetFromListSheet.value = value
     }
 
-    fun whenAddMarkerFromList(it: Context) {
+    fun whenEditMarkerFromList(it: Context) {
         this.editMarker(actualMarker.value!!)
         this._showBottomSheetFromListSheet.value = false
     }

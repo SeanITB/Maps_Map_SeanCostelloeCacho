@@ -52,7 +52,6 @@ fun Navigate(
         }
         composable(Routes.MapScreen.route) { MapScreen(navController, markerVM) }
         composable(Routes.MarkerListScreen.route) {
-            Log.i("navigationñññ", "navigationñññ he passado hacia list")
             MarkerListContent(navController, markerVM) }
         composable(Routes.CameraFromMapScreen.route) { CameraFromMapContent(markerVM, navController) }
         composable(Routes.CameraFromMarkerListScreen.route) { CameraFromMarkerListContent(markerVM, navController) }

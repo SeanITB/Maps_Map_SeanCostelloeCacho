@@ -198,7 +198,6 @@ fun CategoryItem(
     modifier: Modifier = Modifier,
     markerVM: MapViewModel
 ) {
-    Log.i("idMarker", "idMarker: $id name: $text")
     var showConfimDelete by rememberSaveable {
         mutableStateOf(false)
     }
@@ -281,8 +280,6 @@ private fun EditButton(
     if (onEdit) {
         markerVM.getMarker(id)
         LaunchedEffect(key1 = actualMarker) {
-            markerVM.changeIsEditing(true)
-            Log.i("MarkerDataÑÑ", "MarkerData id: ${actualMarker?.id} name: ${actualMarker?.name} ")
             markerVM.changeShowBottomSheetFromList(true)
             onEdit = false
         }
@@ -340,6 +337,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     if (isFirstTime && actualMarker != null) {
         markerVM.changeNameMarke(actualMarker!!.name)
         markerVM.changeTypeMarker(actualMarker!!.type)
+        markerVM.changeUriUrl(actualMarker!!.uriUrl)
         isFirstTime = false
     }
     Log.i(
@@ -364,7 +362,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         navigationItems = navigationItems,
         context = context,
         changeNewMarker = { markerVM.changeNewMarker(it) },
-        whenAddMarker = { markerVM.whenAddMarkerFromList(it) },
+        whenAddMarker = { markerVM.whenEditMarkerFromList(it) },
         actualPosition = actualPosition,
         onFirstTimeChange = { isFirstTime = it }
     )

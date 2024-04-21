@@ -41,6 +41,13 @@ class Repository {
                 LONGITUDE_KEY to editMarker.location.longitude
             )
         )
+        Log.i("nooo", "nooo ${hashMapOf(
+            NAME_KEY to editMarker.name,
+            TYPE_KEY to editMarker.type,
+            PHOTOS_KEY to editMarker.uriUrl,
+            LATITUDE_KEY to editMarker.location.latitude,
+            LONGITUDE_KEY to editMarker.location.longitude
+        )}")
     }
 
     fun deleteMarker(markerId: String) {
