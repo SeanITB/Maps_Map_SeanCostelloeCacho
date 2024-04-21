@@ -30,6 +30,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val showBottomSheet by markerVM.showBottomSheetFromMap.observeAsState(false)
     val recentMarker by markerVM.recentMarker.observeAsState(null)
     val actualPosition by markerVM.actualPosition.observeAsState(LatLng(0.0, 0.0))
+    val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
 
     val cameraPositionState =
         rememberCameraPositionState {
@@ -38,14 +39,13 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val uiSetings = remember {
         MapUiSettings(zoomControlsEnabled = false)
     }
-    Log.i("Actual position", "Actual position actualPosition in map $actualPosition")
 
-    /*
-    LaunchedEffect(key1 = actualPosition) {
-        navigationController.navigate(Routes.MapScreen.route)
+    if (typeMarkerForFilter == "All markers") {
+        markerVM.getMarkers()
+    } else {
+        markerVM.getFilterMarkers(typeMarkerForFilter)
     }
 
-     */
     Column(
         modifier = Modifier
             .fillMaxSize()

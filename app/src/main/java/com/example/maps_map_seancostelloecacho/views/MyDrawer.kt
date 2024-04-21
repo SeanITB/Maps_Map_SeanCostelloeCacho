@@ -91,6 +91,7 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
                         scope.launch {
                             state.close()
                             navController.navigate(Routes.MarkerListScreen.route)
+                            //markerVM.getMarkers()
                         }
                     }
                 )

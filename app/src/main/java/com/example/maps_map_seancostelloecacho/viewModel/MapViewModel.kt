@@ -196,33 +196,21 @@ class MapViewModel : ViewModel() {
     fun addMarker() {
         //instanceActualMarker(newMarker)
 
-        Log.i("addMarker", "addMarker in VM hihih: actualMarker: ${this.actualMarker.value!!}, currentUser: ${auth.currentUser?.email!!}, uriUrl: ${uriUrl}")
+        Log.i(
+            "addMarker",
+            "addMarker in VM hihih: actualMarker: ${this.actualMarker.value!!}, currentUser: ${auth.currentUser?.email!!}, uriUrl: ${uriUrl}"
+        )
 
-        repository.addMarker(this.actualMarker.value!!, auth.currentUser?.email!!, this._uriUrl.value!!)
+        repository.addMarker(
+            this.actualMarker.value!!,
+            auth.currentUser?.email!!,
+            this._uriUrl.value!!
+        )
 
         getMarkers()
     }
-
-    /*
-    fun instanceActualMarker(newMarker: MarkerData) {
-        this.actualMarker.value = MarkerData(
-            id = this.idForMarker.value,
-            name = this.nameMarker.value!!,
-            type = this.typeMarker.value!!,
-            description = if (this.descriptionMarker.value.equals("")) "There isn't any description." else this.descriptionMarker.value!!,
-            photo = this.uri.value.toString(),
-            location = Location(
-                this.latitudeMarker.value!!,
-                this.longitudeMarker.value!!
-            )
-        )
-    }
-
-     */
-
     fun deleteMarker(idMarker: String) {
         repository.deleteMarker(idMarker)
-        getMarkers()
     }
 
     fun getMarkers() {
@@ -235,7 +223,8 @@ class MapViewModel : ViewModel() {
     }
 
     fun getFilterMarkers(typeMarker: String) {
-        repository.getMarkers().whereEqualTo("owner", auth.currentUser?.email).whereEqualTo(TYPE_KEY, typeMarker)
+        repository.getMarkers().whereEqualTo("owner", auth.currentUser?.email)
+            .whereEqualTo(TYPE_KEY, typeMarker)
             .addSnapshotListener { value, error ->
                 processOfGettingMarkerFormDataStore(error, value)
             }
@@ -298,7 +287,8 @@ class MapViewModel : ViewModel() {
         var isCorrect = false
         Log.i("password", "password psw: $password, psw check: ${validation.passwordCheck}")
         if (!password.value.equals(validation.passwordCheck)) {
-            Toast.makeText(validation.context, "Passwords are not the same.", Toast.LENGTH_LONG).show()
+            Toast.makeText(validation.context, "Passwords are not the same.", Toast.LENGTH_LONG)
+                .show()
         } else if (!passwordVerification(validation.password)) {
             Toast.makeText(validation.context, "Incorrect password.", Toast.LENGTH_LONG).show()
         } else if (!proveThatItsAEmail(validation.email)) {
@@ -592,7 +582,8 @@ class MapViewModel : ViewModel() {
             put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
         }
 
-        val uri: Uri? = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        val uri: Uri? =
+            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         uri?.let {
             val outstream: OutputStream? = context.contentResolver.openOutputStream(it)
             outstream?.let { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }
@@ -607,6 +598,7 @@ class MapViewModel : ViewModel() {
         this._actualMarker.value = null
         this._typeMarker.value = ""
         this._uri.value = null
+        this._uriUrl.value = ""
         this._nameMarker.value = ""
     }
 

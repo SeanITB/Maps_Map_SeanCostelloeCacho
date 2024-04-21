@@ -62,9 +62,12 @@ fun MarkerListContent(
     val getMarkersComplet by markerVM.markersComplet.observeAsState(false)
     val turnOnSecondProcess by markerVM.turnOnSeconProcess.observeAsState(false)
     val finishSort by markerVM.finishSort.observeAsState(false)
-    val markerList by markerVM.markerList.observeAsState(emptyList())
 
-
+    if (typeMarkerForFilter == "All markers") {
+        markerVM.getMarkers()
+    } else {
+        markerVM.getFilterMarkers(typeMarkerForFilter)
+    }
 
     LaunchedEffect(key1 = turnOnSecondProcess) {
         markerVM.createMapOfMarkers()
@@ -163,7 +166,7 @@ fun MarkerListScreen(
         }
     } else {
         ErrorMsg(
-            msg = if (typeMarker.equals("All markers")) "For the moment, you don't have any marker." else "For the moment, for the type ${typeMarker} there isn't any marker.",
+            msg = if (typeMarker.equals("All markers")) "For the moment, you don't have any marker." else "For the type ${typeMarker}, by the moment, there isn't any marker.",
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -315,7 +318,7 @@ fun ErrorMsg(msg: String, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = msg, color = MaterialTheme.colorScheme.primary)
+        Text(text = msg, color = MaterialTheme.colorScheme.primary, modifier = Modifier.fillMaxWidth(0.8F))
     }
 }
 
@@ -337,7 +340,6 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     if (isFirstTime && actualMarker != null) {
         markerVM.changeNameMarke(actualMarker!!.name)
         markerVM.changeTypeMarker(actualMarker!!.type)
-        //markerVM.changeActualPosition(LatLng(actualMarker!!.location.latitude, actualMarker!!.location.longitude))
         isFirstTime = false
     }
     Log.i(
