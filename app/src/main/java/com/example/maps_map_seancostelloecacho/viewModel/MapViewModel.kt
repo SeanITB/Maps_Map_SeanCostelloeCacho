@@ -305,7 +305,7 @@ class MapViewModel : ViewModel() {
             Toast.makeText(validation.context, "Incorrect email.", Toast.LENGTH_LONG).show()
         } else {
             isCorrect = true
-            register()
+            register(context = validation.context)
         }
         return isCorrect
     }
@@ -315,7 +315,7 @@ class MapViewModel : ViewModel() {
     }
 
     // Firebase Authentication
-    fun register() {// toDo: if there is an repeat user
+    fun register(context: Context) {// toDo: if there is an repeat user
         auth.createUserWithEmailAndPassword(this.userName.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -323,6 +323,7 @@ class MapViewModel : ViewModel() {
                 } else {
                     _goToNext.value = false
                     Log.d("ERROR", "Ups, user already exists.")
+                    Toast.makeText(context, "This user already exists.", Toast.LENGTH_LONG).show()
                 }
                 modifiyProcessing()
             }

@@ -1,5 +1,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -188,10 +189,6 @@ fun UserRegisterView(
                 if (goToNext) {
                     navController!!.navigate(Routes.MyDrawer.route)
                 }
-                else {
-                    if (registerContentIsCorrect)
-                        Toast.makeText(context, "This user already exists.", Toast.LENGTH_LONG).show()
-                }
             }
         }
     }
@@ -314,7 +311,7 @@ fun RegisterButton(
             if (registerContentIsCorrect) onShowChange(true)
         }
     ) {
-        Text(text = "Registresr")
+        Text(text = "Register")
     }
 }
 
