@@ -31,9 +31,10 @@ class Repository {
             )
     }
 
-    fun editMarker(editMarker: MarkerData) {
+    fun editMarker(editMarker: MarkerData, user:String) {
         database.collection(MARKERS_KEY).document(editMarker.id!!).set(
             hashMapOf(
+                "owner" to user,
                 NAME_KEY to editMarker.name,
                 TYPE_KEY to editMarker.type,
                 PHOTOS_KEY to editMarker.uriUrl,

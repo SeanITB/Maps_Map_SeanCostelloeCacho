@@ -191,19 +191,11 @@ class MapViewModel : ViewModel() {
 
     // Firebase Methods
     fun addMarker() {
-        //instanceActualMarker(newMarker)
-
-        Log.i(
-            "addMarker",
-            "addMarker in VM hihih: actualMarker: ${this.actualMarker.value!!}, currentUser: ${auth.currentUser?.email!!}, uriUrl: ${uriUrl}"
-        )
-
         repository.addMarker(
             this.actualMarker.value!!,
             auth.currentUser?.email!!,
             this._uriUrl.value!!
         )
-
         getMarkers()
     }
     fun deleteMarker(idMarker: String) {
@@ -295,7 +287,7 @@ class MapViewModel : ViewModel() {
     }
 
     fun editMarker(actualMarker: MarkerData) {
-        repository.editMarker(actualMarker)
+        repository.editMarker(actualMarker, auth.currentUser?.email!!)
         Log.i("Estic editant", "Estic editant")
     }
 
