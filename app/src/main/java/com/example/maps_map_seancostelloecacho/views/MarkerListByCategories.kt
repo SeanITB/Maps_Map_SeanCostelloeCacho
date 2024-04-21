@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -208,16 +209,19 @@ fun CategoryItem(
     ) {
         Row(
             modifier = modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            ImageMarker(uri, text)
-            NameMarker(text)
+            ImageMarker(uri, text, modifier = Modifier)
+            NameMarker(text, modifier = Modifier.fillMaxSize(0.5F))
+
             EditButton(
                 actualMarker = actualMarker,
                 markerVM = markerVM,
                 id = id,
             )
             DeleteButtom { showConfimDelete = it }
+
             MyAlertDialog(
                 showConfimDelete,
                 { showConfimDelete = false },
@@ -231,25 +235,35 @@ fun CategoryItem(
 
 @Composable
 @OptIn(ExperimentalGlideComposeApi::class)
-private fun ImageMarker(uri: Uri, text: String) {
-    GlideImage(
-        model = uri,
-        contentDescription = "$text image",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .fillMaxWidth(0.2F)
-            .fillMaxHeight()
-    )
+private fun ImageMarker(uri: Uri, text: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+    ) {
+        GlideImage(
+            model = uri,
+            contentDescription = "$text image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth(0.2F)
+                .fillMaxHeight()
+        )
+    }
 }
 
 @Composable
-private fun NameMarker(text: String) {
-    Text(
-        text = text,
-        //modifier = modifier,
-        fontSize = 14.sp,
-        color = MaterialTheme.colorScheme.background
-    )
+private fun NameMarker(text: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+    ) {
+        Text(
+            text = text,
+            //modifier = modifier,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.background,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 }
 
 @Composable
@@ -315,7 +329,11 @@ fun ErrorMsg(msg: String, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = msg, color = MaterialTheme.colorScheme.primary, modifier = Modifier.fillMaxWidth(0.8F))
+        Text(
+            text = msg,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.fillMaxWidth(0.8F)
+        )
     }
 }
 
@@ -379,7 +397,12 @@ fun MyAlertDialog(
     if (show) {
         AlertDialog(
             onDismissRequest = {},
-            text = { Text("Are you sure that you want to delete.", modifier = Modifier.fillMaxWidth()) },
+            text = {
+                Text(
+                    "Are you sure that you want to delete.",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -388,7 +411,12 @@ fun MyAlertDialog(
                     }
                 ) { Text(text = "OK") }
             },
-            dismissButton = { TextButton(onClick = { onDismiss() }, modifier = Modifier.background(MaterialTheme.colorScheme.primary)) { Text(text = "Cancel")} }
+            dismissButton = {
+                TextButton(
+                    onClick = { onDismiss() },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                ) { Text(text = "Cancel") }
+            }
         )
     }
 }
