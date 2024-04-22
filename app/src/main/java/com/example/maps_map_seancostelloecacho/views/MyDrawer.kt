@@ -69,7 +69,7 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
                         }
                     )
                     Spacer(modifier = Modifier.fillMaxWidth(0.3f))
-                    Text(text = "Drawer title")
+                    Text(text = "Menu")
                 }
                 Divider()
                 NavigationDrawerItem(

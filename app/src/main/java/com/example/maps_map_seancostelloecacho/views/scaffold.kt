@@ -37,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.example.maps_map_seancostelloecacho.models.MapEvent
 import com.example.maps_map_seancostelloecacho.navigation.Navigate
@@ -87,14 +88,13 @@ fun MyScaffold(
                         markerVM.changeExpandedTopBar(!expandedTopBar)
                     }
                     .fillMaxWidth()
-                    //.fillMaxHeight(0.1f)
+                //.fillMaxHeight(0.1f)
             )
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    //.fillMaxHeight(0.9f)
-                   ,
+                    .fillMaxWidth(),
+                //.fillMaxHeight(0.9f)
             ) {
 
                 Navigate(navController, TIME, markerVM)
@@ -111,9 +111,15 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavCo
     val scope = rememberCoroutineScope()
     val darkThem by markerVM.darkThem.observeAsState(false)
     TopAppBar(
-        title = { Text(text = "My SuperApp", modifier = Modifier.clickable {
-            navController.navigate(Routes.MapScreen.route)
-        }) },
+        title = {
+            Text(
+                text = "Placer Remember",
+                modifier = Modifier.clickable {
+                    navController.navigate(Routes.MapScreen.route)
+                },
+                textAlign = TextAlign.Center
+            )
+        },
         colors = TopAppBarDefaults.largeTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = MaterialTheme.colorScheme.primary
@@ -150,7 +156,7 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavCo
                     contentDescription = "Toggle Fallout map",
                     tint = MaterialTheme.colorScheme.secondary,
 
-                )
+                    )
             }
         }
     )
