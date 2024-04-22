@@ -127,7 +127,7 @@ fun MarkerListScreen(
                             text = m.name,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.primary)
+                                .background(MaterialTheme.colorScheme.secondary)
                                 .padding(16.dp)
                         )
                     }
@@ -142,7 +142,7 @@ fun MarkerListScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp)
-                                .background(MaterialTheme.colorScheme.secondary)
+                                .background(MaterialTheme.colorScheme.background)
                                 .padding(16.dp)
                                 .clickable {
                                     markerVM.changeActualPosition(
@@ -259,7 +259,7 @@ private fun NameMarker(text: String, modifier: Modifier = Modifier) {
             text = text,
             //modifier = modifier,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.background,
+            color = MaterialTheme.colorScheme.primary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

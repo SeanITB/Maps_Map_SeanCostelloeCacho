@@ -1,5 +1,6 @@
 package com.example.maps_map_seancostelloecacho.views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -64,12 +66,15 @@ fun MyScaffold(
                 Icon(
                     imageVector = Icons.Filled.AddCircleOutline,
                     contentDescription = "Add marker with actual position",
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
             TypeMarkerScreen(
                 arrTypeMarkers = listMarkerType,
@@ -110,8 +115,8 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavCo
             navController.navigate(Routes.MapScreen.route)
         }) },
         colors = TopAppBarDefaults.largeTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.primary
         ),
         navigationIcon = {
             IconButton(onClick = {
@@ -121,7 +126,7 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavCo
             }) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    tint = MaterialTheme.colorScheme.background,
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = "Menu"
                 )
             }
@@ -131,7 +136,11 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavCo
                 onClick = {
                     markerVM.changeDarkThem(!darkThem)
                     markerVM.onEvent(MapEvent.ToggleFalloutMap)
-                }) {
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
                 Icon(
                     imageVector = if (markerVM.state.isFollautMap) {
                         Icons.Default.ToggleOff
@@ -139,6 +148,8 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavCo
                         Icons.Default.ToggleOn
                     },
                     contentDescription = "Toggle Fallout map",
+                    tint = MaterialTheme.colorScheme.secondary,
+
                 )
             }
         }
