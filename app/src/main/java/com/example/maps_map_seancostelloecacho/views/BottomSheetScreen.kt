@@ -62,10 +62,11 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
     val lastPosition by markerVM.actualPosition.observeAsState()
+    val description by markerVM.description.observeAsState("")
     var actualPosition: LatLng by rememberSaveable {
         mutableStateOf(LatLng(0.0, 0.0))
     }
-    var isFirstTime by rememberSaveable { //toDo: parch feo no magrada
+    var isFirstTime by rememberSaveable {
         mutableStateOf(true)
     }
     if (isFirstTime) {
@@ -73,10 +74,9 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         isFirstTime = false
     }
 
-    Log.i("typeMarkerÑ", "typeMarkerÑ: $typeMarker")
-
-    markerVM.changeActualScreen("BottomSheet")
     MyBottomSheetScreen(
+        description = description,
+        onDescriptionChange = {markerVM.changeDescription(it)},
         onFirstTimeChange = {isFirstTime = it},
         actualMarker = actualMarker,
         name = name,
@@ -101,6 +101,8 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun MyBottomSheetScreen(
+    description: String,
+    onDescriptionChange: (String) -> Unit,
     onFirstTimeChange: (Boolean) -> Unit,
     actualMarker : MarkerData?,
     name: String,
@@ -144,8 +146,14 @@ fun MyBottomSheetScreen(
                     expanded = expandedBottomSheet,
                     onExpandedChange = { onExpandedBottomSheetChange(it) },
                 )
+
             }
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
+            DescriptionOfMarker(
+                description = description,
+                onDescriptionChange = {onDescriptionChange(it)},
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             ImageItem(navigationController, uriUrl, navigationItems)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
@@ -158,11 +166,30 @@ fun MyBottomSheetScreen(
                 whenAddMarker = { whenAddMarker(it) },
                 changeNewMarker = { changeNewMarker(it) },
                 context = context,
-                actualPosition = actualPosition
+                actualPosition = actualPosition,
+                description = description
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         }
     }
+}
+
+@Composable
+fun DescriptionOfMarker(
+    description: String,
+    onDescriptionChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = description,
+        onValueChange = { onDescriptionChange(it) },
+        placeholder = { Text(text = "Description (optional)") },
+        modifier = modifier,
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.primary
+        ),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
+    )
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -198,6 +225,7 @@ fun ImageItem(navController: NavController, uriUrl: String, navigationItems: Map
 @Composable
 fun WhenAddMarkerScreen(
     onFirstTimeChange: (Boolean) -> Unit,
+    description: String?,
     actualMarker: MarkerData?,
     name: String,
     typeMarker: String,
@@ -214,7 +242,8 @@ fun WhenAddMarkerScreen(
                 name = name,
                 type = typeMarker,
                 uriUrl = uriUrl,
-                location = Location(latitude = actualPosition!!.latitude, longitude = actualPosition!!.longitude)
+                location = Location(latitude = actualPosition!!.latitude, longitude = actualPosition!!.longitude),
+                description = description
             )
             Log.i("nooo", "nooo editant amb valors image $uriUrl , name $name id: ${actualMarker?.id}, type $typeMarker, location: ${Location(latitude = actualPosition.latitude, longitude = actualPosition.longitude)}")
             changeNewMarker(newMarker)
@@ -249,7 +278,6 @@ fun NameMarkerScreen(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TypeMarkerScreen(
     arrTypeMarkers: MutableList<String>,

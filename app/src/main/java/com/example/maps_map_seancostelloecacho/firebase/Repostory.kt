@@ -22,6 +22,7 @@ class Repository {
             .add(
                 hashMapOf(
                     "owner" to user,
+                    "description" to marker.description,
                     NAME_KEY to marker.name,
                     TYPE_KEY to marker.type,
                     PHOTOS_KEY to uriUrl,

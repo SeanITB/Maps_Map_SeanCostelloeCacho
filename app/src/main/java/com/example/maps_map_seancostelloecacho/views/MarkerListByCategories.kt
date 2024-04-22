@@ -342,6 +342,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     val actualMarker by markerVM.actualMarker.observeAsState(null)
     val name by markerVM.nameMarker.observeAsState("")
     val typeMarker by markerVM.typeMarker.observeAsState("")
+    val description by markerVM.description.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
     val uriUrl by markerVM.uriUrl.observeAsState("")
@@ -382,7 +383,9 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         changeNewMarker = { markerVM.changeNewMarker(it) },
         whenAddMarker = { markerVM.whenEditMarkerFromList(it) },
         actualPosition = actualPosition,
-        onFirstTimeChange = { isFirstTime = it }
+        onFirstTimeChange = { isFirstTime = it },
+        description = description,
+        onDescriptionChange = {markerVM.changeDescription(it)}
     )
 }
 

@@ -80,7 +80,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                             )
                         ),
                         title = marker.name,
-                        snippet = "Marker at ${marker.name}",
+                        snippet = if (marker.description != null) marker.description else "Any description",
                         icon = BitmapDescriptorFactory.defaultMarker(HUE_VIOLET)
                     )
                 }

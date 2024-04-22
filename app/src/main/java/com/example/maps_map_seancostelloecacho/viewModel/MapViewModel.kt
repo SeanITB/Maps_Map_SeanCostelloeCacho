@@ -95,8 +95,11 @@ class MapViewModel : ViewModel() {
     private val _turnOnSeconProcess = MutableLiveData(false)
     val turnOnSeconProcess = _turnOnSeconProcess
 
-    private val _userName = MutableLiveData<String>("")
-    val userName = _userName
+    private val _email = MutableLiveData<String>("")
+    val email = _email
+
+    private val _description = MutableLiveData<String>("")
+    val description = _description
 
     private val _uriUrl = MutableLiveData<String>("")
     val uriUrl = _uriUrl
@@ -237,7 +240,8 @@ class MapViewModel : ViewModel() {
                     location = Location(
                         latitude = dc.document.get(LATITUDE_KEY).toString().toDouble(),
                         longitude = dc.document.get(LONGITUDE_KEY).toString().toDouble()
-                    )
+                    ),
+                    description = dc.document.get("description").toString()
                 )
                 tempList.add(newMarker)
             }
@@ -288,12 +292,11 @@ class MapViewModel : ViewModel() {
 
     fun editMarker(actualMarker: MarkerData) {
         repository.editMarker(actualMarker, auth.currentUser?.email!!)
-        Log.i("Estic editant", "Estic editant")
     }
 
     // Firebase Authentication
     fun register(context: Context) {// toDo: if there is an repeat user
-        auth.createUserWithEmailAndPassword(this.userName.value!!, this.password.value!!)
+        auth.createUserWithEmailAndPassword(this.email.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     _goToNext.value = true
@@ -315,7 +318,7 @@ class MapViewModel : ViewModel() {
     }
 
     fun login(context: Context) {
-        auth.signInWithEmailAndPassword(this.userName.value!!, this.password.value!!)
+        auth.signInWithEmailAndPassword(this.email.value!!, this.password.value!!)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     _userId.value = task.result.user?.uid
@@ -357,7 +360,7 @@ class MapViewModel : ViewModel() {
     }
 
     fun proveThatLoginContentIsCorrect(): Boolean {
-        return this.userName.value != "" && this.password.value != ""
+        return this.email.value != "" && this.password.value != ""
     }
 
 
@@ -406,7 +409,11 @@ class MapViewModel : ViewModel() {
     }
 
     fun changeUserName(value: String) {
-        this._userName.value = value
+        this._email.value = value
+    }
+
+    fun changeDescription(value: String) {
+        this._description.value = value
     }
 
     fun changePassword(value: String) {
@@ -505,13 +512,10 @@ class MapViewModel : ViewModel() {
     fun whenAddMarkerFromMap(
         context: Context,
     ) {
-        if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) { //toDo: la comprovacion mal
+        if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) {
             this.changeShowBottomFromMapSheet(false)
-            if (this.uri.value != null) {
-
-                //Log.i("addMarker", "addMarker uriURl: $uriURL")
+            if (this.uri.value != null) { //toDo: ???
                 this.addMarker()
-
             }
             this.restartMarkerAtributes()
         } else
@@ -583,6 +587,7 @@ class MapViewModel : ViewModel() {
         this._uri.value = null
         this._uriUrl.value = ""
         this._nameMarker.value = ""
+        this._description.value = ""
     }
 
     fun chngeUserId(value: String) {
@@ -633,7 +638,8 @@ class MapViewModel : ViewModel() {
             name = name,
             type = type,
             uriUrl = "",
-            location = Location(latitude = latitude, longitude = longitude)
+            location = Location(latitude = latitude, longitude = longitude),
+            description = ""
         )
     }
 

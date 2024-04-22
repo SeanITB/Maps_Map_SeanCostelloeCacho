@@ -1,6 +1,5 @@
 package com.example.maps_map_seancostelloecacho.views
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +45,7 @@ fun MyDrawer(navControllerLR: NavController, markerVM: MapViewModel, TIME: Int) 
     var logUtCompleat by rememberSaveable {
         mutableStateOf(false)
     }
-    val userName by markerVM.userName.observeAsState("")
+    val userName by markerVM.email.observeAsState("")
     val password by markerVM.password.observeAsState("")
     ModalNavigationDrawer(
         drawerState = state,

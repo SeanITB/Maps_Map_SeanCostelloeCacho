@@ -1,7 +1,5 @@
 package com.example.maps_map_seancostelloecacho.views
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +55,7 @@ import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 
 @Composable
 fun UsernRegistrerContent(navController: NavController, markerVM: MapViewModel) { //toDo: ahora (con los canvios de mejorar el estate hosting) el canviar los campos de textField no funciona
-    val email by markerVM.userName.observeAsState("")
+    val email by markerVM.email.observeAsState("")
     val password by markerVM.password.observeAsState("")
     val goToNext by markerVM.goToNext.observeAsState(false)
     val isLoading by markerVM.isLoading.observeAsState(true)
