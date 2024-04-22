@@ -2,7 +2,10 @@ package com.example.maps_map_seancostelloecacho.views
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -46,7 +49,9 @@ fun MyScaffold(
     markerVM: MapViewModel,
     state: DrawerState
 ) {
-    val darkThem by markerVM.darkThem.observeAsState(false)
+    val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
+    val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
+    val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     Scaffold(
         topBar = {
             MyTopAppBar(state = state, markerVM = markerVM, navController = navController)
@@ -54,35 +59,43 @@ fun MyScaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    markerVM.changeDarkThem(!darkThem)
-                    markerVM.onEvent(MapEvent.ToggleFalloutMap)
+                    markerVM.changeShowBottomFromMapSheet(true)
                 }) {
-                Icon(
-                    imageVector = if (markerVM.state.isFollautMap) {
-                        Icons.Default.ToggleOff
-                    } else {
-                        Icons.Default.ToggleOn
-                    }, contentDescription = "Toggle Fallout map"
-                )
-            }
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.BottomStart
-        ) {
-            Navigate(navController, TIME, markerVM)
-
-            Button(onClick = {
-                markerVM.changeShowBottomFromMapSheet(true)
-            }) {
                 Icon(
                     imageVector = Icons.Filled.AddCircleOutline,
                     contentDescription = "Add marker with actual position",
                 )
             }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
+        ) {
+            TypeMarkerScreen(
+                arrTypeMarkers = listMarkerType,
+                typeMarker = typeMarkerForFilter,
+                onTypeMarkerChange = { markerVM.changeTypeMarkerForFilter(it) },
+                expanded = expandedTopBar,
+                onExpandedChange = { markerVM.changeExpandedTopBar(it) },
+                modifier = Modifier
+                    .clickable {
+                        markerVM.changeExpandedTopBar(!expandedTopBar)
+                    }
+                    .fillMaxWidth()
+                    //.fillMaxHeight(0.1f)
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    //.fillMaxHeight(0.9f)
+                   ,
+            ) {
+
+                Navigate(navController, TIME, markerVM)
+            }
+
+
         }
     }
 }
@@ -90,11 +103,8 @@ fun MyScaffold(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavController) {
-    val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
-    val expandedTopBar by markerVM.expandedTopBar.observeAsState(false)
-    val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val scope = rememberCoroutineScope()
-
+    val darkThem by markerVM.darkThem.observeAsState(false)
     TopAppBar(
         title = { Text(text = "My SuperApp", modifier = Modifier.clickable {
             navController.navigate(Routes.MapScreen.route)
@@ -117,13 +127,20 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavCo
             }
         },
         actions = {
-            TypeMarkerScreen(
-                arrTypeMarkers = listMarkerType,
-                typeMarker = typeMarkerForFilter,
-                onTypeMarkerChange = { markerVM.changeTypeMarkerForFilter(it) },
-                expanded = expandedTopBar,
-                onExpandedChange = { markerVM.changeExpandedTopBar(it) }
-            )
+            Button(
+                onClick = {
+                    markerVM.changeDarkThem(!darkThem)
+                    markerVM.onEvent(MapEvent.ToggleFalloutMap)
+                }) {
+                Icon(
+                    imageVector = if (markerVM.state.isFollautMap) {
+                        Icons.Default.ToggleOff
+                    } else {
+                        Icons.Default.ToggleOn
+                    },
+                    contentDescription = "Toggle Fallout map",
+                )
+            }
         }
     )
 }

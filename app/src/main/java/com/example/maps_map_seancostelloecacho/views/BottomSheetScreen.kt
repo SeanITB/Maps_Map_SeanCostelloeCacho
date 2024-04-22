@@ -147,6 +147,10 @@ fun MyBottomSheetScreen(
                     onTypeMarkerChange = { changeTypeMarker(it) },
                     expanded = expandedBottomSheet,
                     onExpandedChange = { onExpandedBottomSheetChange(it) },
+                    modifier = Modifier.clickable {
+                        onExpandedBottomSheetChange(!expandedBottomSheet)
+                    }
+                        .fillMaxWidth(0.6f)
                 )
 
             }
@@ -286,10 +290,11 @@ fun TypeMarkerScreen(
     typeMarker: String,
     onTypeMarkerChange: (String) -> Unit,
     expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit
+    onExpandedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box {
-        OutlinedTextField(
+        TextField(
             value = typeMarker,
             onValueChange = { onTypeMarkerChange(it) },
             label = { Text(text = "Marker Type", color = MaterialTheme.colorScheme.primary) },
@@ -299,11 +304,8 @@ fun TypeMarkerScreen(
                 focusedTextColor = MaterialTheme.colorScheme.primary
             ),
             textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
-            modifier = Modifier
-                .clickable {
-                    onExpandedChange(!expanded)
-                }
-                .fillMaxWidth(0.6f)
+            modifier = modifier
+
         )
         DropdownMenu(
             expanded = expanded,
