@@ -365,7 +365,6 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     )
 
 
-    markerVM.changeActualScreen("BottomSheet")
     MyBottomSheetScreen(
         actualMarker = actualMarker,
         name = name,
@@ -385,7 +384,8 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         actualPosition = actualPosition,
         onFirstTimeChange = { isFirstTime = it },
         description = description,
-        onDescriptionChange = {markerVM.changeDescription(it)}
+        onDescriptionChange = {markerVM.changeDescription(it)},
+        fromWhere = "cameraFromMarkerListScreen"
     )
 }
 

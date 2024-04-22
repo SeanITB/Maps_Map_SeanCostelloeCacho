@@ -93,7 +93,8 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         context = context,
         changeNewMarker = {markerVM.changeNewMarker(it)},
         whenAddMarker = { markerVM.whenAddMarkerFromMap(it) },
-        actualPosition = actualPosition
+        actualPosition = actualPosition,
+        fromWhere = "cameraFromMapScreen"
     )
 }
 
@@ -120,6 +121,7 @@ fun MyBottomSheetScreen(
     changeNewMarker: (MarkerData) -> Unit,
     whenAddMarker: (Context) -> Unit,
     actualPosition: LatLng?,
+    fromWhere: String
 ) {
     ModalBottomSheet(
         onDismissRequest = {
@@ -155,7 +157,7 @@ fun MyBottomSheetScreen(
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            ImageItem(navigationController, uriUrl, navigationItems)
+            ImageItem(navigationController, uriUrl, navigationItems, fromWhere)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(
                 onFirstTimeChange = { onFirstTimeChange(it) },
@@ -194,7 +196,7 @@ fun DescriptionOfMarker(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImageItem(navController: NavController, uriUrl: String, navigationItems: Map<String, String>) {
+fun ImageItem(navController: NavController, uriUrl: String, navigationItems: Map<String, String>, fromWhere: String) {
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(8.dp),
@@ -208,7 +210,7 @@ fun ImageItem(navController: NavController, uriUrl: String, navigationItems: Map
                 contentDescription = "Image from the new marker",
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable { navController.navigate(navigationItems["cameraFromMarkerListScreen"]!!) }
+                    .clickable { navController.navigate(navigationItems[fromWhere]!!) }
             )
         } else {
             Image(
@@ -216,7 +218,7 @@ fun ImageItem(navController: NavController, uriUrl: String, navigationItems: Map
                 contentDescription = "Defult images for marker",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { navController.navigate(navigationItems["cameraFromMapScreen"]!!) }
+                    .clickable { navController.navigate(navigationItems[fromWhere]!!) }
             )
         }
     }
