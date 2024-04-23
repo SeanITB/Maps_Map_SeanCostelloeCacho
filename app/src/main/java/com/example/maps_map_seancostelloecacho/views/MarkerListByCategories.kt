@@ -49,6 +49,7 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.models.MarkerData
+import com.example.maps_map_seancostelloecacho.models.MethodsForAddingMarker
 import com.example.maps_map_seancostelloecacho.navigation.Routes
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.example.maps_map_seancostelloecacho.views.MyBottomSheetScreen
@@ -365,7 +366,11 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         "MarkerDataÑ",
         "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uriUrl"
     )
-
+    val methodsForAddingMarker = MethodsForAddingMarker(
+        changeShowBottomFromMapSheet = {markerVM.changeShowBottomSheetFromList(false)},
+        addMarker = {markerVM.addMarker()},
+        restartMarkerAtributes = {markerVM.restartMarkerAtributes()}
+    )
 
     MyBottomSheetScreen(
         actualMarker = actualMarker,
@@ -389,7 +394,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         description = description,
         onDescriptionChange = {markerVM.changeDescription(it)},
         fromWhere = "cameraFromMarkerListScreen",
-        uploadImage = {markerVM.uploadImage()},
+        methodsForAddingMarker = methodsForAddingMarker,
         isUpload = isUpload
     )
 }

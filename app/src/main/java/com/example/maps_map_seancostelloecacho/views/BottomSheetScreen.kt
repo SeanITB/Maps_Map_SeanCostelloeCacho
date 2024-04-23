@@ -43,6 +43,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.R
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
+import com.example.maps_map_seancostelloecacho.models.MethodsForAddingMarker
 import com.example.maps_map_seancostelloecacho.viewModel.MapViewModel
 import com.google.android.gms.maps.model.LatLng
 
@@ -72,7 +73,11 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         actualPosition = lastPosition!!
         isFirstTime = false
     }
-
+    val methodsAddMarker = MethodsForAddingMarker(
+        changeShowBottomFromMapSheet = { markerVM.changeShowBottomFromMapSheet(false) },
+        addMarker = { markerVM.addMarker() },
+        restartMarkerAtributes = { markerVM.restartMarkerAtributes() }
+    )
     MyBottomSheetScreen(
         description = description,
         onDescriptionChange = { markerVM.changeDescription(it) },
@@ -94,7 +99,7 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         whenAddMarker = { markerVM.whenAddMarkerFromMap(it) },
         actualPosition = actualPosition,
         fromWhere = "cameraFromMapScreen",
-        uploadImage = { markerVM.uploadImage() },
+        methodsForAddingMarker = methodsAddMarker,
         isUpload = isUpload,
         uriUrl = uriUrl
     )
@@ -125,7 +130,7 @@ fun MyBottomSheetScreen(
     whenAddMarker: (Context) -> Unit,
     actualPosition: LatLng?,
     fromWhere: String,
-    uploadImage: () -> Unit,
+    methodsForAddingMarker: MethodsForAddingMarker,
     isUpload: Boolean
 ) {
     ModalBottomSheet(
@@ -176,7 +181,7 @@ fun MyBottomSheetScreen(
                 context = context,
                 actualPosition = actualPosition,
                 description = description,
-                uploadImage = { uploadImage() },
+                methodsForAddingMarker = methodsForAddingMarker,
                 isUpload = isUpload
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
@@ -249,17 +254,16 @@ fun WhenAddMarkerScreen(
     changeNewMarker: (MarkerData) -> Unit,
     context: Context,
     actualPosition: LatLng?,
-    uploadImage: () -> Unit,
-    isUpload: Boolean
+    isUpload: Boolean,
+    methodsForAddingMarker: MethodsForAddingMarker,
 ) {
     Button(
         onClick = {
             try {
-                uploadImage()
+                whenAddMarker(context)
             } catch (e: NullPointerException) {
                 println("Any image upload")
             }
-
         }
     ) {
         Text(text = "Add Marker")
@@ -277,9 +281,10 @@ fun WhenAddMarkerScreen(
             description = description
         )
         changeNewMarker(newMarker)
-        whenAddMarker(context)
+        methodsForAddingMarker.addMarker
+        methodsForAddingMarker.restartMarkerAtributes
+        methodsForAddingMarker.changeShowBottomFromMapSheet
         onFirstTimeChange(true)
-
     }
 }
 

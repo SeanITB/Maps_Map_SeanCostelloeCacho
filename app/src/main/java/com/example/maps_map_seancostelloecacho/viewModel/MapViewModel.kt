@@ -516,13 +516,8 @@ class MapViewModel : ViewModel() {
         context: Context,
     ) {
         if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) {
-            this.changeShowBottomFromMapSheet(false)
-            if (this.uri.value != null) { //toDo: ???
-                this.addMarker()
-            }
-            this.restartMarkerAtributes()
+            uploadImage()
         } else {
-            Log.i("makephoto", "makephoto im in whenAddMarkerFromMap")
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
                 .show()
         }
