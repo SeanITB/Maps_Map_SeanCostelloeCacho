@@ -345,7 +345,9 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     val description by markerVM.description.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
+    val isUpload by markerVM.isUpload.observeAsState(false)
     val uriUrl by markerVM.uriUrl.observeAsState("")
+    val uri by markerVM.uri.observeAsState(null)
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
@@ -376,6 +378,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         expandedBottomSheet = expandedBottomSheet,
         onExpandedBottomSheetChange = { markerVM.changeExpandedBottomSheet(it) },
         navigationController = navigationController,
+        uri = uri,
         uriUrl = uriUrl,
         navigationItems = navigationItems,
         context = context,
@@ -385,7 +388,9 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         onFirstTimeChange = { isFirstTime = it },
         description = description,
         onDescriptionChange = {markerVM.changeDescription(it)},
-        fromWhere = "cameraFromMarkerListScreen"
+        fromWhere = "cameraFromMarkerListScreen",
+        uploadImage = {markerVM.uploadImage()},
+        isUpload = isUpload
     )
 }
 

@@ -60,7 +60,7 @@ private fun TakePhotoView(
         }
     }
     val navigationItems by markerVM.navigationItems.observeAsState(emptyMap())
-    val isUriUpload by markerVM.isUriUpload.observeAsState(false)
+    //val isUriUpload by markerVM.isUriUpload.observeAsState(false)
     Box(modifier = Modifier.fillMaxSize()) {
         CameraPreview(controller, Modifier.fillMaxSize())
         IconButton(
@@ -93,16 +93,9 @@ private fun TakePhotoView(
             IconButton(
                 onClick = {
                     takePhoto(context, controller) { photo ->
-                        //markerVM.addPhoto(photo)
                         val uri = markerVM.bitmapToUri(context, photo)
-                        if (uri != null) {
-                            markerVM.changeUri(uri)
-                        }
-                        markerVM.uploadImage()
-                        if (isUriUpload) {
-                            navController.navigate(navigationItems[whereToNavigate]!!)
-                            markerVM.changeIsUriUrlUpload(false)
-                        }
+                        markerVM.changeUri(uri!!)
+                        navController.navigate(navigationItems[whereToNavigate]!!)
                     }
                 }
             ) {

@@ -48,17 +48,21 @@ fun GalleryScreen(navController: NavHostController, markerVM: MapViewModel) {
     val launchImage = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = {
-            bitmap = if (Build.VERSION.SDK_INT < 28) {
-                MediaStore.Images.Media.getBitmap(context.contentResolver, it)
-            } else {
-                val source = it?.let { it1 ->
-                    ImageDecoder.createSource(context.contentResolver, it1)
+            try {
+                bitmap = if (Build.VERSION.SDK_INT < 28) {
+                    MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                } else {
+                    val source = it?.let { it1 ->
+                        ImageDecoder.createSource(context.contentResolver, it1)
+                    }
+                    source?.let { it1 ->
+                        ImageDecoder.decodeBitmap(it1)
+                    }!!
                 }
-                source?.let { it1 ->
-                    ImageDecoder.decodeBitmap(it1)
-                }!!
+                markerVM.changeUri(it)
+            } catch (e: NullPointerException) {
+                println("Gallery close")
             }
-            markerVM.changeUri(it)
         }
     )
     var galleryOpened by remember {
@@ -82,6 +86,7 @@ fun GalleryScreen(navController: NavHostController, markerVM: MapViewModel) {
         )
         Button(
             onClick = {
+
                 if (!galleryOpened) {
                     launchImage.launch("image/*")
                     galleryOpened = true

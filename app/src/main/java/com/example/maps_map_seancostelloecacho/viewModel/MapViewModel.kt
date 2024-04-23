@@ -60,6 +60,9 @@ class MapViewModel : ViewModel() {
     private val _darkThem = MutableLiveData(false)
     val darkThem = _darkThem
 
+    private val _isUpload = MutableLiveData(false)
+    val isUpload = _isUpload
+
     private val _navigationItemsItems = MutableLiveData( //toDo: no hacer asi, poner un bucle
         mapOf(
             NavigationItems.GalleryScreen.label to NavigationItems.GalleryScreen.route,
@@ -280,9 +283,9 @@ class MapViewModel : ViewModel() {
             Toast.makeText(validation.context, "Passwords are not the same.", Toast.LENGTH_LONG)
                 .show()
         } else if (!passwordVerification(validation.password)) {
-            Toast.makeText(validation.context, "Incorrect password.", Toast.LENGTH_LONG).show()
+            Toast.makeText(validation.context, "Invalid password.", Toast.LENGTH_LONG).show()
         } else if (!proveThatItsAEmail(validation.email)) {
-            Toast.makeText(validation.context, "Incorrect email.", Toast.LENGTH_LONG).show()
+            Toast.makeText(validation.context, "Invalid email.", Toast.LENGTH_LONG).show()
         } else {
             isCorrect = true
             register(context = validation.context)
@@ -518,9 +521,11 @@ class MapViewModel : ViewModel() {
                 this.addMarker()
             }
             this.restartMarkerAtributes()
-        } else
+        } else {
+            Log.i("makephoto", "makephoto im in whenAddMarkerFromMap")
             Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
                 .show()
+        }
     }
 
     fun uploadImage(/*onUriUpload: (String) -> Unit*/) {
@@ -545,7 +550,7 @@ class MapViewModel : ViewModel() {
     }
 
     fun changeIsUriUrlUpload(b: Boolean) {
-        this._isUriUpload.value = b
+        this._isUpload.value = b
     }
 
     fun changeUriUrl(uriUrl: String) {

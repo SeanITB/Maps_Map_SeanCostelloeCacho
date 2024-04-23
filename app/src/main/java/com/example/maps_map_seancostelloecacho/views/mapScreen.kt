@@ -31,7 +31,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
     val recentMarker by markerVM.recentMarker.observeAsState(null)
     val actualPosition by markerVM.actualPosition.observeAsState(LatLng(0.0, 0.0))
     val typeMarkerForFilter by markerVM.typeMarkerForFilter.observeAsState("")
-
+    val darkThem by markerVM.darkThem.observeAsState(false)
     val cameraPositionState =
         rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(actualPosition, 18f)
@@ -81,7 +81,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                         ),
                         title = marker.name,
                         snippet = if (marker.description != null) marker.description else "Any description",
-                        icon = BitmapDescriptorFactory.defaultMarker(HUE_VIOLET)
+                        icon = defaultMarker(if (darkThem) HUE_VIOLET else HUE_BLUE)
                     )
                 }
             }

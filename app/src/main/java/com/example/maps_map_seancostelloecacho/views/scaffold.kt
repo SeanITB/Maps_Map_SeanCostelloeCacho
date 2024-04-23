@@ -113,7 +113,7 @@ fun MyTopAppBar(state: DrawerState, markerVM: MapViewModel, navController: NavCo
     TopAppBar(
         title = {
             Text(
-                text = "Placer Remember",
+                text = "Remember the Place app",
                 modifier = Modifier.clickable {
                     navController.navigate(Routes.MapScreen.route)
                 },

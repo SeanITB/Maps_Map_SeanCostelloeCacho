@@ -1,15 +1,13 @@
 package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
-import android.util.Log
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +20,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -57,12 +54,14 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
+    val uri by markerVM.uri.observeAsState(null)
     val uriUrl by markerVM.uriUrl.observeAsState("")
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
     val lastPosition by markerVM.actualPosition.observeAsState()
     val description by markerVM.description.observeAsState("")
+    val isUpload by markerVM.isUpload.observeAsState(false)
     var actualPosition: LatLng by rememberSaveable {
         mutableStateOf(LatLng(0.0, 0.0))
     }
@@ -76,8 +75,8 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
 
     MyBottomSheetScreen(
         description = description,
-        onDescriptionChange = {markerVM.changeDescription(it)},
-        onFirstTimeChange = {isFirstTime = it},
+        onDescriptionChange = { markerVM.changeDescription(it) },
+        onFirstTimeChange = { isFirstTime = it },
         actualMarker = actualMarker,
         name = name,
         onNameChange = { markerVM.changeNameMarke(it) },
@@ -88,13 +87,16 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         expandedBottomSheet = expandedBottomSheet,
         onExpandedBottomSheetChange = { markerVM.changeExpandedBottomSheet(it) },
         navigationController = navigationController,
-        uriUrl = uriUrl,
+        uri = uri,
         navigationItems = navigationItems,
         context = context,
-        changeNewMarker = {markerVM.changeNewMarker(it)},
+        changeNewMarker = { markerVM.changeNewMarker(it) },
         whenAddMarker = { markerVM.whenAddMarkerFromMap(it) },
         actualPosition = actualPosition,
-        fromWhere = "cameraFromMapScreen"
+        fromWhere = "cameraFromMapScreen",
+        uploadImage = { markerVM.uploadImage() },
+        isUpload = isUpload,
+        uriUrl = uriUrl
     )
 }
 
@@ -105,7 +107,7 @@ fun MyBottomSheetScreen(
     description: String,
     onDescriptionChange: (String) -> Unit,
     onFirstTimeChange: (Boolean) -> Unit,
-    actualMarker : MarkerData?,
+    actualMarker: MarkerData?,
     name: String,
     onNameChange: (String) -> Unit,
     onShowBottomSheetChange: (Boolean) -> Unit,
@@ -115,13 +117,16 @@ fun MyBottomSheetScreen(
     expandedBottomSheet: Boolean,
     onExpandedBottomSheetChange: (Boolean) -> Unit,
     navigationController: NavController,
+    uri: Uri?,
     uriUrl: String,
     navigationItems: Map<String, String>,
     context: Context,
     changeNewMarker: (MarkerData) -> Unit,
     whenAddMarker: (Context) -> Unit,
     actualPosition: LatLng?,
-    fromWhere: String
+    fromWhere: String,
+    uploadImage: () -> Unit,
+    isUpload: Boolean
 ) {
     ModalBottomSheet(
         onDismissRequest = {
@@ -133,35 +138,32 @@ fun MyBottomSheetScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
+            NameMarkerScreen(
+                name = name,
+                onNameChange = { onNameChange(it) },
                 modifier = Modifier.fillMaxWidth(0.9f),
-            ) {
-                NameMarkerScreen(
-                    name = name,
-                    onNameChange = { onNameChange(it) },
-                    modifier = Modifier.fillMaxWidth(0.5f),
-                )
-                TypeMarkerScreen(
-                    arrTypeMarkers = listTypeMarker,
-                    typeMarker = typeMarker,
-                    onTypeMarkerChange = { changeTypeMarker(it) },
-                    expanded = expandedBottomSheet,
-                    onExpandedChange = { onExpandedBottomSheetChange(it) },
-                    modifier = Modifier.clickable {
+            )
+            Spacer(modifier = Modifier.fillMaxHeight(0.05f))
+            TypeMarkerScreen(
+                arrTypeMarkers = listTypeMarker,
+                typeMarker = typeMarker,
+                onTypeMarkerChange = { changeTypeMarker(it) },
+                expanded = expandedBottomSheet,
+                onExpandedChange = { onExpandedBottomSheetChange(it) },
+                modifier = Modifier
+                    .clickable {
                         onExpandedBottomSheetChange(!expandedBottomSheet)
                     }
-                        .fillMaxWidth(0.6f)
-                )
-
-            }
+                    .fillMaxWidth(0.9f)
+            )
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             DescriptionOfMarker(
                 description = description,
-                onDescriptionChange = {onDescriptionChange(it)},
-                modifier = Modifier.fillMaxWidth(0.8f)
+                onDescriptionChange = { onDescriptionChange(it) },
+                modifier = Modifier.fillMaxWidth(0.9f)
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            ImageItem(navigationController, uriUrl, navigationItems, fromWhere)
+            ImageItem(navigationController, uri, navigationItems, fromWhere)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(
                 onFirstTimeChange = { onFirstTimeChange(it) },
@@ -173,7 +175,9 @@ fun MyBottomSheetScreen(
                 changeNewMarker = { changeNewMarker(it) },
                 context = context,
                 actualPosition = actualPosition,
-                description = description
+                description = description,
+                uploadImage = { uploadImage() },
+                isUpload = isUpload
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         }
@@ -200,7 +204,12 @@ fun DescriptionOfMarker(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImageItem(navController: NavController, uriUrl: String, navigationItems: Map<String, String>, fromWhere: String) {
+fun ImageItem(
+    navController: NavController,
+    uri: Uri?,
+    navigationItems: Map<String, String>,
+    fromWhere: String
+) {
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(8.dp),
@@ -208,9 +217,9 @@ fun ImageItem(navController: NavController, uriUrl: String, navigationItems: Map
             .fillMaxWidth(0.25f)
             .fillMaxHeight(0.25f)
     ) {
-        if (uriUrl != "") {
+        if (uri != null) {
             GlideImage(
-                model = uriUrl.toUri(),
+                model = uri,
                 contentDescription = "Image from the new marker",
                 modifier = Modifier
                     .fillMaxSize()
@@ -239,25 +248,38 @@ fun WhenAddMarkerScreen(
     whenAddMarker: (Context) -> Unit,
     changeNewMarker: (MarkerData) -> Unit,
     context: Context,
-    actualPosition: LatLng?
+    actualPosition: LatLng?,
+    uploadImage: () -> Unit,
+    isUpload: Boolean
 ) {
     Button(
         onClick = {
-            val newMarker = MarkerData(
-                id = actualMarker?.id,
-                name = name,
-                type = typeMarker,
-                uriUrl = uriUrl,
-                location = Location(latitude = actualPosition!!.latitude, longitude = actualPosition!!.longitude),
-                description = description
-            )
-            Log.i("nooo", "nooo editant amb valors image $uriUrl , name $name id: ${actualMarker?.id}, type $typeMarker, location: ${Location(latitude = actualPosition.latitude, longitude = actualPosition.longitude)}")
-            changeNewMarker(newMarker)
-            whenAddMarker(context)
-            onFirstTimeChange(true)
+            try {
+                uploadImage()
+            } catch (e: NullPointerException) {
+                println("Any image upload")
+            }
+
         }
     ) {
         Text(text = "Add Marker")
+    }
+    if (isUpload) {
+        val newMarker = MarkerData(
+            id = actualMarker?.id,
+            name = name,
+            type = typeMarker,
+            uriUrl = uriUrl,
+            location = Location(
+                latitude = actualPosition!!.latitude,
+                longitude = actualPosition!!.longitude
+            ),
+            description = description
+        )
+        changeNewMarker(newMarker)
+        whenAddMarker(context)
+        onFirstTimeChange(true)
+
     }
 }
 
@@ -312,14 +334,14 @@ fun TypeMarkerScreen(
             onDismissRequest = {
                 onExpandedChange(!expanded)
             },
-            modifier = Modifier.background(MaterialTheme.colorScheme.secondary)
+            modifier = modifier
         ) {
             arrTypeMarkers.forEach { typeMarker ->
                 DropdownMenuItem(
                     text = {
                         Text(
                             text = typeMarker,
-                            color = MaterialTheme.colorScheme.background
+                            color = MaterialTheme.colorScheme.primary
                         )
                     },
                     onClick = {
@@ -333,16 +355,3 @@ fun TypeMarkerScreen(
 }
 
 
-
-
-/* // todo: no me funciona el preview
-@PreviewParameter
-@Composable
-fun BottomSheetScreenPreview(markerVM: MarkerViewModel, navigationController: NavController){
-
-    Maps_Map_SeanCostelloeCachoTheme {
-        MyBottomSheet(navigationController, markerVM)
-    }
-}
-
- */
