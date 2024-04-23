@@ -97,7 +97,7 @@ fun PermissionDeclinedScreen() {
 
 fun openAppSettings(activity: Activity) {
     val intent = Intent().apply {
-        action = Settings.ACTION_APPLICATION_SETTINGS
+        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
         data = Uri.fromParts("package", activity.packageName, null)
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }

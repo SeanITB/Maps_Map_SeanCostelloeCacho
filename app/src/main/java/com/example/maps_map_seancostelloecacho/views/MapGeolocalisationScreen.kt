@@ -45,11 +45,13 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
         true
     )
     val showMapPermissionDenied by markerVM.showMapPermissionDenied.observeAsState(false)
-    val actualPosition by markerVM.actualPosition.observeAsState(null)
+    var isMapLoaded by rememberSaveable {
+        mutableStateOf(false)
+    }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
-            Log.i("booleano", "isGranded: $isGranted") //toDo: siempre me sale false
+            Log.i("booleano", "isGranded: $isGranted")
             if (isGranted)
                 markerVM.setMapPermissionGranted(true)
             else {
@@ -99,8 +101,12 @@ fun MapGeolocalisationScreen(navController: NavHostController, markerVM: MapView
             }
         }
     }
+    // Whait that all the screen is reloaded
+    SideEffect {
+        isMapLoaded = true
+    }
 
-    if (showMapPermissionDenied)
+    if (showMapPermissionDenied && isMapLoaded)
         PermissionDeclinedMapGeolocalisationScreen()
 }
 
@@ -124,7 +130,7 @@ fun PermissionDeclinedMapGeolocalisationScreen() {
 
 fun openAppSettingsMapGeolocalisationScreen(activity: Activity) {
     val intent = Intent().apply {
-        action = Settings.ACTION_APPLICATION_SETTINGS
+        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
         data = Uri.fromParts("package", activity.packageName, null)
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
