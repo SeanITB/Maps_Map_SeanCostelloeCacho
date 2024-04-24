@@ -29,7 +29,7 @@ fun  Splash(alphaAnim: Float){
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
+            painter = painterResource(id = R.drawable.map_icon),
             contentDescription = "logo",
             alpha = alphaAnim,
             modifier = Modifier.size(200.dp)

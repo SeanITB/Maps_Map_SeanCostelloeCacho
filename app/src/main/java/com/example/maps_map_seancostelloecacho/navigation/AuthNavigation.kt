@@ -22,7 +22,7 @@ fun AuthNavigation( markerVM: MapViewModel) {
     val navControllerLR = rememberNavController()
     NavHost(
         navController = navControllerLR as NavHostController,
-        startDestination = Routes.LoginScreen.route,
+        startDestination = Routes.LunchScreen.route,
         enterTransition = {
             fadeIn(animationSpec = tween(TIME)) + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left, tween(TIME)

@@ -32,8 +32,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -75,7 +76,7 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         actualPosition = lastPosition!!
         isFirstTime = false
     }
-    Log.i("map","map entor en bottom sheet")
+    Log.i("map", "map entor en bottom sheet")
     val methodsAddMarker = MethodsForAddingMarker(
         changeShowBottomSheet = { markerVM.changeShowBottomFromMapSheet(false) },
         addMarker = { markerVM.addMarker() },
@@ -113,8 +114,8 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         isUpload = isUpload,
         uriUrl = uriUrl,
         fieldToAddMarker = fieldToAddMarkr,
-        onIsPhotoEditedChange = {false},
-        isUploadChange = {markerVM.changeIsUriUrlUpload(it)},
+        onIsPhotoEditedChange = { false },
+        isUploadChange = { markerVM.changeIsUriUrlUpload(it) },
         labelToPush = "Add Marker"
     )
 }
@@ -199,7 +200,7 @@ fun MyBottomSheetScreen(
                 methodsForAddingMarker = methodsForAddingMarker,
                 isUpload = isUpload,
                 fieldToAddMarker = fieldToAddMarker,
-                isUploadChange = {isUploadChange(it)},
+                isUploadChange = { isUploadChange(it) },
                 labelToPush = labelToPush
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
@@ -257,7 +258,7 @@ fun ImageItem(
 
         } else {
             Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = R.drawable.map_icon),
                 contentDescription = "Defult images for marker",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -281,11 +282,11 @@ fun WhenAddMarkerScreen(
     fieldToAddMarker: FieldToAddMarker,
     isUploadChange: (Boolean) -> Unit,
     labelToPush: String
-    ) {
+) {
     Button(
         onClick = {
             try {
-                 whenAddMarker(fieldToAddMarker)
+                whenAddMarker(fieldToAddMarker)
             } catch (e: NullPointerException) {
                 println("Any image upload")
             }
