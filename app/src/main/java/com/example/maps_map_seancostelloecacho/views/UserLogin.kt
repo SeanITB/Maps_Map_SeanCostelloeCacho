@@ -52,7 +52,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun UserLoginOnCreateContent(navController: NavController, markerVM: MapViewModel) {
-    val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val userName by markerVM.email.observeAsState("")
     val password by markerVM.password.observeAsState("")
     val goToNext by markerVM.goToNext.observeAsState(false)

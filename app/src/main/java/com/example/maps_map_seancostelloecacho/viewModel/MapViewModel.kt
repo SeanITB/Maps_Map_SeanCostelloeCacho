@@ -346,6 +346,10 @@ class MapViewModel : ViewModel() {
     }
 
     fun logout() {
+        modifiyProcessing()
+        this._userId.value = null
+        this._goToNext.value = false
+        this._password.value = ""
         auth.signOut()
     }
 
