@@ -211,6 +211,7 @@ class MapViewModel : ViewModel() {
         )
         getMarkers()
     }
+
     fun deleteMarker(idMarker: String) {
         repository.deleteMarker(idMarker)
     }
@@ -300,8 +301,8 @@ class MapViewModel : ViewModel() {
         return isCorrect
     }
 
-    fun editMarker(actualMarker: MarkerData) {
-        repository.editMarker(actualMarker, auth.currentUser?.email!!)
+    fun editMarker() {
+        repository.editMarker(this.actualMarker.value!!, this.auth.currentUser?.email!!)
     }
 
     // Firebase Authentication
@@ -512,22 +513,26 @@ class MapViewModel : ViewModel() {
     }
 
     fun proveThatMarkerIsCorrect(fieldToAddMarker: FieldToAddMarker): Boolean {
+        Log.i("showBottomShetFormList", "showBottomShetFormList name: ${fieldToAddMarker.name}. tyep: ${fieldToAddMarker.type} and photo: ${fieldToAddMarker.photo}")
         return (fieldToAddMarker.name != "" && fieldToAddMarker.type != "" && fieldToAddMarker.photo != null)
     }
 
     fun changeShowBottomFromMapSheet(value: Boolean) {
+        Log.i("showBottomShetFormList", "showBottomShetFormList but form map $value")
         this.showBottomSheetFromMap.value = value
     }
 
     fun whenAddMarkerFromMap(
         fieldToAddMarker: FieldToAddMarker,
     ) {
-        Log.i("fromWhere", "fromWhere ${fromWhere.value}")
         if (this.proveThatMarkerIsCorrect(fieldToAddMarker)) {
-            if (fromWhere.value.equals("cameraFromMarkerListScreen") && isPhotoEdited.value!!) uploadImage()
-            if (fromWhere.value.equals("cameraFromMapScreen")) uploadImage()
+            uploadImage()
         } else {
-            Toast.makeText(fieldToAddMarker.context, "There are unfinished fields.", Toast.LENGTH_LONG)
+            Toast.makeText(
+                fieldToAddMarker.context,
+                "There are unfinished fields.",
+                Toast.LENGTH_LONG
+            )
                 .show()
         }
     }
@@ -653,15 +658,24 @@ class MapViewModel : ViewModel() {
     }
 
     fun changeShowBottomSheetFromList(value: Boolean) {
+        Log.i("showBottomShetFormList", "showBottomShetFormList change to $value")
         this._showBottomSheetFromListSheet.value = value
     }
 
-    fun whenEditMarkerFromList(fieldToAddMarkr: FieldToAddMarker) {
-        if (proveThatMarkerIsCorrect(fieldToAddMarkr)) {
-
+    fun whenEditMarkerFromList(fieldsToEditMarker: FieldToAddMarker) {
+        Log.i("showBottomShetFormList", "showBottomShetFormList state: ${proveThatMarkerIsCorrect(fieldsToEditMarker)}")
+        if (proveThatMarkerIsCorrect(fieldsToEditMarker)) {
+            Log.i("showBottomShetFormList", "showBottomShetFormList is photo edited ${this.isPhotoEdited.value!!}")
+            if (this.isPhotoEdited.value!!) uploadImage()
+            else this._isUpload.value = true //parche feo, pq en el mapa solo añado marker quando ya asubido la imagen en el storage, pero aque no hace falta
+        } else {
+            Toast.makeText(
+                fieldsToEditMarker.context,
+                "There are unfinished fields.",
+                Toast.LENGTH_LONG
+            )
+                .show()
         }
-        this.editMarker(actualMarker.value!!)
-        this._showBottomSheetFromListSheet.value = false
     }
 
 }

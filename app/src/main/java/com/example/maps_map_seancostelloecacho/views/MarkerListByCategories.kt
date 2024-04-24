@@ -370,8 +370,8 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         "in bottom Sheet id: ${actualMarker?.id}, name: ${actualMarker?.name} photo: $uriUrl"
     )
     val methodsForAddingMarker = MethodsForAddingMarker(
-        changeShowBottomFromMapSheet = {markerVM.changeShowBottomSheetFromList(false)},
-        addMarker = {markerVM.addMarker()},
+        changeShowBottomSheet = {markerVM.changeShowBottomSheetFromList(false)},
+        addMarker = {markerVM.editMarker()},
         restartMarkerAtributes = {markerVM.restartMarkerAtributes()}
     )
     val fieldToAddMarkr = FieldToAddMarker(
@@ -407,7 +407,8 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         isUpload = isUpload,
         fieldToAddMarker = fieldToAddMarkr,
         onIsPhotoEditedChange = {markerVM.changeIsPhotoedited(it)},
-        isUploadChange = {markerVM.changeIsUriUrlUpload(it)}
+        isUploadChange = {markerVM.changeIsUriUrlUpload(it)},
+        labelToPush = "Edit Marker"
     )
 }
 
