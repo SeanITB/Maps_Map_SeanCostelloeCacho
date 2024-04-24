@@ -68,6 +68,7 @@ fun MapScreen(navigationController: NavController, markerVM: MapViewModel) {
                 markerVM.changeActualPosition(it)
                 markerVM.restartMarkerAtributes()
                 markerVM.changeShowBottomFromMapSheet(true)
+                Log.i("map", "map q passa with $showBottomSheet")
             },
         ) {
             if (markerList.isNotEmpty()) {

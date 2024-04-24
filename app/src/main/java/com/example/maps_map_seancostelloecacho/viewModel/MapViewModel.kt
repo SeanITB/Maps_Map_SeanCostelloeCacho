@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.maps_map_seancostelloecacho.firebase.Repository
 import com.example.maps_map_seancostelloecacho.models.Category
+import com.example.maps_map_seancostelloecacho.models.FieldToAddMarker
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MapEvent
 import com.example.maps_map_seancostelloecacho.models.MapState
@@ -37,6 +38,9 @@ import java.util.SortedMap
 import java.util.regex.Pattern
 
 class MapViewModel : ViewModel() {
+
+    private val _isPhotoEdited = MutableLiveData(false)
+    val isPhotoEdited = _isPhotoEdited
 
     // firebase values
     private val repository = Repository()
@@ -100,6 +104,9 @@ class MapViewModel : ViewModel() {
 
     private val _email = MutableLiveData<String>("")
     val email = _email
+
+    private val _fromWhere = MutableLiveData("")
+    val fromWhere = _fromWhere
 
     private val _description = MutableLiveData<String>("")
     val description = _description
@@ -375,8 +382,8 @@ class MapViewModel : ViewModel() {
         this._goToNext.value = value
     }
 
-    fun changeMarkerComplete(value: Boolean) {
-        this._markersComplet.value = value
+    fun changeIsPhotoedited(value: Boolean) {
+        this._isPhotoEdited.value = value
     }
 
     fun changeFinishSort(value: Boolean) {
@@ -504,8 +511,8 @@ class MapViewModel : ViewModel() {
         this._uri.value = value
     }
 
-    fun proveThatMarkerIsCorrect(newMarker: MarkerData): Boolean {
-        return (newMarker.name != "" && newMarker.type != "" && newMarker.uriUrl != "")
+    fun proveThatMarkerIsCorrect(fieldToAddMarker: FieldToAddMarker): Boolean {
+        return (fieldToAddMarker.name != "" && fieldToAddMarker.type != "" && fieldToAddMarker.photo != null)
     }
 
     fun changeShowBottomFromMapSheet(value: Boolean) {
@@ -513,12 +520,14 @@ class MapViewModel : ViewModel() {
     }
 
     fun whenAddMarkerFromMap(
-        context: Context,
+        fieldToAddMarker: FieldToAddMarker,
     ) {
-        if (this.proveThatMarkerIsCorrect(this.actualMarker.value!!)) {
-            uploadImage()
+        Log.i("fromWhere", "fromWhere ${fromWhere.value}")
+        if (this.proveThatMarkerIsCorrect(fieldToAddMarker)) {
+            if (fromWhere.value.equals("cameraFromMarkerListScreen") && isPhotoEdited.value!!) uploadImage()
+            if (fromWhere.value.equals("cameraFromMapScreen")) uploadImage()
         } else {
-            Toast.makeText(context, "There are unfinished fields.", Toast.LENGTH_LONG)
+            Toast.makeText(fieldToAddMarker.context, "There are unfinished fields.", Toast.LENGTH_LONG)
                 .show()
         }
     }
@@ -533,7 +542,6 @@ class MapViewModel : ViewModel() {
                 storage.downloadUrl.addOnSuccessListener {
                     val uriUrl = it.toString()
                     Log.i("IMAGE UPLOAD", "Image uploaded successfully! with image: ${uriUrl}")
-                    //changeUriUrl(uriUrl)
                     changeUriUrl(uriUrl)
                     changeIsUriUrlUpload(true)
                 }
@@ -552,13 +560,10 @@ class MapViewModel : ViewModel() {
         this._uriUrl.value = uriUrl
     }
 
-
-    /*
-    fun changeImageUrl(value: String) {
-        this._imageUrl.value = value
+    fun changeFromWhere(value: String) {
+        this._fromWhere.value = value
     }
 
-     */
     fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? { //toDo: passarlo al storage con url
         val filename = "${System.currentTimeMillis()}.jpg"
         val values = ContentValues().apply {
@@ -651,7 +656,10 @@ class MapViewModel : ViewModel() {
         this._showBottomSheetFromListSheet.value = value
     }
 
-    fun whenEditMarkerFromList(it: Context) {
+    fun whenEditMarkerFromList(fieldToAddMarkr: FieldToAddMarker) {
+        if (proveThatMarkerIsCorrect(fieldToAddMarkr)) {
+
+        }
         this.editMarker(actualMarker.value!!)
         this._showBottomSheetFromListSheet.value = false
     }

@@ -2,6 +2,7 @@ package com.example.maps_map_seancostelloecacho.views
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.maps_map_seancostelloecacho.R
+import com.example.maps_map_seancostelloecacho.models.FieldToAddMarker
 import com.example.maps_map_seancostelloecacho.models.Location
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.models.MethodsForAddingMarker
@@ -62,6 +64,7 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
     val lastPosition by markerVM.actualPosition.observeAsState()
     val description by markerVM.description.observeAsState("")
+    val fromWhere by markerVM.fromWhere.observeAsState("")
     val isUpload by markerVM.isUpload.observeAsState(false)
     var actualPosition: LatLng by rememberSaveable {
         mutableStateOf(LatLng(0.0, 0.0))
@@ -73,11 +76,19 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         actualPosition = lastPosition!!
         isFirstTime = false
     }
+    Log.i("map","map entor en bottom sheet")
     val methodsAddMarker = MethodsForAddingMarker(
         changeShowBottomFromMapSheet = { markerVM.changeShowBottomFromMapSheet(false) },
         addMarker = { markerVM.addMarker() },
         restartMarkerAtributes = { markerVM.restartMarkerAtributes() }
     )
+    val fieldToAddMarkr = FieldToAddMarker(
+        context = context,
+        name = name,
+        type = typeMarker,
+        photo = uri
+    )
+    markerVM.changeFromWhere("cameraFromMapScreen")
     MyBottomSheetScreen(
         description = description,
         onDescriptionChange = { markerVM.changeDescription(it) },
@@ -98,10 +109,13 @@ fun MyBottomSheetFromMapContent(navigationController: NavController, markerVM: M
         changeNewMarker = { markerVM.changeNewMarker(it) },
         whenAddMarker = { markerVM.whenAddMarkerFromMap(it) },
         actualPosition = actualPosition,
-        fromWhere = "cameraFromMapScreen",
+        fromWhere = fromWhere,
         methodsForAddingMarker = methodsAddMarker,
         isUpload = isUpload,
-        uriUrl = uriUrl
+        uriUrl = uriUrl,
+        fieldToAddMarker = fieldToAddMarkr,
+        onIsPhotoEditedChange = {false},
+        isUploadChange = {markerVM.changeIsUriUrlUpload(it)}
     )
 }
 
@@ -127,11 +141,14 @@ fun MyBottomSheetScreen(
     navigationItems: Map<String, String>,
     context: Context,
     changeNewMarker: (MarkerData) -> Unit,
-    whenAddMarker: (Context) -> Unit,
+    whenAddMarker: (FieldToAddMarker) -> Unit,
     actualPosition: LatLng?,
     fromWhere: String,
     methodsForAddingMarker: MethodsForAddingMarker,
-    isUpload: Boolean
+    isUpload: Boolean,
+    isUploadChange: (Boolean) -> Unit,
+    fieldToAddMarker: FieldToAddMarker,
+    onIsPhotoEditedChange: (Boolean) -> Unit,
 ) {
     ModalBottomSheet(
         onDismissRequest = {
@@ -168,21 +185,21 @@ fun MyBottomSheetScreen(
                 modifier = Modifier.fillMaxWidth(0.9f)
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-            ImageItem(navigationController, uri, navigationItems, fromWhere)
+            ImageItem(navigationController, uri, navigationItems, fromWhere, onIsPhotoEditedChange)
             Spacer(modifier = Modifier.fillMaxHeight(0.05f))
             WhenAddMarkerScreen(
                 onFirstTimeChange = { onFirstTimeChange(it) },
                 actualMarker = actualMarker,
-                name = name,
-                typeMarker = typeMarker,
                 uriUrl = uriUrl,
                 whenAddMarker = { whenAddMarker(it) },
                 changeNewMarker = { changeNewMarker(it) },
-                context = context,
                 actualPosition = actualPosition,
                 description = description,
                 methodsForAddingMarker = methodsForAddingMarker,
-                isUpload = isUpload
+                isUpload = isUpload,
+                fieldToAddMarker = fieldToAddMarker,
+                onShowBottomSheetChange = {onShowBottomSheetChange(it)},
+                isUploadChange = {isUploadChange(it)}
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         }
@@ -213,7 +230,8 @@ fun ImageItem(
     navController: NavController,
     uri: Uri?,
     navigationItems: Map<String, String>,
-    fromWhere: String
+    fromWhere: String,
+    onIsPhotoEditedChange: (Boolean) -> Unit
 ) {
     Card(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
@@ -230,6 +248,9 @@ fun ImageItem(
                     .fillMaxSize()
                     .clickable { navController.navigate(navigationItems[fromWhere]!!) }
             )
+            if (fromWhere.equals("cameraFromMarkerListScreen")) {
+                onIsPhotoEditedChange(true)
+            }
         } else {
             Image(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground),
@@ -247,20 +268,20 @@ fun WhenAddMarkerScreen(
     onFirstTimeChange: (Boolean) -> Unit,
     description: String?,
     actualMarker: MarkerData?,
-    name: String,
-    typeMarker: String,
     uriUrl: String,
-    whenAddMarker: (Context) -> Unit,
+    whenAddMarker: (FieldToAddMarker) -> Unit,
     changeNewMarker: (MarkerData) -> Unit,
-    context: Context,
     actualPosition: LatLng?,
     isUpload: Boolean,
     methodsForAddingMarker: MethodsForAddingMarker,
-) {
+    fieldToAddMarker: FieldToAddMarker,
+    onShowBottomSheetChange: (Boolean) -> Unit,
+    isUploadChange: (Boolean) -> Unit
+    ) {
     Button(
         onClick = {
             try {
-                whenAddMarker(context)
+                 whenAddMarker(fieldToAddMarker)
             } catch (e: NullPointerException) {
                 println("Any image upload")
             }
@@ -271,12 +292,12 @@ fun WhenAddMarkerScreen(
     if (isUpload) {
         val newMarker = MarkerData(
             id = actualMarker?.id,
-            name = name,
-            type = typeMarker,
+            name = fieldToAddMarker.name,
+            type = fieldToAddMarker.type,
             uriUrl = uriUrl,
             location = Location(
                 latitude = actualPosition!!.latitude,
-                longitude = actualPosition!!.longitude
+                longitude = actualPosition.longitude
             ),
             description = description
         )
@@ -285,6 +306,8 @@ fun WhenAddMarkerScreen(
         methodsForAddingMarker.restartMarkerAtributes
         methodsForAddingMarker.changeShowBottomFromMapSheet
         onFirstTimeChange(true)
+        onShowBottomSheetChange(false)
+        isUploadChange(false)
     }
 }
 

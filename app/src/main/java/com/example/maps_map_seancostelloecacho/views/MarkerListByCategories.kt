@@ -48,6 +48,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.example.maps_map_seancostelloecacho.models.FieldToAddMarker
 import com.example.maps_map_seancostelloecacho.models.MarkerData
 import com.example.maps_map_seancostelloecacho.models.MethodsForAddingMarker
 import com.example.maps_map_seancostelloecacho.navigation.Routes
@@ -344,6 +345,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     val name by markerVM.nameMarker.observeAsState("")
     val typeMarker by markerVM.typeMarker.observeAsState("")
     val description by markerVM.description.observeAsState("")
+    val fromWhere by markerVM.fromWhere.observeAsState("")
     val context = LocalContext.current
     val expandedBottomSheet by markerVM.expandedBottomSheet.observeAsState(false)
     val isUpload by markerVM.isUpload.observeAsState(false)
@@ -351,6 +353,7 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
     val uri by markerVM.uri.observeAsState(null)
     val navigationItems by markerVM.navigationItems.observeAsState(mapOf())
     val listMarkerType by markerVM.listMarkerType.observeAsState(mutableListOf())
+    val isPhotoEdited by markerVM.isPhotoEdited.observeAsState()
     val newListMarkersType = listMarkerType.drop(1).toMutableList()
     var isFirstTime by rememberSaveable {
         mutableStateOf(true)
@@ -371,7 +374,13 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         addMarker = {markerVM.addMarker()},
         restartMarkerAtributes = {markerVM.restartMarkerAtributes()}
     )
-
+    val fieldToAddMarkr = FieldToAddMarker(
+        context = context,
+        name = name,
+        type = typeMarker,
+        photo = uri
+    )
+    markerVM.changeFromWhere("cameraFromMarkerListScreen")
     MyBottomSheetScreen(
         actualMarker = actualMarker,
         name = name,
@@ -393,9 +402,12 @@ fun MyBottomSheetFromListContent(navigationController: NavController, markerVM: 
         onFirstTimeChange = { isFirstTime = it },
         description = description,
         onDescriptionChange = {markerVM.changeDescription(it)},
-        fromWhere = "cameraFromMarkerListScreen",
+        fromWhere = fromWhere,
         methodsForAddingMarker = methodsForAddingMarker,
-        isUpload = isUpload
+        isUpload = isUpload,
+        fieldToAddMarker = fieldToAddMarkr,
+        onIsPhotoEditedChange = {markerVM.changeIsPhotoedited(it)},
+        isUploadChange = {markerVM.changeIsUriUrlUpload(it)}
     )
 }
 
@@ -427,7 +439,6 @@ fun MyAlertDialog(
             dismissButton = {
                 TextButton(
                     onClick = { onDismiss() },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
                 ) { Text(text = "Cancel") }
             }
         )
