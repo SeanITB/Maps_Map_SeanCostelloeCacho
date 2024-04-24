@@ -198,7 +198,6 @@ fun MyBottomSheetScreen(
                 methodsForAddingMarker = methodsForAddingMarker,
                 isUpload = isUpload,
                 fieldToAddMarker = fieldToAddMarker,
-                onShowBottomSheetChange = {onShowBottomSheetChange(it)},
                 isUploadChange = {isUploadChange(it)}
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
@@ -275,7 +274,6 @@ fun WhenAddMarkerScreen(
     isUpload: Boolean,
     methodsForAddingMarker: MethodsForAddingMarker,
     fieldToAddMarker: FieldToAddMarker,
-    onShowBottomSheetChange: (Boolean) -> Unit,
     isUploadChange: (Boolean) -> Unit
     ) {
     Button(
@@ -302,11 +300,10 @@ fun WhenAddMarkerScreen(
             description = description
         )
         changeNewMarker(newMarker)
-        methodsForAddingMarker.addMarker
-        methodsForAddingMarker.restartMarkerAtributes
-        methodsForAddingMarker.changeShowBottomFromMapSheet
+        methodsForAddingMarker.addMarker()
+        methodsForAddingMarker.restartMarkerAtributes()
+        methodsForAddingMarker.changeShowBottomFromMapSheet(false)
         onFirstTimeChange(true)
-        onShowBottomSheetChange(false)
         isUploadChange(false)
     }
 }
